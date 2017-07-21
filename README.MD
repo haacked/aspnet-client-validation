@@ -16,14 +16,14 @@ Alternatively, download these:
 - [aspnet-validation.min.js](https://github.com/ryanelian/aspnet-validation/raw/master/dist/aspnet-validation.min.js)
 - [aspnet-validation.min.js.map](https://github.com/ryanelian/aspnet-validation/raw/master/dist/aspnet-validation.min.js.map)
 
+## Quick Start Guide
+
+### Via \<script src="..."\>
+
 ```html
 <script src="es6-promise.auto.min.js"></script>
 <script src="aspnet-validation.min.js"></script>
 ```
-
-## Quick Start Guide
-
-### Via \<script src="..."\>
 
 ```js
 var v = new window.aspnetValidation.ValidationService();
@@ -65,6 +65,8 @@ v.bootstrap();
 
 Example stolen from https://docs.microsoft.com/en-us/aspnet/core/mvc/models/validation
 
+### Server Code
+
 ```cs
 public class ClassicMovieAttribute : ValidationAttribute, IClientModelValidator
 {
@@ -102,6 +104,8 @@ public class ClassicMovieAttribute : ValidationAttribute, IClientModelValidator
     }
 }
 ```
+
+### Client Code
 
 ```ts
 import { ValidationService } from 'aspnet-validation';
