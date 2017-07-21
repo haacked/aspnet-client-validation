@@ -26,11 +26,11 @@ Alternatively, download these:
 ### Via \<script src="..."\>
 
 ```js
-let v = new window.aspnetValidation.ValidationService();
+var v = new window.aspnetValidation.ValidationService();
 v.bootstrap();
 ```
 
-### Via CommonJS
+### Via CommonJS / Browserify
 
 ```js
 require('es6-promise').polyfill();
@@ -43,15 +43,15 @@ v.bootstrap();
 ### Via TypeScript / ES Modules
 
 ```ts
-import ES6Promise = require('es6-promise');
-ES6Promise.polyfill();
-
+import * as ES6Promise from 'es6-promise';
 import { ValidationService } from 'aspnet-validation';
+
+ES6Promise.polyfill();
 let v = new ValidationService();
 v.bootstrap();
 ```
 
-> Shameless promotion: use [instapack](https://github.com/ryanelian/instapack) for painless TypeScript development!
+> Shameless promotion: use [instapack](https://github.com/ryanelian/instapack) for painless web application client development using TypeScript!
 
 ## Why?
 
