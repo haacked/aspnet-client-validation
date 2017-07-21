@@ -1,16 +1,23 @@
 {
   "name": "aspnet-validation",
-  "version": "0.0.1-beta1",
+  "version": "0.0.1-beta2",
   "description": "Enables ASP.NET Core MVC client-side validation, without JQuery!",
-  "main": "index.js",
+  "main": "aspnet-validation.js",
   "repository": "https://github.com/ryanelian/aspnet-validation",
+  "bugs": {
+    "url": "https://github.com/ryanelian/aspnet-validation/issues"
+  },
+  "homepage": "https://github.com/ryanelian/aspnet-validation#readme",
   "author": "Ryan Elian",
   "license": "MIT",
   "scripts": {
-    "build": "tsc && uglifyjs index.js > dist/aspnet-validation.min.js"
+    "build": "webpack && webpack --config webpack.config.min.js"
   },
   "devDependencies": {
-    "typescript": "latest",
-    "uglify-js": "latest"
+    "awesome-typescript-loader": "^3.2.1",
+    "source-map-loader": "^0.2.1",
+    "typescript": "^2.4.2",
+    "uglifyjs-webpack-plugin": "^0.4.6",
+    "webpack": "^3.3.0"
   }
 }

@@ -44,7 +44,7 @@ export type ValidationProvider = (value: string, element: HTMLInputElement, para
 type Validator = () => Promise<boolean>;
 
 /**
- * Contains default implementations for ASP.NET Core MVC validaion attributes.
+ * Contains default implementations for ASP.NET Core MVC validation attributes.
  */
 export class MvcValidationProviders {
     /**
@@ -759,7 +759,7 @@ export class ValidationService {
     }
 
     /**
-     * Load default validation providers and scans the entire document 
+     * Load default validation providers and scans the entire document when ready.
      */
     bootstrap() {
         this.addMvcProviders();
