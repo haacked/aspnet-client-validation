@@ -13,8 +13,8 @@ npm install aspnet-validation es6-promise
 
 Alternatively, download these:
 
-- [mini](https://github.com/ryanelian/aspnet-validation/raw/master/dist/aspnet-validation.min.js)
-- [map](https://github.com/ryanelian/aspnet-validation/raw/master/dist/aspnet-validation.min.js.map)
+- [aspnet-validation.min.js](https://github.com/ryanelian/aspnet-validation/raw/master/dist/aspnet-validation.min.js)
+- [aspnet-validation.min.js.map](https://github.com/ryanelian/aspnet-validation/raw/master/dist/aspnet-validation.min.js.map)
 
 ```html
 <script src="aspnet-validation.min.js"></script>
@@ -104,12 +104,13 @@ let v = new ValidationService();
 // Must be done BEFORE bootstrap() is called!
 v.addProvider('classicmovie', (value, element, params) => {
     if (!value) {
+        // let [Required] handle validation error for empty input!
         return true;
     }
 
     var genre = (document.getElementById('Genre') as HTMLSelectElement).value;
     
-    // data-val-classicmovie-year is bound automatically to params.
+    // data-val-classicmovie-year is bound automatically to params. Cool huh?
     let year = parseInt(params.year);
     let date = new Date(value);
 
@@ -128,7 +129,7 @@ v.bootstrap();
 Other than `boolean` and `string`, `addProvider` callback accepts `Promise<string | boolean>` as return value:
 
 ```ts
-v.addProvider('cool', (value, element, params) => {
+v.addProvider('io', (value, element, params) => {
     if (!value) {
         return true;
     }
