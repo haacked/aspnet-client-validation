@@ -40,7 +40,7 @@ let v = new aspnetValidation.ValidationService();
 v.bootstrap();
 ```
 
-### Via ES6 Module
+### Via TypeScript / ES Modules
 
 ```ts
 import ES6Promise = require('es6-promise');
