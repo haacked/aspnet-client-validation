@@ -9,7 +9,7 @@
 npm install aspnet-validation es6-promise
 ```
 
-> aspnet-validation uses [Promise API](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Promise), which is not supported in Internet Explorer. It is recommended to use promise-polyfill or es6-promise to resolve this issue...
+> aspnet-validation uses [Promise API](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Promise), which is not supported in Internet Explorer. It is recommended to use [promise-polyfill](https://github.com/taylorhakes/promise-polyfill) or [es6-promise](https://github.com/stefanpenner/es6-promise) to resolve this issue...
 
 Alternatively, download these:
 
@@ -17,6 +17,7 @@ Alternatively, download these:
 - [aspnet-validation.min.js.map](https://github.com/ryanelian/aspnet-validation/raw/master/dist/aspnet-validation.min.js.map)
 
 ```html
+<script src="es6-promise.auto.min.js"></script>
 <script src="aspnet-validation.min.js"></script>
 ```
 
@@ -32,14 +33,19 @@ v.bootstrap();
 ### Via CommonJS
 
 ```js
-const v = require('aspnet-validation');
-let v = new ValidationService();
+require('es6-promise').polyfill();
+const aspnetValidation = require('aspnet-validation');
+
+let v = new aspnetValidation.ValidationService();
 v.bootstrap();
 ```
 
 ### Via ES6 Module
 
 ```ts
+import ES6Promise = require('es6-promise');
+ES6Promise.polyfill();
+
 import { ValidationService } from 'aspnet-validation';
 let v = new ValidationService();
 v.bootstrap();
