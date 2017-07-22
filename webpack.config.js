@@ -1,7 +1,7 @@
 module.exports = {
-    entry: "./index.ts",
+    entry: "./src/index.ts",
     output: {
-        filename: './index.js',
+        filename: './src/index.js',
         library: 'aspnetValidation',
         libraryTarget: 'umd'
     },

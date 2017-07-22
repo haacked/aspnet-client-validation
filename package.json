@@ -1,8 +1,8 @@
 {
   "name": "aspnet-validation",
-  "version": "0.0.1-beta2",
+  "version": "0.0.1-beta3",
   "description": "Enables ASP.NET Core MVC client-side validation, without JQuery!",
-  "main": "aspnet-validation.js",
+  "main": "./src/index.js",
   "repository": "https://github.com/ryanelian/aspnet-validation",
   "bugs": {
     "url": "https://github.com/ryanelian/aspnet-validation/issues"

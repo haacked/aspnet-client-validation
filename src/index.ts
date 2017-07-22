@@ -401,6 +401,8 @@ export class ValidationService {
         this.addProvider('required', mvc.required);
         // [StringLength], [MinLength], [MaxLength]
         this.addProvider('length', mvc.stringLength);
+        this.addProvider('maxlength', mvc.stringLength);
+        this.addProvider('minlength', mvc.stringLength);
         // [Compare]
         this.addProvider('equalto', mvc.compare);
         // [Range]

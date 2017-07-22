@@ -1,3 +1,3 @@
-index.js linguist-generated=true
-dist/*.js linguist-generated=true
+src/**/*.js linguist-generated=true
+dist/**/*.js linguist-generated=true
 webpack*.js linguist-language=TypeScript

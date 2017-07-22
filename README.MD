@@ -62,6 +62,14 @@ v.bootstrap();
 - **promise-polyfill**: +2.58 KB = **12.4 KB (12.97%)**
 - **es6-promise**: +6.19 KB = **19 KB (19.87%)**
 
+## Building the Source Code
+
+```powershell
+git clone https://github.com/ryanelian/aspnet-validation.git
+npm install
+npm run build   # If using PowerShell: .\build.ps1
+```
+
 ## Adding Custom Validation
 
 Example stolen from https://docs.microsoft.com/en-us/aspnet/core/mvc/models/validation
@@ -115,11 +123,11 @@ let v = new ValidationService();
 // Must be done BEFORE bootstrap() is called!
 v.addProvider('classicmovie', (value, element, params) => {
     if (!value) {
-        // let [Required] handle validation error for empty input!
+        // Let [Required] handle validation error for empty input...
         return true;
     }
     
-    // data-val-classicmovie-year is bound automatically to params.
+    // data-val-classicmovie-year is bound automatically to params!
     let year = parseInt(params.year);
     let date = new Date(value);
 
