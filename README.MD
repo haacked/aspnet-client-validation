@@ -1,7 +1,7 @@
 # aspnet-validation
 > Enables ASP.NET Core MVC client-side validation, without JQuery! 
 
-[![npm](https://img.shields.io/npm/v/aspnet-validation.svg)](https://www.npmjs.com/package/aspnet-validation)
+[![npm](https://img.shields.io/npm/v/aspnet-validation.svg)](https://www.npmjs.com/package/aspnet-validation) [![Build Status](https://travis-ci.org/ryanelian/aspnet-validation.svg?branch=master)](https://travis-ci.org/ryanelian/aspnet-validation)
 
 ## Install
 
@@ -26,7 +26,8 @@ Alternatively, download these:
 ```
 
 ```js
-var v = new window.aspnetValidation.ValidationService();
+// Exposes window['aspnetValidation']
+var v = new aspnetValidation.ValidationService();
 v.bootstrap();
 ```
 
@@ -51,7 +52,7 @@ let v = new ValidationService();
 v.bootstrap();
 ```
 
-> Shameless promotion: use [instapack](https://github.com/ryanelian/instapack) for painless web application client development using TypeScript!
+> Shameless self-promotion: use [instapack](https://github.com/ryanelian/instapack) for painless web application client development using TypeScript!
 
 ## Why?
 
@@ -65,7 +66,7 @@ v.bootstrap();
 
 Example stolen from https://docs.microsoft.com/en-us/aspnet/core/mvc/models/validation
 
-### Server Code
+### Server Code (C#)
 
 ```cs
 public class ClassicMovieAttribute : ValidationAttribute, IClientModelValidator
@@ -117,14 +118,15 @@ v.addProvider('classicmovie', (value, element, params) => {
         // let [Required] handle validation error for empty input!
         return true;
     }
-
-    var genre = (document.getElementById('Genre') as HTMLSelectElement).value;
     
-    // data-val-classicmovie-year is bound automatically to params. Cool huh?
+    // data-val-classicmovie-year is bound automatically to params.
     let year = parseInt(params.year);
     let date = new Date(value);
 
-    if (genre && genre.length > 0 && genre[0] === '0') {
+    let genreDropdown = document.getElementById('Genre') as HTMLSelectElement;
+    let genre = select.options[select.selectedIndex].value;
+
+    if (genre && genre.length > 0 && genre === '0') {
         return date.getFullYear() <= year;
     }
 
