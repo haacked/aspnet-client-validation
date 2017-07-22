@@ -22,5 +22,8 @@
       "es5",
       "es2015.promise"
     ]
-  }
+  },
+  "exclude": [
+    "node_modules"
+  ]
 }
