@@ -122,14 +122,13 @@ public class ClassicMovieAttribute : ValidationAttribute, IClientModelValidator
 import { ValidationService } from 'aspnet-validation';
 let v = new ValidationService();
 
-// Must be done BEFORE bootstrap() is called!
 v.addProvider('classicmovie', (value, element, params) => {
     if (!value) {
         // Let [Required] handle validation error for empty input...
         return true;
     }
     
-    // data-val-classicmovie-year is bound automatically to params!
+    // Unlike the original, data-val-classicmovie-year is bound automatically to params['year'] as string!
     let year = parseInt(params.year);
     let date = new Date(value);
 
