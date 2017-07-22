@@ -1,5 +1,5 @@
 # aspnet-validation
-> Enables ASP.NET Core MVC client-side validation, without JQuery! 
+> Enables ASP.NET Core MVC client-side validation without JQuery! 
 
 [![npm](https://img.shields.io/npm/v/aspnet-validation.svg)](https://www.npmjs.com/package/aspnet-validation) [![Build Status](https://travis-ci.org/ryanelian/aspnet-validation.svg?branch=master)](https://travis-ci.org/ryanelian/aspnet-validation)
 
@@ -60,9 +60,9 @@ v.bootstrap();
 
 **jQuery + jQuery Validation + jQuery Validation Unobtrusive:** 67.9 KB + 22.5 KB + 5.14 KB = **95.6 KB**
 
-**aspnet-validation:** 9.81 KB **(10.26%)**
-- **promise-polyfill**: +2.58 KB = **12.4 KB (12.97%)**
-- **es6-promise**: +6.19 KB = **19 KB (19.87%)**
+**aspnet-validation:** ~10 KB **(10.46%, ~4KB GZIP)**
+- **promise-polyfill**: +2.58 KB
+- **es6-promise**: +6.19 KB
 
 ## Building the Source Code
 
