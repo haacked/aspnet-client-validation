@@ -16,6 +16,8 @@ Alternatively, download these:
 - [aspnet-validation.min.js](https://github.com/ryanelian/aspnet-validation/raw/master/dist/aspnet-validation.min.js)
 - [aspnet-validation.min.js.map](https://github.com/ryanelian/aspnet-validation/raw/master/dist/aspnet-validation.min.js.map)
 
+> If you are also using Bootstrap, you may [un-jQuery](http://youmightnotneedjquery.com/) the application by using https://github.com/thednp/bootstrap.native
+
 ## Quick Start Guide
 
 ### Via \<script src="..."\>

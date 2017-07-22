@@ -687,6 +687,7 @@ export class ValidationService {
             }
         }
 
+        input.classList.remove('input-validation-valid');
         input.classList.add('input-validation-error');
 
         let uid = this.getElementUID(input);
@@ -708,6 +709,7 @@ export class ValidationService {
         }
 
         input.classList.remove('input-validation-error');
+        input.classList.add('input-validation-valid');
 
         let uid = this.getElementUID(input);
         delete this.summary[uid];

@@ -667,6 +667,7 @@ var ValidationService = (function () {
                 spans[i].className = 'field-validation-error';
             }
         }
+        input.classList.remove('input-validation-valid');
         input.classList.add('input-validation-error');
         var uid = this.getElementUID(input);
         this.summary[uid] = message;
@@ -685,6 +686,7 @@ var ValidationService = (function () {
             }
         }
         input.classList.remove('input-validation-error');
+        input.classList.add('input-validation-valid');
         var uid = this.getElementUID(input);
         delete this.summary[uid];
         this.renderSummary();
