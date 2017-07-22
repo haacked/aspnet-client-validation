@@ -60,7 +60,7 @@ v.bootstrap();
 
 **jQuery + jQuery Validation + jQuery Validation Unobtrusive:** 67.9 KB + 22.5 KB + 5.14 KB = **95.6 KB**
 
-**aspnet-validation:** ~10 KB **(10.46%, ~4KB GZIP)**
+**aspnet-validation:** ~10 KB **(10.46%, ~3KB GZIP)**
 - **promise-polyfill**: +2.58 KB
 - **es6-promise**: +6.19 KB
 
