@@ -3,6 +3,7 @@
   "version": "0.0.1-beta3",
   "description": "Enables ASP.NET Core MVC client-side validation, without JQuery!",
   "main": "./src/index.js",
+  "types": "./src/index.d.ts",
   "repository": "https://github.com/ryanelian/aspnet-validation",
   "bugs": {
     "url": "https://github.com/ryanelian/aspnet-validation/issues"
@@ -14,8 +15,8 @@
     "build": "webpack && webpack --config webpack.config.min.js"
   },
   "devDependencies": {
-    "awesome-typescript-loader": "^3.2.1",
     "source-map-loader": "^0.2.1",
+    "ts-loader": "^2.3.1",
     "typescript": "^2.4.2",
     "uglifyjs-webpack-plugin": "^0.4.6",
     "webpack": "^3.3.0"

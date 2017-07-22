@@ -1,7 +1,7 @@
 ﻿/**
  * A simple IDictionary<string, string>
  */
-interface StringKeyValuePair {
+export interface StringKeyValuePair {
     [key: string]: string
 }
 

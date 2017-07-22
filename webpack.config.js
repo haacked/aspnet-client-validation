@@ -6,12 +6,13 @@ module.exports = {
         libraryTarget: 'umd'
     },
     resolve: {
-        extensions: ['.ts', '.tsx', '.js', '.jsx']
+        // Add `.ts` and `.tsx` as a resolvable extension.
+        extensions: ['.ts', '.tsx', '.js']
     },
     module: {
         rules: [
             // All files with a '.ts' or '.tsx' extension will be handled by 'awesome-typescript-loader'.
-            { test: /\.tsx?$/, loader: "awesome-typescript-loader" },
+            { test: /\.tsx?$/, loader: 'ts-loader' }
         ]
     },
 };
