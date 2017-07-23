@@ -133,7 +133,7 @@ v.addProvider('classicmovie', (value, element, params) => {
     let date = new Date(value);
     let genre = (document.getElementById('Genre') as HTMLSelectElement).value;
 
-    if (genre && genre.length > 0 && genre === '0') {
+    if (genre && genre === '0') {
         return date.getFullYear() <= year;
     }
 
