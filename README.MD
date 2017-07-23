@@ -131,9 +131,7 @@ v.addProvider('classicmovie', (value, element, params) => {
     // Unlike the original, data-val-classicmovie-year is bound automatically to params['year'] as string!
     let year = parseInt(params.year);
     let date = new Date(value);
-
-    let genreDropdown = document.getElementById('Genre') as HTMLSelectElement;
-    let genre = select.options[select.selectedIndex].value;
+    let genre = (document.getElementById('Genre') as HTMLSelectElement).value;
 
     if (genre && genre.length > 0 && genre === '0') {
         return date.getFullYear() <= year;
