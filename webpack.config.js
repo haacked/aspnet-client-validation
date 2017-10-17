@@ -1,6 +1,6 @@
 let tsconfigOverride = {
     declaration: true,
-    declarationDir: '@types',
+    declarationDir: 'typings',
     sourceMap: false,
     noEmit: false
 };
