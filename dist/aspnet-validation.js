@@ -119,7 +119,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 /**
  * Contains default implementations for ASP.NET Core MVC validation attributes.
  */
-var MvcValidationProviders = (function () {
+var MvcValidationProviders = /** @class */ (function () {
     function MvcValidationProviders() {
         /**
          * Validates whether the input has a value.
@@ -359,7 +359,7 @@ var MvcValidationProviders = (function () {
 /**
  * Responsibles for managing the DOM elements and running the validation providers.
  */
-var ValidationService = (function () {
+var ValidationService = /** @class */ (function () {
     function ValidationService() {
         /**
          * A key-value collection of loaded validation plugins.

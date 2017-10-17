@@ -1,18 +1,29 @@
+let tsconfigOverride = {
+    declaration: true,
+    declarationDir: '@types',
+    sourceMap: false,
+    noEmit: false
+};
+
 module.exports = {
     entry: "./src/index.ts",
     output: {
-        filename: './src/index.js',
+        filename: './dist/aspnet-validation.js',
         library: 'aspnetValidation',
         libraryTarget: 'umd'
     },
     resolve: {
-        // Add `.ts` and `.tsx` as a resolvable extension.
         extensions: ['.ts', '.tsx', '.js']
     },
     module: {
         rules: [
-            // All files with a '.ts' or '.tsx' extension will be handled by 'awesome-typescript-loader'.
-            { test: /\.tsx?$/, loader: 'ts-loader' }
+            {
+                test: /\.tsx?$/,
+                loader: 'ts-loader',
+                options: {
+                    compilerOptions: tsconfigOverride
+                }
+            },
         ]
     },
 };
