@@ -374,6 +374,10 @@ var ValidationService = /** @class */ (function () {
          */
         this.elementUIDs = [];
         /**
+         * A key-value collection of UID to Element for quick lookup.
+         */
+        this.elementByUID = {};
+        /**
          * A key-value collection of input UIDs for a <form> UID.
          */
         this.formInputs = {};
@@ -443,11 +447,11 @@ var ValidationService = /** @class */ (function () {
         var validationMessageElements = document.querySelectorAll('[data-valmsg-for]');
         for (var i = 0; i < validationMessageElements.length; i++) {
             var e = validationMessageElements[i];
-            var id = e.getAttribute('data-valmsg-for');
-            if (!this.messageFor[id]) {
-                this.messageFor[id] = [];
+            var name_1 = e.getAttribute('data-valmsg-for');
+            if (!this.messageFor[name_1]) {
+                this.messageFor[name_1] = [];
             }
-            this.messageFor[id].push(e);
+            this.messageFor[name_1].push(e);
         }
     };
     /**
@@ -516,6 +520,7 @@ var ValidationService = /** @class */ (function () {
             node: node,
             uid: uid
         });
+        this.elementByUID[uid] = node;
         return uid;
     };
     /**
@@ -568,6 +573,22 @@ var ValidationService = /** @class */ (function () {
             });
         };
         form.addEventListener('submit', cb);
+        form.addEventListener('reset', function (e) {
+            var uids = _this.formInputs[formUID];
+            for (var _i = 0, uids_1 = uids; _i < uids_1.length; _i++) {
+                var uid = uids_1[_i];
+                var input = _this.elementByUID[uid];
+                input.classList.remove('input-validation-error');
+                var spans = _this.messageFor[input.name];
+                if (spans) {
+                    for (var i = 0; i < spans.length; i++) {
+                        spans[i].innerHTML = '';
+                    }
+                }
+                delete _this.summary[uid];
+            }
+            _this.renderSummary();
+        });
         this.elementEvents[formUID] = cb;
     };
     /**
@@ -660,7 +681,7 @@ var ValidationService = /** @class */ (function () {
      * @param message
      */
     ValidationService.prototype.addError = function (input, message) {
-        var spans = this.messageFor[input.id];
+        var spans = this.messageFor[input.name];
         if (spans) {
             for (var i = 0; i < spans.length; i++) {
                 spans[i].innerHTML = message;
@@ -678,7 +699,7 @@ var ValidationService = /** @class */ (function () {
      * @param input
      */
     ValidationService.prototype.removeError = function (input) {
-        var spans = this.messageFor[input.id];
+        var spans = this.messageFor[input.name];
         if (spans) {
             for (var i = 0; i < spans.length; i++) {
                 spans[i].innerHTML = '';

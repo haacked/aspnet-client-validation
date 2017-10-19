@@ -1,9 +1,9 @@
 {
   "name": "aspnet-validation",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Enables ASP.NET Core MVC client-side validation, without JQuery!",
   "main": "./dist/aspnet-validation.js",
-  "types": "./typings/index.d.ts",
+  "types": "./types/index.d.ts",
   "repository": "https://github.com/ryanelian/aspnet-validation",
   "bugs": {
     "url": "https://github.com/ryanelian/aspnet-validation/issues"
@@ -15,7 +15,7 @@
     "build": "webpack && webpack --config webpack.config.min.js"
   },
   "devDependencies": {
-    "ts-loader": "^3.0.2",
+    "ts-loader": "^3.0.3",
     "typescript": "^2.5.3",
     "webpack": "^3.8.1"
   }

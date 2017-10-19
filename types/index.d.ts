@@ -88,6 +88,10 @@ export declare class ValidationService {
      */
     private elementUIDs;
     /**
+     * A key-value collection of UID to Element for quick lookup.
+     */
+    private elementByUID;
+    /**
      * A key-value collection of input UIDs for a <form> UID.
      */
     private formInputs;

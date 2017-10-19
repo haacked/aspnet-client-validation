@@ -347,6 +347,11 @@ export class ValidationService {
     private elementUIDs: ElementUID[] = [];
 
     /**
+     * A key-value collection of UID to Element for quick lookup. 
+     */
+    private elementByUID: { [uid: string]: Element } = {};
+
+    /**
      * A key-value collection of input UIDs for a <form> UID.
      */
     private formInputs: { [formUID: string]: string[] } = {};
@@ -429,13 +434,13 @@ export class ValidationService {
 
         for (let i = 0; i < validationMessageElements.length; i++) {
             let e = validationMessageElements[i];
-            let id = e.getAttribute('data-valmsg-for');
+            let name = e.getAttribute('data-valmsg-for');
 
-            if (!this.messageFor[id]) {
-                this.messageFor[id] = [];
+            if (!this.messageFor[name]) {
+                this.messageFor[name] = [];
             }
 
-            this.messageFor[id].push(e);
+            this.messageFor[name].push(e);
         }
     }
 
@@ -514,6 +519,7 @@ export class ValidationService {
             node: node,
             uid: uid
         });
+        this.elementByUID[uid] = node;
         return uid;
     }
 
@@ -574,6 +580,24 @@ export class ValidationService {
         };
 
         form.addEventListener('submit', cb);
+        form.addEventListener('reset', e => {
+            let uids = this.formInputs[formUID];
+
+            for (let uid of uids) {
+                let input = this.elementByUID[uid] as HTMLInputElement;
+                input.classList.remove('input-validation-error');
+
+                let spans = this.messageFor[input.name];
+                if (spans) {
+                    for (let i = 0; i < spans.length; i++) {
+                        spans[i].innerHTML = '';
+                    }
+                }
+
+                delete this.summary[uid];
+            }
+            this.renderSummary();
+        });
         this.elementEvents[formUID] = cb;
     }
 
@@ -679,7 +703,7 @@ export class ValidationService {
      * @param message 
      */
     addError(input: HTMLInputElement, message: string) {
-        let spans = this.messageFor[input.id];
+        let spans = this.messageFor[input.name];
         if (spans) {
             for (let i = 0; i < spans.length; i++) {
                 spans[i].innerHTML = message;
@@ -700,7 +724,7 @@ export class ValidationService {
      * @param input 
      */
     removeError(input: HTMLInputElement) {
-        let spans = this.messageFor[input.id];
+        let spans = this.messageFor[input.name];
         if (spans) {
             for (let i = 0; i < spans.length; i++) {
                 spans[i].innerHTML = '';
