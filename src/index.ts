@@ -586,6 +586,7 @@ export class ValidationService {
             for (let uid of uids) {
                 let input = this.elementByUID[uid] as HTMLInputElement;
                 input.classList.remove('input-validation-error');
+                input.classList.remove('input-validation-valid');
 
                 let spans = this.messageFor[input.name];
                 if (spans) {
