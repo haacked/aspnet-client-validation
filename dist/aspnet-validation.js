@@ -579,6 +579,7 @@ var ValidationService = /** @class */ (function () {
                 var uid = uids_1[_i];
                 var input = _this.elementByUID[uid];
                 input.classList.remove('input-validation-error');
+                input.classList.remove('input-validation-valid');
                 var spans = _this.messageFor[input.name];
                 if (spans) {
                     for (var i = 0; i < spans.length; i++) {

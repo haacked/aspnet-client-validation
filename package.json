@@ -15,8 +15,10 @@
     "build": "webpack && webpack --config webpack.config.min.js"
   },
   "devDependencies": {
-    "ts-loader": "^3.0.3",
-    "typescript": "^2.5.3",
+    "ts-loader": "^3.1.1",
+    "typescript": "^2.6.1",
+    "uglifyjs-webpack-plugin": "^1.1.0",
     "webpack": "^3.8.1"
-  }
+  },
+  "dependencies": {}
 }

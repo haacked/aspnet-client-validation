@@ -5,6 +5,7 @@
     "alwaysStrict": true,
     "strictNullChecks": false,
     "skipLibCheck": true,
+    "strictFunctionTypes": true,
     
     "noUnusedLocals": false,
     "noUnusedParameters": false,
