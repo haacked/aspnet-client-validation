@@ -1,3 +1,5 @@
+const path = require('path');
+
 let tsconfigOverride = {
     declaration: true,
     declarationDir: 'types',
@@ -7,11 +9,14 @@ let tsconfigOverride = {
 
 module.exports = {
     entry: "./src/index.ts",
+    mode: "development",
     output: {
-        filename: './dist/aspnet-validation.js',
+        filename: 'aspnet-validation.js',
+        path: path.resolve(__dirname, 'dist'),
         library: 'aspnetValidation',
         libraryTarget: 'umd'
     },
+    // devtool: 'inline-source-map',
     resolve: {
         extensions: ['.ts', '.tsx', '.js']
     },
