@@ -13,7 +13,7 @@
     outline-color: green;
 }
 
-.validation-summary-error {
+.validation-summary-errors {
     color: red;
     font-style: italic;
 }
