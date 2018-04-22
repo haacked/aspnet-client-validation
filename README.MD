@@ -54,7 +54,7 @@ let v = new ValidationService();
 v.bootstrap();
 ```
 
-> Shameless self-promotion: use [instapack](https://github.com/ryanelian/instapack) for painless web application client development using TypeScript!
+> Shameless self-promotion: use [instapack](https://github.com/ryanelian/instapack) for easy, rapid, and painless web application client development using TypeScript!
 
 ## Why?
 
