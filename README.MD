@@ -9,7 +9,7 @@
 npm install aspnet-validation es6-promise
 ```
 
-> aspnet-validation uses [Promise API](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Promise), which is not supported in Internet Explorer. It is recommended to use [promise-polyfill](https://github.com/taylorhakes/promise-polyfill) or [es6-promise](https://github.com/stefanpenner/es6-promise) to resolve this issue...
+> aspnet-validation uses [Promise API](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Promise), which is not supported in Internet Explorer. It is recommended to use [promise-polyfill](https://github.com/taylorhakes/promise-polyfill) or [ts-polyfill](https://github.com/ryanelian/ts-polyfill) or [core-js](https://github.com/zloirock/core-js) to resolve this issue...
 
 Alternatively, download these:
 
@@ -23,7 +23,7 @@ Alternatively, download these:
 ### Via \<script src="..."\>
 
 ```html
-<script src="es6-promise.auto.min.js"></script>
+<script src="promise-polyfill.min.js"></script>
 <script src="aspnet-validation.min.js"></script>
 ```
 
@@ -36,7 +36,7 @@ v.bootstrap();
 ### Via CommonJS / Browserify
 
 ```js
-require('es6-promise').polyfill();
+require('core-js');
 const aspnetValidation = require('aspnet-validation');
 
 let v = new aspnetValidation.ValidationService();
@@ -46,23 +46,21 @@ v.bootstrap();
 ### Via TypeScript / ES Modules
 
 ```ts
-import * as ES6Promise from 'es6-promise';
+import 'ts-polyfill';
 import { ValidationService } from 'aspnet-validation';
 
-ES6Promise.polyfill();
 let v = new ValidationService();
 v.bootstrap();
 ```
 
-> Shameless self-promotion: use [instapack](https://github.com/ryanelian/instapack) for easy, rapid, and painless web application client development using TypeScript!
+> Shameless self-promotion: use [instapack](https://github.com/ryanelian/instapack) for easy, rapid, and painless web application front-end development using TypeScript!
 
 ## Why?
 
-**jquery-3.3.1.min.js** + **jquery.validate.min.js** + **jquery.validate.unobtrusive.min.js** = 113 KB
+**jquery-3.3.2.min.js** + **jquery.validate.min.js** + **jquery.validate.unobtrusive.min.js** = 112 KB
 
-**aspnet-validation.min.js:** 10.2 KB **(9.03%, ~3 KB GZIP)**
-- **promise-polyfill**: +2.81 KB (< 1 KB GZIP)
-- **es6-promise.auto.min.js** +6.19 KB (2.4 KB GZIP)
+**aspnet-validation.min.js:** 10.6 KB **(9.46%, ~4 KB GZIP)**
+- **promise-polyfill**: +3.06 KB (< 1 KB GZIP)
 
 ## Building the Source Code
 
