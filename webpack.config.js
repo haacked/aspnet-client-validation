@@ -16,7 +16,7 @@ module.exports = {
         library: 'aspnetValidation',
         libraryTarget: 'umd'
     },
-    // devtool: 'inline-source-map',
+    devtool: false,
     resolve: {
         extensions: ['.ts', '.tsx', '.js']
     },
