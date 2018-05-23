@@ -44,6 +44,35 @@ export type ValidationProvider = (value: string, element: HTMLInputElement, para
 type Validator = () => Promise<boolean>;
 
 /**
+ * Resolves and returns the element referred by original element using ASP.NET selector logic.
+ * @param elementName 
+ */
+function getRelativeFormElement(elementName: string, selector: string) {
+    // example elementName: Form.PasswordConfirm, Form.Email
+    // example selector (dafuq): *.Password, *.__RequestVerificationToken
+    // example result element name: Form.Password, __RequestVerificationToken
+
+    let realSelector = selector.substr(2); // Password, __RequestVerificationToken
+    let objectName = '';
+
+    let dotLocation = elementName.lastIndexOf('.');
+    if (dotLocation > -1) {
+        // Form
+        objectName = elementName.substr(0, dotLocation);
+
+        // Form.Password
+        let relativeElementName = objectName + '.' + realSelector;
+        let relativeElement = document.getElementsByName(relativeElementName)[0];
+        if (relativeElement) {
+            return relativeElement;
+        }
+    }
+
+    // __RequestVerificationToken
+    return document.getElementsByName(realSelector)[0];
+}
+
+/**
  * Contains default implementations for ASP.NET Core MVC validation attributes.
  */
 export class MvcValidationProviders {
@@ -87,9 +116,7 @@ export class MvcValidationProviders {
             return true;
         }
 
-        // Sample other parameter: "*.Name"
-        // Wat?
-        let otherElement = document.getElementById(params.other.substr(2)) as HTMLInputElement;
+        let otherElement = getRelativeFormElement(element.name, params.other) as HTMLInputElement;
         if (!otherElement) {
             return true;
         }
