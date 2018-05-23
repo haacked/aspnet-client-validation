@@ -305,28 +305,48 @@ export class MvcValidationProviders {
             return true;
         }
 
-        return new Promise((ok, reject) => {
-            let url = params['url'] + '?' + element.name + '=' + encodeURIComponent(value);
+        // params.additionalfields: *.Email,*.Username
+        let fieldSelectors: string[] = (params.additionalfields as string).split(',');
+        let fields: StringKeyValuePair = {};
 
-            // params.additionalfields: *.Email,*.Username
-            let xtras = (params.additionalfields as string).split(',');
+        for (let fieldSelector of fieldSelectors) {
+            let fieldName = fieldSelector.substr(2);
+            let fieldElement = getRelativeFormElement(element.name, fieldSelector) as HTMLInputElement;
 
-            for (let i = 0; i < xtras.length; i++) {
-                let xtra = xtras[i].substr(2);
-                if (xtra === element.name) {
-                    continue;
-                }
-
-                let e = document.getElementById(xtra) as HTMLInputElement;
-                if (!e || !e.value) {
-                    continue;
-                }
-
-                url = url + '&' + e.name + '=' + encodeURIComponent(e.value);
+            let hasValue = Boolean(fieldElement && fieldElement.value);
+            if (!hasValue) {
+                continue;
             }
 
-            var request = new XMLHttpRequest();
-            request.open('get', url);
+            fields[fieldName] = fieldElement.value;
+        }
+
+        let url: string = params['url'];
+        // console.log(fields);
+
+        let encodedParams: string[] = [];
+        for (let fieldName in fields) {
+            let encodedParam = encodeURIComponent(fieldName) + '=' + encodeURIComponent(fields[fieldName]);
+            encodedParams.push(encodedParam);
+        }
+        let payload = encodedParams.join('&');
+        // console.log(payload);
+
+        return new Promise((ok, reject) => {
+            let request = new XMLHttpRequest();
+
+            if (params.type === 'Post') {
+                let postData = new FormData();
+                for (let fieldName in fields) {
+                    postData.append(fieldName, fields[fieldName]);
+                }
+                request.open('post', url);
+                request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+                request.send(payload);
+            } else {
+                request.open('get', url + '?' + payload);
+                request.send();
+            }
 
             request.onload = e => {
                 if (request.status >= 200 && request.status < 300) {
@@ -348,8 +368,6 @@ export class MvcValidationProviders {
                     data: request.responseText
                 });
             };
-
-            request.send();
         });
     }
 }
