@@ -640,7 +640,7 @@ export class ValidationService {
                     }
                 }
 
-                delete this.summary[uid];
+                this.summary[uid] = undefined;
             }
             this.renderSummary();
         });
@@ -659,7 +659,9 @@ export class ValidationService {
         let validate = this.createValidator(input, directives);
 
         this.validators[uid] = validate;
-        this.trackFormInput(input.form, uid);
+        if (input.form) {
+            this.trackFormInput(input.form, uid);
+        }
 
         if (this.elementEvents[uid]) {
             return;
@@ -782,7 +784,7 @@ export class ValidationService {
         input.classList.add('input-validation-valid');
 
         let uid = this.getElementUID(input);
-        delete this.summary[uid];
+        this.summary[uid] = undefined;
         this.renderSummary();
     }
 
