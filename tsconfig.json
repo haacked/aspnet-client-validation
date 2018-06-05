@@ -5,7 +5,7 @@
     "alwaysStrict": true,
     "strictNullChecks": false,
     "strictFunctionTypes": true,
-    "strictPropertyInitialization": true,
+    "strictPropertyInitialization": false,
     "skipLibCheck": true,
     
     "noUnusedLocals": false,
