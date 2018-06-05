@@ -735,7 +735,7 @@ var ValidationService = /** @class */ (function () {
             var e = summaryElements[i];
             e.innerHTML = '';
             if (ul) {
-                e.className = 'validation-summary-error';
+                e.className = 'validation-summary-errors';
                 e.appendChild(ul.cloneNode(true));
             }
             else {

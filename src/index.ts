@@ -735,7 +735,7 @@ export class ValidationService {
             let e = summaryElements[i];
             e.innerHTML = '';
             if (ul) {
-                e.className = 'validation-summary-error';
+                e.className = 'validation-summary-errors';
                 e.appendChild(ul.cloneNode(true));
             } else {
                 e.className = 'validation-summary-valid';
