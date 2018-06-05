@@ -653,7 +653,7 @@ var ValidationService = /** @class */ (function () {
                         spans[i].innerHTML = '';
                     }
                 }
-                delete _this.summary[uid];
+                _this.summary[uid] = undefined;
             }
             _this.renderSummary();
         });
@@ -670,7 +670,9 @@ var ValidationService = /** @class */ (function () {
         var directives = this.parseDirectives(input.attributes);
         var validate = this.createValidator(input, directives);
         this.validators[uid] = validate;
-        this.trackFormInput(input.form, uid);
+        if (input.form) {
+            this.trackFormInput(input.form, uid);
+        }
         if (this.elementEvents[uid]) {
             return;
         }
@@ -777,7 +779,7 @@ var ValidationService = /** @class */ (function () {
         input.classList.remove('input-validation-error');
         input.classList.add('input-validation-valid');
         var uid = this.getElementUID(input);
-        delete this.summary[uid];
+        this.summary[uid] = undefined;
         this.renderSummary();
     };
     /**
