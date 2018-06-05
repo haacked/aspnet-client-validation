@@ -640,7 +640,7 @@ export class ValidationService {
                     }
                 }
 
-                this.summary[uid] = undefined;
+                delete this.summary[uid];
             }
             this.renderSummary();
         });
@@ -784,7 +784,7 @@ export class ValidationService {
         input.classList.add('input-validation-valid');
 
         let uid = this.getElementUID(input);
-        this.summary[uid] = undefined;
+        delete this.summary[uid];
         this.renderSummary();
     }
 
