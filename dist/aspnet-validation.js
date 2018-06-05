@@ -653,7 +653,7 @@ var ValidationService = /** @class */ (function () {
                         spans[i].innerHTML = '';
                     }
                 }
-                _this.summary[uid] = undefined;
+                delete _this.summary[uid];
             }
             _this.renderSummary();
         });
@@ -779,7 +779,7 @@ var ValidationService = /** @class */ (function () {
         input.classList.remove('input-validation-error');
         input.classList.add('input-validation-valid');
         var uid = this.getElementUID(input);
-        this.summary[uid] = undefined;
+        delete this.summary[uid];
         this.renderSummary();
     };
     /**
