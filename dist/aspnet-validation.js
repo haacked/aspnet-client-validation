@@ -852,19 +852,10 @@ var ValidationService = /** @class */ (function () {
     ValidationService.prototype.bootstrap = function () {
         var _this = this;
         this.addMvcProviders();
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', function (event) {
-                _this.scanMessages();
-                _this.scanInputs();
-            });
-        }
-        else {
-            // interactive: The document has finished loading and the document has been parsed 
-            // but sub-resources such as images, stylesheets and frames are still loading.
-            // or complete: The document and all sub-resources have finished loading.
-            this.scanMessages();
-            this.scanInputs();
-        }
+        window.addEventListener('load', function (event) {
+            _this.scanMessages();
+            _this.scanInputs();
+        });
     };
     return ValidationService;
 }());

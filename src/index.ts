@@ -840,17 +840,9 @@ export class ValidationService {
     bootstrap() {
         this.addMvcProviders();
 
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', event => {
-                this.scanMessages();
-                this.scanInputs();
-            });
-        } else {
-            // interactive: The document has finished loading and the document has been parsed 
-            // but sub-resources such as images, stylesheets and frames are still loading.
-            // or complete: The document and all sub-resources have finished loading.
+        window.addEventListener('load', event => {
             this.scanMessages();
             this.scanInputs();
-        }
+        });
     }
 }
