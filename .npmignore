@@ -1,0 +1,8 @@
+.vscode/
+src/
+.gitattributes
+.travis.yml
+build.ps1
+tsconfig.json
+webpack.config.js
+webpack.config.min.js
