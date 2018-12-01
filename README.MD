@@ -1,7 +1,8 @@
 # aspnet-validation
 > Enables ASP.NET MVC client-side validation without jQuery! 
 
-[![npm](https://img.shields.io/npm/v/aspnet-validation.svg)](https://www.npmjs.com/package/aspnet-validation) [![Build Status](https://travis-ci.org/ryanelian/aspnet-validation.svg?branch=master)](https://travis-ci.org/ryanelian/aspnet-validation)
+[![npm](https://img.shields.io/npm/v/aspnet-validation.svg)](https://www.npmjs.com/package/aspnet-validation)
+[![Build Status](https://ryanelian.visualstudio.com/aspnet-validation/_apis/build/status/ryanelian.aspnet-validation)](https://ryanelian.visualstudio.com/aspnet-validation/_build/latest?definitionId=2)
 
 ## Install
 
