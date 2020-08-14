@@ -627,20 +627,20 @@ export class ValidationService {
                 return;
             }
 
-            let isProgamaticValidate = !e;
-            if (!isProgamaticValidate) {
+            let isProgrammaticValidate = !e;
+            if (!isProgrammaticValidate) {
                 e.preventDefault();
             }
             validate.then(success => {
                 if (success) {
-                    if (isProgamaticValidate) {
+                    if (isProgrammaticValidate) {
                         callback(true);
                         return;
                     }
                     form.submit();
                     return;
                 }
-                if (isProgamaticValidate) {
+                if (isProgrammaticValidate) {
                     callback(false);
                 }
             }).catch(error => {
