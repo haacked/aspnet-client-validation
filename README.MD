@@ -17,6 +17,12 @@ or
 yarn add aspnet-client-validation
 ```
 
+Alternatively, extract these files from the [dist.zip folder of the latest release](https://github.com/haacked/aspnet-client-validation/releases/):
+
+* aspnet-validation.min.js
+* aspnet-validation.min.js.map
+
+
 > aspnet-client-validation uses [Promise API](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Promise), which is not supported in Internet Explorer. **It is recommended to use [promise-polyfill](https://github.com/taylorhakes/promise-polyfill) or [ts-polyfill](https://github.com/ryanelian/ts-polyfill) or [core-js](https://github.com/zloirock/core-js) to resolve this issue...**
 
 > If you are also using Bootstrap, you may [un-jQuery](http://youmightnotneedjquery.com/) the application by using https://github.com/thednp/bootstrap.native
@@ -56,7 +62,7 @@ let v = new ValidationService();
 v.bootstrap();
 ```
 
-> Shameless self-promotion: use [instapack](https://github.com/ryanelian/instapack) for easy, rapid, and painless web application front-end development using TypeScript!
+> Use [instapack](https://github.com/ryanelian/instapack) for easy, rapid, and painless web application front-end development using TypeScript!
 
 ## Why?
 
