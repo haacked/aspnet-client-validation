@@ -1,15 +1,15 @@
 {
-  "name": "aspnet-core-validation",
+  "name": "aspnet-client-validation",
   "version": "0.0.11",
   "description": "Enables ASP.NET MVC client-side validation, without jQuery!",
   "main": "dist/aspnet-validation.js",
   "style": "dist/aspnet-validation.css",
   "types": "types/index.d.ts",
-  "repository": "https://github.com/haacked/aspnet-validation",
+  "repository": "https://github.com/haacked/aspnet-client-validation",
   "bugs": {
-    "url": "https://github.com/haacked/aspnet-validation/issues"
+    "url": "https://github.com/haacked/aspnet-client-validation/issues"
   },
-  "homepage": "https://github.com/haacked/aspnet-validation#readme",
+  "homepage": "https://github.com/haacked/aspnet-client-validation#readme",
   "author": "Ryan Elian, Phil Haack",
   "license": "MIT",
   "scripts": {

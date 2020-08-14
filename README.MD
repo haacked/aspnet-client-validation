@@ -1,22 +1,23 @@
-# aspnet-validation
-> Enables ASP.NET MVC client-side validation without jQuery! 
+# ASP.NET Client Validation
 
-[![npm](https://img.shields.io/npm/v/aspnet-validation.svg)](https://www.npmjs.com/package/aspnet-validation)
-[![Build Status](https://github.com/haacked/aspnet-validation/workflows/main/badge.svg)](https://github.com/haacked/aspnet-validation/actions)
+Enables ASP.NET MVC client-side validation without jQuery! Originally forked from https://github.com/ryanelian/aspnet-validation
+
+[![npm](https://img.shields.io/npm/v/aspnet-client-validation.svg)](https://www.npmjs.com/package/aspnet-client-validation)
+[![Build Status](https://github.com/haacked/aspnet-client-validation/workflows/main/badge.svg)](https://github.com/haacked/aspnet-client-validation/actions)
 
 ## Install
 
 ```
-npm install aspnet-validation
+npm install aspnet-client-validation
 ```
 
 or
 
 ```
-yarn add aspnet-validation
+yarn add aspnet-client-validation
 ```
 
-> aspnet-validation uses [Promise API](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Promise), which is not supported in Internet Explorer. **It is recommended to use [promise-polyfill](https://github.com/taylorhakes/promise-polyfill) or [ts-polyfill](https://github.com/ryanelian/ts-polyfill) or [core-js](https://github.com/zloirock/core-js) to resolve this issue...**
+> aspnet-client-validation uses [Promise API](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Promise), which is not supported in Internet Explorer. **It is recommended to use [promise-polyfill](https://github.com/taylorhakes/promise-polyfill) or [ts-polyfill](https://github.com/ryanelian/ts-polyfill) or [core-js](https://github.com/zloirock/core-js) to resolve this issue...**
 
 > If you are also using Bootstrap, you may [un-jQuery](http://youmightnotneedjquery.com/) the application by using https://github.com/thednp/bootstrap.native
 
@@ -67,7 +68,7 @@ v.bootstrap();
 ## Building the Source Code
 
 ```powershell
-git clone https://github.com/haacked/aspnet-validation.git
+git clone https://github.com/haacked/aspnet-client-validation.git
 npm install
 scripts/build   # If using PowerShell: scripts/build.ps1
 ```
