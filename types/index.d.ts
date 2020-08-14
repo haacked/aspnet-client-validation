@@ -150,6 +150,12 @@ export declare class ValidationService {
      */
     private getFormValidationTask;
     /**
+     * Fires off validation for elements within the provided form and then calls the callback
+     * @param form
+     * @param callback
+     */
+    validateForm: (form: HTMLFormElement, callback: Function) => void;
+    /**
      * Tracks a <form> element as parent of an input UID. When the form is submitted, attempts to validate the said input asynchronously.
      * @param form
      * @param inputUID

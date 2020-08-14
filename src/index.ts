@@ -409,7 +409,7 @@ export class ValidationService {
     /**
      * A key-value map for element UID to its trigger element (submit event for <form>, input event for <textarea> and <input>).
      */
-    private elementEvents: { [id: string]: (Event) => any } = {};
+    private elementEvents: { [id: string]: (e: Event, callback?: Function) => any } = {};
 
     /**
      * A key-value map of input UID to its validation error message.
@@ -590,6 +590,19 @@ export class ValidationService {
     }
 
     /**
+     * Fires off validation for elements within the provided form and then calls the callback
+     * @param form 
+     * @param callback 
+     */
+    validateForm = (form: HTMLFormElement, callback: Function) => {
+        let formUID = this.getElementUID(form);
+        let formValidationEvent = this.elementEvents[formUID];  
+        if (formValidationEvent) {
+            formValidationEvent(null, callback);
+        }
+    }
+
+    /**
      * Tracks a <form> element as parent of an input UID. When the form is submitted, attempts to validate the said input asynchronously.
      * @param form 
      * @param inputUID 
@@ -608,16 +621,27 @@ export class ValidationService {
             return;
         }
 
-        let cb = e => {
+        let cb = (e: Event, callback?: Function) => {
             let validate = this.getFormValidationTask(formUID);
             if (!validate) {
                 return;
             }
 
-            e.preventDefault();
+            let isProgrammaticValidate = !e;
+            if (!isProgrammaticValidate) {
+                e.preventDefault();
+            }
             validate.then(success => {
                 if (success) {
+                    if (isProgrammaticValidate) {
+                        callback(true);
+                        return;
+                    }
                     form.submit();
+                    return;
+                }
+                if (isProgrammaticValidate) {
+                    callback(false);
                 }
             }).catch(error => {
                 console.log(error);
