@@ -3,7 +3,7 @@
 Enables ASP.NET MVC client-side validation without jQuery! Originally forked from https://github.com/ryanelian/aspnet-validation
 
 [![npm](https://img.shields.io/npm/v/aspnet-client-validation.svg)](https://www.npmjs.com/package/aspnet-client-validation)
-[![Build Status](https://github.com/haacked/aspnet-client-validation/workflows/main/badge.svg)](https://github.com/haacked/aspnet-client-validation/actions)
+[![Build Status](https://github.com/haacked/aspnet-client-validation/workflows/Build&20aspnet-validation/badge.svg)](https://github.com/haacked/aspnet-client-validation/actions)
 
 ## Install
 
