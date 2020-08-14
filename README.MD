@@ -18,11 +18,6 @@ yarn add aspnet-validation
 
 > aspnet-validation uses [Promise API](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Promise), which is not supported in Internet Explorer. **It is recommended to use [promise-polyfill](https://github.com/taylorhakes/promise-polyfill) or [ts-polyfill](https://github.com/ryanelian/ts-polyfill) or [core-js](https://github.com/zloirock/core-js) to resolve this issue...**
 
-Alternatively, download these:
-
-- [aspnet-validation.min.js](https://github.com/ryanelian/aspnet-validation/raw/master/dist/aspnet-validation.min.js)
-- [aspnet-validation.min.js.map](https://github.com/ryanelian/aspnet-validation/raw/master/dist/aspnet-validation.min.js.map)
-
 > If you are also using Bootstrap, you may [un-jQuery](http://youmightnotneedjquery.com/) the application by using https://github.com/thednp/bootstrap.native
 
 ## Quick Start Guide
@@ -72,9 +67,9 @@ v.bootstrap();
 ## Building the Source Code
 
 ```powershell
-git clone https://github.com/ryanelian/aspnet-validation.git
+git clone https://github.com/haacked/aspnet-validation.git
 npm install
-npm run build   # If using PowerShell: .\build.ps1
+scripts/build   # If using PowerShell: scripts/build.ps1
 ```
 
 ## Adding Custom Validation
