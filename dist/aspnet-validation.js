@@ -644,18 +644,18 @@ var ValidationService = /** @class */ (function () {
             if (!validate) {
                 return;
             }
-            var isProgrammaticValidate = !e;
-            if (!isProgrammaticValidate) {
-                e.preventDefault();
-            }
             validate.then(function (success) {
+                var isProgrammaticValidate = !e;
                 if (success) {
                     if (isProgrammaticValidate) {
                         callback(true);
                         return;
                     }
-                    form.submit();
                     return;
+                }
+                else {
+                    e.preventDefault();
+                    e.stopImmediatePropagation();
                 }
                 if (isProgrammaticValidate) {
                     callback(false);
