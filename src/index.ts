@@ -634,12 +634,20 @@ export class ValidationService {
                         callback(true);
                         return;
                     }
+                    const validationEvent = new CustomEvent('validation',
+                    {
+                        detail: { valid: true }
+                    });
+                    form.dispatchEvent(validationEvent);
                     return;
                 }
-                else {
-                    e.preventDefault();
-                    e.stopImmediatePropagation();
-                }
+                e.preventDefault();
+                e.stopImmediatePropagation();
+                const validationEvent = new CustomEvent('validation',
+                {
+                    detail: { valid: false }
+                });
+                form.dispatchEvent(validationEvent);
                 if (isProgrammaticValidate) {
                     callback(false);
                 }
