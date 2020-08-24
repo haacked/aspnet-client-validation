@@ -863,10 +863,19 @@ export class ValidationService {
      */
     bootstrap() {
         this.addMvcProviders();
+        let document = window.document;
+        if(document.readyState === 'complete') {
+            this.scan();
+        }
+        else {
+            window.document.addEventListener('DOMContentLoaded', event => {
+                this.scan();
+            });
+        }
+    }
 
-        window.addEventListener('load', event => {
-            this.scanMessages();
-            this.scanInputs();
-        });
+    private scan() {
+        this.scanMessages();
+        this.scanInputs();
     }
 }
