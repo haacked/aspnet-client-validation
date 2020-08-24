@@ -627,18 +627,18 @@ export class ValidationService {
                 return;
             }
 
-            let isProgrammaticValidate = !e;
-            if (!isProgrammaticValidate) {
-                e.preventDefault();
-            }
             validate.then(success => {
+                let isProgrammaticValidate = !e;
                 if (success) {
                     if (isProgrammaticValidate) {
                         callback(true);
                         return;
                     }
-                    form.submit();
                     return;
+                }
+                else {
+                    e.preventDefault();
+                    e.stopImmediatePropagation();
                 }
                 if (isProgrammaticValidate) {
                     callback(false);
