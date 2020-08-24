@@ -200,4 +200,5 @@ export declare class ValidationService {
      * Load default validation providers and scans the entire document when ready.
      */
     bootstrap(): void;
+    private scan;
 }

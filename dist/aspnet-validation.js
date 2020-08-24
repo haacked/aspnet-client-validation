@@ -877,10 +877,19 @@ var ValidationService = /** @class */ (function () {
     ValidationService.prototype.bootstrap = function () {
         var _this = this;
         this.addMvcProviders();
-        window.addEventListener('load', function (event) {
-            _this.scanMessages();
-            _this.scanInputs();
-        });
+        var document = window.document;
+        if (document.readyState === 'complete') {
+            this.scan();
+        }
+        else {
+            window.document.addEventListener('DOMContentLoaded', function (event) {
+                _this.scan();
+            });
+        }
+    };
+    ValidationService.prototype.scan = function () {
+        this.scanMessages();
+        this.scanInputs();
     };
     return ValidationService;
 }());
