@@ -1,6 +1,6 @@
 # ASP.NET Client Validation
 
-Enables ASP.NET MVC client-side validation without jQuery! Originally forked from https://github.com/ryanelian/aspnet-validation
+Enables ASP.NET MVC client-side validation without jQuery! Originally forked from https://github.com/ryanelian/aspnet-validation. This library replaces the need for `jquery.validate.min.js`, `jquery.validate.unobtrusive.min.js`. It's a nearly drop-in replacement. The only difference is you need to initialize the library as shown in the [Quickstart Guide](#quick-start-guide).
 
 [![npm](https://img.shields.io/npm/v/aspnet-client-validation.svg)](https://www.npmjs.com/package/aspnet-client-validation)
 [![Build Status](https://github.com/haacked/aspnet-client-validation/workflows/Build%20aspnet-validation/badge.svg)](https://github.com/haacked/aspnet-client-validation/actions)
