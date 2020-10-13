@@ -651,12 +651,18 @@ var ValidationService = /** @class */ (function () {
                         callback(true);
                         return;
                     }
+                    var validationEvent_1 = new CustomEvent('validation', {
+                        detail: { valid: true }
+                    });
+                    form.dispatchEvent(validationEvent_1);
                     return;
                 }
-                else {
-                    e.preventDefault();
-                    e.stopImmediatePropagation();
-                }
+                e.preventDefault();
+                e.stopImmediatePropagation();
+                var validationEvent = new CustomEvent('validation', {
+                    detail: { valid: false }
+                });
+                form.dispatchEvent(validationEvent);
                 if (isProgrammaticValidate) {
                     callback(false);
                 }
@@ -708,8 +714,12 @@ var ValidationService = /** @class */ (function () {
             delay = setTimeout(validate, _this.debounce);
         };
         var isDropdown = input.tagName.toLowerCase() === 'select';
+        var validateEvent = input.dataset.valEvent;
         if (isDropdown) {
             input.addEventListener('change', cb);
+        }
+        else if (validateEvent) {
+            input.addEventListener(validateEvent, cb);
         }
         else {
             input.addEventListener('input', cb);

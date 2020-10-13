@@ -707,9 +707,13 @@ export class ValidationService {
         };
 
         let isDropdown = input.tagName.toLowerCase() === 'select';
+        let validateEvent = input.dataset.valEvent;
         if (isDropdown) {
             input.addEventListener('change', cb);
-        } else {
+        } else if (validateEvent) {
+            input.addEventListener(validateEvent, cb);
+        }
+        else {
             input.addEventListener('input', cb);
         }
 
