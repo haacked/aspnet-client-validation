@@ -166,3 +166,12 @@ v.addProvider('io', (value, element, params) => {
     };
 });
 ```
+
+## Subscribing to Client Form Validation Event
+
+```ts
+cost form = document.getElementById('form');
+form.addEventListener('validation', function (e) {
+    /* Check if form is valid here. */
+});
+```
