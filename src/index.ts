@@ -602,6 +602,24 @@ export class ValidationService {
         }
     }
 
+
+    /**
+     * Focuses the first invalid element within the provided form
+     * @param form
+     */
+    focusFirstInvalid = (form: HTMLFormElement) => {
+        let formUID = this.getElementUID(form);
+        let formInputUIDs = this.formInputs[formUID];
+        let invalidFormInputUIDs = formInputUIDs.filter(uid => this.summary[uid]);
+
+        if (invalidFormInputUIDs.length > 0) {
+            var firstInvalid = this.elementByUID[invalidFormInputUIDs[0]] as HTMLElement;
+            if (firstInvalid) {
+                firstInvalid.focus();
+            }
+        }
+    }
+
     /**
      * Tracks a <form> element as parent of an input UID. When the form is submitted, attempts to validate the said input asynchronously.
      * @param form 
@@ -648,8 +666,13 @@ export class ValidationService {
                     detail: { valid: false }
                 });
                 form.dispatchEvent(validationEvent);
+                
+                
                 if (isProgrammaticValidate) {
                     callback(false);
+                }
+                else {
+                    this.focusFirstInvalid(form);
                 }
             }).catch(error => {
                 console.log(error);
