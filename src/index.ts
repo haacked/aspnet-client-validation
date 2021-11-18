@@ -621,6 +621,43 @@ export class ValidationService {
     }
 
     /**
+     * Returns true if the provided form is valid, and then calls the callback. The form will be validated before checking, unless prevalidate is set to false
+     * @param form 
+     * @param prevalidate 
+     * @param callback 
+     * @returns 
+     */
+    isValid = (form: HTMLFormElement, prevalidate: boolean = true, callback: Function) => {
+        if (prevalidate) {
+            this.validateForm(form, callback);
+        }
+        let formUID = this.getElementUID(form);
+        let formInputUIDs = this.formInputs[formUID];
+        let invalidFormInputUIDs = formInputUIDs.filter(uid => this.summary[uid]);
+        return invalidFormInputUIDs.length == 0;
+    }
+
+    /**
+     * Returns true if the provided field is valid, and then calls the callback. The form will be validated before checking, unless prevalidate is set to false
+     * @param form 
+     * @param prevalidate 
+     * @param callback 
+     * @returns 
+     */
+    isFieldValid = (field: HTMLElement, prevalidate: boolean = true, callback: Function) => {
+        
+        if (prevalidate) {
+            let form = field.closest("form");
+            if (form != null) {
+                this.validateForm(form, callback);
+            }
+        }
+
+        let fieldUID = this.getElementUID(field);
+        return this.summary[fieldUID] != null;
+    }
+
+    /**
      * Tracks a <form> element as parent of an input UID. When the form is submitted, attempts to validate the said input asynchronously.
      * @param form 
      * @param inputUID 
