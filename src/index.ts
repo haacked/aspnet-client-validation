@@ -696,8 +696,12 @@ export class ValidationService {
                     form.dispatchEvent(validationEvent);
                     return;
                 }
-                e.preventDefault();
-                e.stopImmediatePropagation();
+
+                if (e) {
+                    e.preventDefault();
+                    e.stopImmediatePropagation();
+                }
+                
                 const validationEvent = new CustomEvent('validation',
                 {
                     detail: { valid: false }
