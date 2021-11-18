@@ -895,43 +895,58 @@ export class ValidationService {
      */
     createValidator(input: HTMLInputElement, directives: ValidationDirective) {
         return async () => {
-            for (let key in directives) {
-                let directive = directives[key];
-                let provider = this.providers[key];
 
-                if (!provider) {
-                    console.log('aspnet-validation provider not implemented: ' + key);
-                    continue;
-                }
+            // only validate visible fields
+            if (!this.isHidden(input))
+            {
+                for (let key in directives) {
+                    let directive = directives[key];
+                    let provider = this.providers[key];
 
-                let result = provider(input.value, input, directive.params);
-                let valid = false;
-                let error = directive.error;
-
-                if (typeof result === 'boolean') {
-                    valid = result;
-                } else if (typeof result === 'string') {
-                    valid = false;
-                    error = result;
-                } else {
-                    let resolution = await result;
-                    if (typeof resolution === 'boolean') {
-                        valid = resolution;
-                    } else {
-                        valid = false;
-                        error = resolution;
+                    if (!provider) {
+                        console.log('aspnet-validation provider not implemented: ' + key);
+                        continue;
                     }
-                }
 
-                if (!valid) {
-                    this.addError(input, error);
-                    return false;
+                    let result = provider(input.value, input, directive.params);
+                    let valid = false;
+                    let error = directive.error;
+
+                    if (typeof result === 'boolean') {
+                        valid = result;
+                    } else if (typeof result === 'string') {
+                        valid = false;
+                        error = result;
+                    } else {
+                        let resolution = await result;
+                        if (typeof resolution === 'boolean') {
+                            valid = resolution;
+                        } else {
+                            valid = false;
+                            error = resolution;
+                        }
+                    }
+
+                    if (!valid) {
+                        this.addError(input, error);
+                        return false;
+                    }
                 }
             }
 
             this.removeError(input);
             return true;
+
         };
+    }
+
+    /**
+     * Checks if the provided input is hidden from the browser
+     * @param input
+     * @returns 
+     */
+    private isHidden(input: HTMLElement) {
+        return !( input.offsetWidth || input.offsetHeight || input.getClientRects().length );
     }
 
     /**
