@@ -46,7 +46,7 @@ v.bootstrap();
 
 ```js
 require('core-js');
-const aspnetValidation = require('aspnet-validation');
+const aspnetValidation = require('aspnet-client-validation');
 
 let v = new aspnetValidation.ValidationService();
 v.bootstrap();
@@ -56,7 +56,7 @@ v.bootstrap();
 
 ```ts
 import 'ts-polyfill';
-import { ValidationService } from 'aspnet-validation';
+import { ValidationService } from 'aspnet-client-validation';
 
 let v = new ValidationService();
 v.bootstrap();
@@ -126,7 +126,7 @@ public class ClassicMovieAttribute : ValidationAttribute, IClientModelValidator
 ### Client Code
 
 ```ts
-import { ValidationService } from 'aspnet-validation';
+import { ValidationService } from 'aspnet-client-validation';
 let v = new ValidationService();
 
 v.addProvider('classicmovie', (value, element, params) => {
@@ -170,8 +170,52 @@ v.addProvider('io', (value, element, params) => {
 ## Subscribing to Client Form Validation Event
 
 ```ts
-cost form = document.getElementById('form');
+const form = document.getElementById('form');
 form.addEventListener('validation', function (e) {
     /* Check if form is valid here. */
 });
+```
+
+## Programatically validate a form
+
+```ts
+v.validateForm(document.getElementById('form'));
+```
+
+## Checking form validity
+
+```ts
+v.isValid(document.getElementById('form'))
+```
+
+By default it will try to validate the form, before returning whether the form is valid. This can be disabled by setting the `prevalidate` parameter like so:
+
+```ts
+v.isValid(document.getElementById('form'), false)
+```
+
+You can also supply a callback function to be run after the check.
+
+```ts
+v.isValid(document.getElementById('form'), true, myCallbackFn)
+```
+
+## Checking field validity
+
+Similar to checking a forms validity, you can check individual fields too.
+
+```ts
+v.isFieldValid(document.getElementById('field'))
+```
+
+By default it will try to validate the form surrounding the field, before returning whether the field is valid. This can be disabled by setting the `prevalidate` parameter like so:
+
+```ts
+v.isFieldValid(document.getElementById('field'), false)
+```
+
+You can also supply a callback function to be run after the check.
+
+```ts
+v.isFieldValid(document.getElementById('field'), true, myCallbackFn)
 ```
