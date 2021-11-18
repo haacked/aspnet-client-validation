@@ -882,7 +882,7 @@ export class ValidationService {
      * @returns 
      */
     private isHidden(input: HTMLElement) {
-        return !!( input.offsetWidth || input.offsetHeight || input.getClientRects().length );
+        return !( input.offsetWidth || input.offsetHeight || input.getClientRects().length );
     }
 
     /**
