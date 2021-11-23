@@ -238,6 +238,7 @@ export class MvcValidationProviders {
         
         let lowerCaseValue = value.toLowerCase();
 
+        // Match the logic in `UrlAttribute`
         return lowerCaseValue.indexOf('http://') > -1
             || lowerCaseValue.indexOf('https://') > -1
             || lowerCaseValue.indexOf('ftp://') > -1; 
