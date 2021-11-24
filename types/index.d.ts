@@ -156,6 +156,27 @@ export declare class ValidationService {
      */
     validateForm: (form: HTMLFormElement, callback: Function) => void;
     /**
+     * Focuses the first invalid element within the provided form
+     * @param form
+     */
+    focusFirstInvalid: (form: HTMLFormElement) => void;
+    /**
+     * Returns true if the provided form is valid, and then calls the callback. The form will be validated before checking, unless prevalidate is set to false
+     * @param form
+     * @param prevalidate
+     * @param callback
+     * @returns
+     */
+    isValid: (form: HTMLFormElement, prevalidate: boolean, callback: Function) => boolean;
+    /**
+     * Returns true if the provided field is valid, and then calls the callback. The form will be validated before checking, unless prevalidate is set to false
+     * @param form
+     * @param prevalidate
+     * @param callback
+     * @returns
+     */
+    isFieldValid: (field: HTMLElement, prevalidate: boolean, callback: Function) => boolean;
+    /**
      * Tracks a <form> element as parent of an input UID. When the form is submitted, attempts to validate the said input asynchronously.
      * @param form
      * @param inputUID
@@ -196,6 +217,12 @@ export declare class ValidationService {
      * @param directives
      */
     createValidator(input: HTMLInputElement, directives: ValidationDirective): () => Promise<boolean>;
+    /**
+     * Checks if the provided input is hidden from the browser
+     * @param input
+     * @returns
+     */
+    private isHidden;
     /**
      * Load default validation providers and scans the entire document when ready.
      */

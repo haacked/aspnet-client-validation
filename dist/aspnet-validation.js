@@ -301,43 +301,11 @@ var MvcValidationProviders = /** @class */ (function () {
             if (!value) {
                 return true;
             }
-            // (c) Diego Perini, MIT Licensed
-            // https://gist.github.com/dperini/729294
-            var r = new RegExp("^" +
-                // protocol identifier
-                "(?:(?:https?|ftp)://)" +
-                // user:pass authentication
-                "(?:\\S+(?::\\S*)?@)?" +
-                "(?:" +
-                // IP address exclusion
-                // private & local networks
-                "(?!(?:10|127)(?:\\.\\d{1,3}){3})" +
-                "(?!(?:169\\.254|192\\.168)(?:\\.\\d{1,3}){2})" +
-                "(?!172\\.(?:1[6-9]|2\\d|3[0-1])(?:\\.\\d{1,3}){2})" +
-                // IP address dotted notation octets
-                // excludes loopback network 0.0.0.0
-                // excludes reserved space >= 224.0.0.0
-                // excludes network & broacast addresses
-                // (first & last IP address of each class)
-                "(?:[1-9]\\d?|1\\d\\d|2[01]\\d|22[0-3])" +
-                "(?:\\.(?:1?\\d{1,2}|2[0-4]\\d|25[0-5])){2}" +
-                "(?:\\.(?:[1-9]\\d?|1\\d\\d|2[0-4]\\d|25[0-4]))" +
-                "|" +
-                // host name
-                "(?:(?:[a-z\\u00a1-\\uffff0-9]-*)*[a-z\\u00a1-\\uffff0-9]+)" +
-                // domain name
-                "(?:\\.(?:[a-z\\u00a1-\\uffff0-9]-*)*[a-z\\u00a1-\\uffff0-9]+)*" +
-                // TLD identifier
-                "(?:\\.(?:[a-z\\u00a1-\\uffff]{2,}))" +
-                // TLD may end with dot
-                "\\.?" +
-                ")" +
-                // port number
-                "(?::\\d{2,5})?" +
-                // resource path
-                "(?:[/?#]\\S*)?" +
-                "$", "i");
-            return r.test(value);
+            var lowerCaseValue = value.toLowerCase();
+            // Match the logic in `UrlAttribute`
+            return lowerCaseValue.indexOf('http://') > -1
+                || lowerCaseValue.indexOf('https://') > -1
+                || lowerCaseValue.indexOf('ftp://') > -1;
         };
         /**
          * Validates whether the input value is a phone number.
@@ -477,6 +445,56 @@ var ValidationService = /** @class */ (function () {
             if (formValidationEvent) {
                 formValidationEvent(null, callback);
             }
+        };
+        /**
+         * Focuses the first invalid element within the provided form
+         * @param form
+         */
+        this.focusFirstInvalid = function (form) {
+            var formUID = _this.getElementUID(form);
+            var formInputUIDs = _this.formInputs[formUID];
+            var invalidFormInputUIDs = formInputUIDs.filter(function (uid) { return _this.summary[uid]; });
+            if (invalidFormInputUIDs.length > 0) {
+                var firstInvalid = _this.elementByUID[invalidFormInputUIDs[0]];
+                if (firstInvalid) {
+                    firstInvalid.focus();
+                }
+            }
+        };
+        /**
+         * Returns true if the provided form is valid, and then calls the callback. The form will be validated before checking, unless prevalidate is set to false
+         * @param form
+         * @param prevalidate
+         * @param callback
+         * @returns
+         */
+        this.isValid = function (form, prevalidate, callback) {
+            if (prevalidate === void 0) { prevalidate = true; }
+            if (prevalidate) {
+                _this.validateForm(form, callback);
+            }
+            var formUID = _this.getElementUID(form);
+            var formInputUIDs = _this.formInputs[formUID];
+            var invalidFormInputUIDs = formInputUIDs.filter(function (uid) { return _this.summary[uid]; });
+            return invalidFormInputUIDs.length == 0;
+        };
+        /**
+         * Returns true if the provided field is valid, and then calls the callback. The form will be validated before checking, unless prevalidate is set to false
+         * @param form
+         * @param prevalidate
+         * @param callback
+         * @returns
+         */
+        this.isFieldValid = function (field, prevalidate, callback) {
+            if (prevalidate === void 0) { prevalidate = true; }
+            if (prevalidate) {
+                var form = field.closest("form");
+                if (form != null) {
+                    _this.validateForm(form, callback);
+                }
+            }
+            var fieldUID = _this.getElementUID(field);
+            return _this.summary[fieldUID] != null;
         };
     }
     /**
@@ -657,14 +675,19 @@ var ValidationService = /** @class */ (function () {
                     form.dispatchEvent(validationEvent_1);
                     return;
                 }
-                e.preventDefault();
-                e.stopImmediatePropagation();
+                if (e) {
+                    e.preventDefault();
+                    e.stopImmediatePropagation();
+                }
                 var validationEvent = new CustomEvent('validation', {
                     detail: { valid: false }
                 });
                 form.dispatchEvent(validationEvent);
                 if (isProgrammaticValidate) {
                     callback(false);
+                }
+                else {
+                    _this.focusFirstInvalid(form);
                 }
             }).catch(function (error) {
                 console.log(error);
@@ -829,6 +852,7 @@ var ValidationService = /** @class */ (function () {
             return __generator(this, function (_c) {
                 switch (_c.label) {
                     case 0:
+                        if (!!this.isHidden(input)) return [3 /*break*/, 7];
                         _a = [];
                         for (_b in directives)
                             _a.push(_b);
@@ -880,6 +904,14 @@ var ValidationService = /** @class */ (function () {
                 }
             });
         }); };
+    };
+    /**
+     * Checks if the provided input is hidden from the browser
+     * @param input
+     * @returns
+     */
+    ValidationService.prototype.isHidden = function (input) {
+        return !(input.offsetWidth || input.offsetHeight || input.getClientRects().length);
     };
     /**
      * Load default validation providers and scans the entire document when ready.
