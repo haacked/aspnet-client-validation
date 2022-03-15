@@ -134,7 +134,7 @@ v.addProvider('classicmovie', (value, element, params) => {
         // Let [Required] handle validation error for empty input...
         return true;
     }
-    
+
     // Unlike the original, data-val-classicmovie-year is bound automatically to params['year'] as string!
     let year = parseInt(params.year);
     let date = new Date(value);
