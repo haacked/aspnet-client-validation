@@ -76,7 +76,7 @@ v.bootstrap();
 ```powershell
 git clone https://github.com/haacked/aspnet-client-validation.git
 npm install
-script/scripts/build   # If using PowerShell: script/scripts/build.ps1
+script/build   # If using PowerShell: script/build.ps1
 ```
 
 ## Adding Custom Validation

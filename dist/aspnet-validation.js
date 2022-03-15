@@ -640,6 +640,14 @@ var ValidationService = /** @class */ (function () {
         return Promise.all(tasks).then(function (result) { return result.every(function (e) { return e; }); });
     };
     /**
+     * Returns true if the event triggering the form submission indicates we should validate the form.
+     * @param e
+     */
+    ValidationService.prototype.shouldValidate = function (e) {
+        // Skip client-side validation if the form has been submitted via a button that has the "formnovalidate" attribute.
+        return !(e['submitter'] && e['submitter']['formNoValidate']);
+    };
+    /**
      * Tracks a <form> element as parent of an input UID. When the form is submitted, attempts to validate the said input asynchronously.
      * @param form
      * @param inputUID
@@ -658,6 +666,9 @@ var ValidationService = /** @class */ (function () {
             return;
         }
         var cb = function (e, callback) {
+            if (!_this.shouldValidate(e)) {
+                return;
+            }
             var validate = _this.getFormValidationTask(formUID);
             if (!validate) {
                 return;
