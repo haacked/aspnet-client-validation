@@ -45,7 +45,7 @@ type Validator = () => Promise<boolean>;
 
 /**
  * Resolves and returns the element referred by original element using ASP.NET selector logic.
- * @param elementName 
+ * @param elementName
  */
 function getRelativeFormElement(elementName: string, selector: string) {
     // example elementName: Form.PasswordConfirm, Form.Email
@@ -235,13 +235,13 @@ export class MvcValidationProviders {
         if (!value) {
             return true;
         }
-        
+
         let lowerCaseValue = value.toLowerCase();
 
         // Match the logic in `UrlAttribute`
         return lowerCaseValue.indexOf('http://') > -1
             || lowerCaseValue.indexOf('https://') > -1
-            || lowerCaseValue.indexOf('ftp://') > -1; 
+            || lowerCaseValue.indexOf('ftp://') > -1;
     }
 
     /**
@@ -263,7 +263,7 @@ export class MvcValidationProviders {
     }
 
     /**
-     * Asynchronously validates the input value to a JSON GET API endpoint. 
+     * Asynchronously validates the input value to a JSON GET API endpoint.
      */
     remote: ValidationProvider = (value, element, params) => {
         if (!value) {
@@ -342,7 +342,7 @@ export class MvcValidationProviders {
  */
 export class ValidationService {
     /**
-     * A key-value collection of loaded validation plugins. 
+     * A key-value collection of loaded validation plugins.
      */
     private providers: { [name: string]: ValidationProvider } = {};
 
@@ -357,7 +357,7 @@ export class ValidationService {
     private elementUIDs: ElementUID[] = [];
 
     /**
-     * A key-value collection of UID to Element for quick lookup. 
+     * A key-value collection of UID to Element for quick lookup.
      */
     private elementByUID: { [uid: string]: Element } = {};
 
@@ -394,8 +394,8 @@ export class ValidationService {
     /**
      * Registers a new validation plugin of the given name, if not registered yet.
      * Registered plugin validates inputs with data-val-[name] attribute, used as error message.
-     * @param name 
-     * @param callback 
+     * @param name
+     * @param callback
      */
     addProvider(name: string, callback: ValidationProvider) {
         if (this.providers[name]) {
@@ -407,7 +407,7 @@ export class ValidationService {
     }
 
     /**
-     * Registers the default providers for enabling ASP.NET Core MVC client-side validation. 
+     * Registers the default providers for enabling ASP.NET Core MVC client-side validation.
      */
     private addMvcProviders() {
         let mvc = new MvcValidationProviders();
@@ -455,8 +455,8 @@ export class ValidationService {
     }
 
     /**
-     * Given attribute map for an HTML input, returns the validation directives to be executed. 
-     * @param attributes 
+     * Given attribute map for an HTML input, returns the validation directives to be executed.
+     * @param attributes
      */
     parseDirectives(attributes: NamedNodeMap) {
         let directives: ValidationDirective = {};
@@ -513,7 +513,7 @@ export class ValidationService {
 
     /**
      * Gets a UID for an DOM element.
-     * @param node 
+     * @param node
      */
     private getElementUID(node: Element) {
         let x = this.elementUIDs.filter(e => {
@@ -535,7 +535,7 @@ export class ValidationService {
 
     /**
      * Returns a Promise that returns validation result for each and every inputs within the form.
-     * @param formUID 
+     * @param formUID
      */
     private getFormValidationTask(formUID: string) {
         let formInputUIDs = this.formInputs[formUID];
@@ -556,12 +556,12 @@ export class ValidationService {
 
     /**
      * Fires off validation for elements within the provided form and then calls the callback
-     * @param form 
-     * @param callback 
+     * @param form
+     * @param callback
      */
     validateForm = (form: HTMLFormElement, callback: Function) => {
         let formUID = this.getElementUID(form);
-        let formValidationEvent = this.elementEvents[formUID];  
+        let formValidationEvent = this.elementEvents[formUID];
         if (formValidationEvent) {
             formValidationEvent(null, callback);
         }
@@ -587,10 +587,10 @@ export class ValidationService {
 
     /**
      * Returns true if the provided form is valid, and then calls the callback. The form will be validated before checking, unless prevalidate is set to false
-     * @param form 
-     * @param prevalidate 
-     * @param callback 
-     * @returns 
+     * @param form
+     * @param prevalidate
+     * @param callback
+     * @returns
      */
     isValid = (form: HTMLFormElement, prevalidate: boolean = true, callback: Function) => {
         if (prevalidate) {
@@ -604,13 +604,13 @@ export class ValidationService {
 
     /**
      * Returns true if the provided field is valid, and then calls the callback. The form will be validated before checking, unless prevalidate is set to false
-     * @param form 
-     * @param prevalidate 
-     * @param callback 
-     * @returns 
+     * @param form
+     * @param prevalidate
+     * @param callback
+     * @returns
      */
     isFieldValid = (field: HTMLElement, prevalidate: boolean = true, callback: Function) => {
-        
+
         if (prevalidate) {
             let form = field.closest("form");
             if (form != null) {
@@ -623,9 +623,18 @@ export class ValidationService {
     }
 
     /**
+     * Returns true if the event triggering the form submission indicates we should validate the form.
+     * @param e
+     */
+    private shouldValidate(e: Event) {
+        // Skip client-side validation if the form has been submitted via a button that has the "formnovalidate" attribute.
+        return !(e['submitter'] && e['submitter']['formNoValidate']);
+    }
+
+    /**
      * Tracks a <form> element as parent of an input UID. When the form is submitted, attempts to validate the said input asynchronously.
-     * @param form 
-     * @param inputUID 
+     * @param form
+     * @param inputUID
      */
     private trackFormInput(form: HTMLFormElement, inputUID: string) {
         let formUID = this.getElementUID(form);
@@ -642,6 +651,10 @@ export class ValidationService {
         }
 
         let cb = (e: Event, callback?: Function) => {
+            if (!this.shouldValidate(e)) {
+                return;
+            }
+
             let validate = this.getFormValidationTask(formUID);
             if (!validate) {
                 return;
@@ -666,14 +679,14 @@ export class ValidationService {
                     e.preventDefault();
                     e.stopImmediatePropagation();
                 }
-                
+
                 const validationEvent = new CustomEvent('validation',
                 {
                     detail: { valid: false }
                 });
                 form.dispatchEvent(validationEvent);
-                
-                
+
+
                 if (isProgrammaticValidate) {
                     callback(false);
                 }
@@ -711,7 +724,7 @@ export class ValidationService {
     /**
      * Adds an input element to be managed and validated by the service.
      * Triggers a debounced live validation when input value changes.
-     * @param input 
+     * @param input
      */
     addInput(input: HTMLInputElement) {
         let uid = this.getElementUID(input);
@@ -812,8 +825,8 @@ export class ValidationService {
 
     /**
      * Adds an error message to an input element, which also updates the validation message elements and validation summary elements.
-     * @param input 
-     * @param message 
+     * @param input
+     * @param message
      */
     addError(input: HTMLInputElement, message: string) {
         let spans = this.messageFor[input.name];
@@ -834,7 +847,7 @@ export class ValidationService {
 
     /**
      * Removes an error message from an input element, which also updates the validation message elements and validation summary elements.
-     * @param input 
+     * @param input
      */
     removeError(input: HTMLInputElement) {
         let spans = this.messageFor[input.name];
@@ -854,9 +867,9 @@ export class ValidationService {
     }
 
     /**
-     * Returns a validation Promise factory for an input element, using given validation directives.  
-     * @param input 
-     * @param directives 
+     * Returns a validation Promise factory for an input element, using given validation directives.
+     * @param input
+     * @param directives
      */
     createValidator(input: HTMLInputElement, directives: ValidationDirective) {
         return async () => {
@@ -908,7 +921,7 @@ export class ValidationService {
     /**
      * Checks if the provided input is hidden from the browser
      * @param input
-     * @returns 
+     * @returns
      */
     private isHidden(input: HTMLElement) {
         return !( input.offsetWidth || input.offsetHeight || input.getClientRects().length );

@@ -177,6 +177,11 @@ export declare class ValidationService {
      */
     isFieldValid: (field: HTMLElement, prevalidate: boolean, callback: Function) => boolean;
     /**
+     * Returns true if the event triggering the form submission indicates we should validate the form.
+     * @param e
+     */
+    private shouldValidate;
+    /**
      * Tracks a <form> element as parent of an input UID. When the form is submitted, attempts to validate the said input asynchronously.
      * @param form
      * @param inputUID
