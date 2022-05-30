@@ -628,7 +628,7 @@ export class ValidationService {
      */
     private shouldValidate(e: Event) {
         // Skip client-side validation if the form has been submitted via a button that has the "formnovalidate" attribute.
-        return !(e['submitter'] && e['submitter']['formNoValidate']);
+        return !(e !== null && e['submitter'] && e['submitter']['formNoValidate']);
     }
 
     /**

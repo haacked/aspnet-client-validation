@@ -645,7 +645,7 @@ var ValidationService = /** @class */ (function () {
      */
     ValidationService.prototype.shouldValidate = function (e) {
         // Skip client-side validation if the form has been submitted via a button that has the "formnovalidate" attribute.
-        return !(e['submitter'] && e['submitter']['formNoValidate']);
+        return !(e !== null && e['submitter'] && e['submitter']['formNoValidate']);
     };
     /**
      * Tracks a <form> element as parent of an input UID. When the form is submitted, attempts to validate the said input asynchronously.
