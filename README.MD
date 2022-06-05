@@ -221,7 +221,7 @@ v.isFieldValid(document.getElementById('field'), true, myCallbackFn)
 ```
 
 ## Hidden fields validation
-By default validation is skipped for hidden fieldss. To enable validation for hidden fields validation use:
+By default validation is skipped for hidden fields. To enable validation for hidden fields validation use:
 ```ts
 v.allowHiddenFields = true;
 ```
