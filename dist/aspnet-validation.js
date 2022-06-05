@@ -435,6 +435,10 @@ var ValidationService = /** @class */ (function () {
          */
         this.debounce = 300;
         /**
+         * Allow hidden fields validation
+         */
+        this.allowHiddenFields = false;
+        /**
          * Fires off validation for elements within the provided form and then calls the callback
          * @param form
          * @param callback
@@ -922,7 +926,7 @@ var ValidationService = /** @class */ (function () {
      * @returns
      */
     ValidationService.prototype.isHidden = function (input) {
-        return !(input.offsetWidth || input.offsetHeight || input.getClientRects().length);
+        return !(this.allowHiddenFields || input.offsetWidth || input.offsetHeight || input.getClientRects().length);
     };
     /**
      * Load default validation providers and scans the entire document when ready.
