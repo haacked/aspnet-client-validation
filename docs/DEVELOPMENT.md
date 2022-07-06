@@ -11,7 +11,7 @@ Make sure to push that commit to `origin`.
 Tag the release with the version in `package.json` and push the tags. For example:
 
 ```bash
-git tag 0.5.5
+git tag v0.5.5
 git push --tags
 ```
 
