@@ -116,6 +116,10 @@ export declare class ValidationService {
      */
     debounce: number;
     /**
+     * Allow hidden fields validation
+     */
+    allowHiddenFields: boolean;
+    /**
      * Registers a new validation plugin of the given name, if not registered yet.
      * Registered plugin validates inputs with data-val-[name] attribute, used as error message.
      * @param name

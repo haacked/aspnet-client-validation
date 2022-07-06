@@ -392,6 +392,11 @@ export class ValidationService {
     debounce = 300;
 
     /**
+     * Allow hidden fields validation     
+     */
+    allowHiddenFields = false;
+
+    /**
      * Registers a new validation plugin of the given name, if not registered yet.
      * Registered plugin validates inputs with data-val-[name] attribute, used as error message.
      * @param name
@@ -924,7 +929,7 @@ export class ValidationService {
      * @returns
      */
     private isHidden(input: HTMLElement) {
-        return !( input.offsetWidth || input.offsetHeight || input.getClientRects().length );
+        return !(this.allowHiddenFields || input.offsetWidth || input.offsetHeight || input.getClientRects().length );
     }
 
     /**
