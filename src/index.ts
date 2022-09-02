@@ -948,7 +948,7 @@ export class ValidationService {
         }
     }
 
-    private scan() {
+    scan() {
         this.scanMessages();
         this.scanInputs();
     }
