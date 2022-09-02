@@ -938,7 +938,7 @@ export class ValidationService {
     bootstrap() {
         this.addMvcProviders();
         let document = window.document;
-        if(document.readyState === 'complete') {
+        if(document.readyState === 'complete' || document.readyState === 'interactive') {
             this.scan();
         }
         else {
