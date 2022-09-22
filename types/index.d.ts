@@ -5,6 +5,12 @@ export interface StringKeyValuePair {
     [key: string]: string;
 }
 /**
+ * A simple logging interface that mirrors the Console object.
+ */
+export interface Logger {
+    log(message: string, ...args: any[]): void;
+}
+/**
  * Parameters passed into validation providers from the element attributes.
  * error property is read from data-val-[Provider Name] attribute.
  * params property is populated from data-val-[Provider Name]-[Parameter Name] attributes.
@@ -119,6 +125,9 @@ export declare class ValidationService {
      * Allow hidden fields validation
      */
     allowHiddenFields: boolean;
+    private logger;
+    observer?: MutationObserver;
+    constructor(logger?: Logger);
     /**
      * Registers a new validation plugin of the given name, if not registered yet.
      * Registered plugin validates inputs with data-val-[name] attribute, used as error message.
@@ -234,7 +243,20 @@ export declare class ValidationService {
     private isHidden;
     /**
      * Load default validation providers and scans the entire document when ready.
+     * @param options.watch If set to true, a MutationObserver will be used to continuously watch for new elements that provide validation directives.
      */
-    bootstrap(): void;
-    private scan;
+    bootstrap(options?: {
+        watch?: boolean;
+        root?: HTMLElement;
+    }): void;
+    /**
+     * Scans the provided root element for any validation directives and attaches behavior to them.
+     */
+    scan(root: HTMLElement): void;
+    /**
+     * Watches the provided root element for mutations, and scans for new validation directives to attach behavior.
+     * @param root The root element to use, defaults to the document.documentElement.
+     */
+    watch(root: HTMLElement): void;
+    private observed;
 }
