@@ -959,16 +959,16 @@ var ValidationService = /** @class */ (function () {
     ValidationService.prototype.bootstrap = function (options) {
         var _this = this;
         options = options || {};
-        options.root = options.root || window.document.body;
         this.addMvcProviders();
+        var document = window.document;
         // If the document is done loading, scan it now.
-        if (window.document.readyState !== 'loading') {
-            this.scan(options.root);
+        if (document.readyState === 'complete' || document.readyState === 'interactive') {
+            this.scan(options.root || window.document.body);
         }
         else {
             // Otherwise wait until the document is done loading.
             window.document.addEventListener('DOMContentLoaded', function (event) {
-                _this.scan(options.root);
+                _this.scan(options.root || window.document.body);
             });
         }
         // Watch for further mutations
