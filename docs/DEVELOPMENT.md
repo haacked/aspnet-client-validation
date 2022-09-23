@@ -18,4 +18,4 @@ git push --tags
 Now you can go to GitHub to [Draft a new Release](https://github.com/haacked/aspnet-client-validation/releases/new) and click the button to "Auto-generate release notes". Edit the notes accordingly create the Release.
 
 
-When you cerate the Release, the [`release.yml`](../.github/.workflow.release.yml) workflow builds and publishes the package to NPM.
+When you create the Release, the [`release.yml`](../.github/.workflow.release.yml) workflow builds and publishes the package to NPM.
