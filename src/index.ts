@@ -970,18 +970,17 @@ export class ValidationService {
      */
     bootstrap(options?: { watch?: boolean, root?: HTMLElement }) {
         options = options || {};
-        options.root = options.root || window.document.body;
 
         this.addMvcProviders();
 
         // If the document is done loading, scan it now.
         if(window.document.readyState !== 'loading') {
-            this.scan(options.root);
+            this.scan(options.root || window.document.body);
         }
         else {
             // Otherwise wait until the document is done loading.
             window.document.addEventListener('DOMContentLoaded', event => {
-                this.scan(options.root);
+                this.scan(options.root || window.document.body);
             });
         }
 
