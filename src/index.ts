@@ -972,9 +972,9 @@ export class ValidationService {
         options = options || {};
 
         this.addMvcProviders();
-
+        let document = window.document;
         // If the document is done loading, scan it now.
-        if(window.document.readyState !== 'loading') {
+        if(document.readyState === 'complete' || document.readyState === 'interactive') {
             this.scan(options.root || window.document.body);
         }
         else {
