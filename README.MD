@@ -221,7 +221,36 @@ v.isFieldValid(document.getElementById('field'), true, myCallbackFn)
 ```
 
 ## Hidden fields validation
+
 By default validation is skipped for hidden fields. To enable validation for hidden fields validation use:
 ```ts
 v.allowHiddenFields = true;
+```
+
+## Monitoring the DOM for changes
+
+If configured, aspnet-client-validation can monitor the DOM for changes using [`MutationObserver`](https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver), if the browser supports it.
+As new elements are added/modified, the library will automatically wire up validation directives found.
+This can be very useful when using frameworks that modify the DOM, such as [Turbo](http://turbo.hotwired.dev).
+To configure this, set the `watch` option to `true` when calling `bootstrap`:
+
+```js
+let v = new aspnetValidation.ValidationService();
+v.bootstrap({ watch: true });
+```
+
+## Logging
+
+There is a rudimentary logging infrastructure in place if you want to get more insight into what the library is doing.
+To enable logging, pass an object that implements the `Logger` interface (see below) in to the `ValidationService` constructor.
+The `window.console` object satisfies this interface automatically:
+
+```typescript
+// The Logger interface, for reference
+export interface Logger {
+    log(message: string, ...args: any[]): void;
+}
+
+let v = new aspnetValidation.ValidationService(console);
+v.bootstrap();
 ```
