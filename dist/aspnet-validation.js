@@ -511,6 +511,22 @@ var ValidationService = /** @class */ (function () {
             var fieldUID = _this.getElementUID(field);
             return _this.summary[fieldUID] != null;
         };
+        /**
+         * Override CSS class name for input validation. Default: 'input-validation-error'
+         */
+        this.ValidationInputCssClassName = "input-validation-error";
+        /**
+         * Override CSS class name for valid input validation. Default: 'input-validation-valid'
+         */
+        this.ValidationInputValidCssClassName = "input-validation-valid";
+        /**
+         * Override CSS class name for field validation error. Default: 'field-validation-error'
+         */
+        this.ValidationMessageCssClassName = "field-validation-error";
+        /**
+         * Override CSS class name for valid field validation. Default: 'field-validation-valid'
+         */
+        this.ValidationMessageValidCssClassName = "field-validation-valid";
         this.logger = logger || nullLogger;
     }
     /**
@@ -732,8 +748,8 @@ var ValidationService = /** @class */ (function () {
             for (var _i = 0, uids_1 = uids; _i < uids_1.length; _i++) {
                 var uid = uids_1[_i];
                 var input = _this.elementByUID[uid];
-                input.classList.remove('input-validation-error');
-                input.classList.remove('input-validation-valid');
+                input.classList.remove(_this.ValidationInputCssClassName);
+                input.classList.remove(_this.ValidationInputValidCssClassName);
                 var spans = _this.messageFor[input.name];
                 if (spans) {
                     for (var i = 0; i < spans.length; i++) {
@@ -851,11 +867,11 @@ var ValidationService = /** @class */ (function () {
         if (spans) {
             for (var i = 0; i < spans.length; i++) {
                 spans[i].innerHTML = message;
-                spans[i].className = 'field-validation-error';
+                spans[i].className = this.ValidationMessageCssClassName;
             }
         }
-        input.classList.remove('input-validation-valid');
-        input.classList.add('input-validation-error');
+        input.classList.remove(this.ValidationInputValidCssClassName);
+        input.classList.add(this.ValidationInputCssClassName);
         var uid = this.getElementUID(input);
         this.summary[uid] = message;
         this.renderSummary();
@@ -869,11 +885,11 @@ var ValidationService = /** @class */ (function () {
         if (spans) {
             for (var i = 0; i < spans.length; i++) {
                 spans[i].innerHTML = '';
-                spans[i].className = 'field-validation-valid';
+                spans[i].className = this.ValidationMessageValidCssClassName;
             }
         }
-        input.classList.remove('input-validation-error');
-        input.classList.add('input-validation-valid');
+        input.classList.remove(this.ValidationInputCssClassName);
+        input.classList.add(this.ValidationInputValidCssClassName);
         var uid = this.getElementUID(input);
         delete this.summary[uid];
         this.renderSummary();
