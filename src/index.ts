@@ -734,8 +734,8 @@ export class ValidationService {
 
             for (let uid of uids) {
                 let input = this.elementByUID[uid] as HTMLInputElement;
-                input.classList.remove('input-validation-error');
-                input.classList.remove('input-validation-valid');
+                input.classList.remove(this.ValidationInputCssClassName);
+                input.classList.remove(this.ValidationInputValidCssClassName);
 
                 let spans = this.messageFor[input.name];
                 if (spans) {
@@ -869,12 +869,12 @@ export class ValidationService {
         if (spans) {
             for (let i = 0; i < spans.length; i++) {
                 spans[i].innerHTML = message;
-                spans[i].className = 'field-validation-error';
+                spans[i].className = this.ValidationMessageCssClassName;
             }
         }
 
-        input.classList.remove('input-validation-valid');
-        input.classList.add('input-validation-error');
+        input.classList.remove(this.ValidationInputValidCssClassName);
+        input.classList.add(this.ValidationInputCssClassName);
 
         let uid = this.getElementUID(input);
         this.summary[uid] = message;
@@ -890,12 +890,12 @@ export class ValidationService {
         if (spans) {
             for (let i = 0; i < spans.length; i++) {
                 spans[i].innerHTML = '';
-                spans[i].className = 'field-validation-valid';
+                spans[i].className = this.ValidationMessageValidCssClassName;
             }
         }
 
-        input.classList.remove('input-validation-error');
-        input.classList.add('input-validation-valid');
+        input.classList.remove(this.ValidationInputCssClassName);
+        input.classList.add(this.ValidationInputValidCssClassName);
 
         let uid = this.getElementUID(input);
         delete this.summary[uid];
@@ -1030,4 +1030,24 @@ export class ValidationService {
             }
         }
     }
+
+    /**
+     * Override CSS class name for input validation. Default: 'input-validation-error'
+     */
+     ValidationInputCssClassName = "input-validation-error";
+
+     /**
+      * Override CSS class name for valid input validation. Default: 'input-validation-valid'
+      */
+     ValidationInputValidCssClassName = "input-validation-valid";
+
+     /**
+      * Override CSS class name for field validation error. Default: 'field-validation-error'
+      */
+     ValidationMessageCssClassName = "field-validation-error";  
+
+     /**
+      * Override CSS class name for valid field validation. Default: 'field-validation-valid'
+      */
+     ValidationMessageValidCssClassName = "field-validation-valid";
 }

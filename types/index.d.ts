@@ -259,4 +259,20 @@ export declare class ValidationService {
      */
     watch(root: HTMLElement): void;
     private observed;
+    /**
+     * Override CSS class name for input validation. Default: 'input-validation-error'
+     */
+    ValidationInputCssClassName: string;
+    /**
+     * Override CSS class name for valid input validation. Default: 'input-validation-valid'
+     */
+    ValidationInputValidCssClassName: string;
+    /**
+     * Override CSS class name for field validation error. Default: 'field-validation-error'
+     */
+    ValidationMessageCssClassName: string;
+    /**
+     * Override CSS class name for valid field validation. Default: 'field-validation-valid'
+     */
+    ValidationMessageValidCssClassName: string;
 }
