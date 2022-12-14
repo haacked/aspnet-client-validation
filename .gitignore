@@ -9,7 +9,7 @@
 !.vscode/launch.json
 !.vscode/extensions.json
 
-## Ignore Rider / JetBrains config files 
+## Ignore Rider / JetBrains config files
 .idea/
 
 # Logal Blob Storage For Testing

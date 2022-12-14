@@ -711,6 +711,11 @@ var ValidationService = /** @class */ (function () {
             if (!validate) {
                 return;
             }
+            //Prevent the submit before validation
+            if (e) {
+                e.preventDefault();
+                e.stopImmediatePropagation();
+            }
             validate.then(function (success) {
                 var isProgrammaticValidate = !e;
                 if (success) {
@@ -722,11 +727,9 @@ var ValidationService = /** @class */ (function () {
                         detail: { valid: true }
                     });
                     form.dispatchEvent(validationEvent_1);
+                    //Resubmit the form here, after the async validation is completed.
+                    form.submit();
                     return;
-                }
-                if (e) {
-                    e.preventDefault();
-                    e.stopImmediatePropagation();
                 }
                 var validationEvent = new CustomEvent('validation', {
                     detail: { valid: false }

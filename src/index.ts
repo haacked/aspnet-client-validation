@@ -688,7 +688,13 @@ export class ValidationService {
             let validate = this.getFormValidationTask(formUID);
             if (!validate) {
                 return;
-            }
+			}
+
+			//Prevent the submit before validation
+			if (e) {
+				e.preventDefault();
+				e.stopImmediatePropagation();
+			}
 
             validate.then(success => {
                 let isProgrammaticValidate = !e;
@@ -701,14 +707,14 @@ export class ValidationService {
                     {
                         detail: { valid: true }
                     });
-                    form.dispatchEvent(validationEvent);
-                    return;
-                }
+					form.dispatchEvent(validationEvent);
 
-                if (e) {
-                    e.preventDefault();
-                    e.stopImmediatePropagation();
-                }
+					//Resubmit the form here, after the async validation is completed.
+					form.submit();
+
+                    return;
+				}
+
 
                 const validationEvent = new CustomEvent('validation',
                 {
