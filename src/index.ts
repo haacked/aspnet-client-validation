@@ -476,11 +476,13 @@ export class ValidationService {
             let e = validationMessageElements[i];
             let name = e.getAttribute('data-valmsg-for');
 
-            if (!this.messageFor[name]) {
-                this.messageFor[name] = [];
+            let spans = this.messageFor[name] || (this.messageFor[name] = []);
+            if (spans.indexOf(e) < 0) {
+                spans.push(e);
             }
-
-            this.messageFor[name].push(e);
+            else {
+                this.logger.log(`Validation element for '%s' is already tracked`, name, e);
+            }
         }
     }
 
@@ -674,6 +676,9 @@ export class ValidationService {
         let add = (this.formInputs[formUID].indexOf(inputUID) === -1);
         if (add) {
             this.formInputs[formUID].push(inputUID);
+        }
+        else {
+            this.logger.log(`Form input for UID '%s' is already tracked`, inputUID);
         }
 
         if (this.elementEvents[formUID]) {
