@@ -862,10 +862,10 @@ export class ValidationService {
             let e = summaryElements[i];
             e.innerHTML = '';
             if (ul) {
-                e.className = 'validation-summary-errors';
+                e.className = this.ValidationSummaryCssClassName;
                 e.appendChild(ul.cloneNode(true));
             } else {
-                e.className = 'validation-summary-valid';
+                e.className = this.ValidationSummaryValidCssClassName;
             }
         }
     }
@@ -1043,7 +1043,7 @@ export class ValidationService {
     }
 
     /**
-     * Override CSS class name for input validation. Default: 'input-validation-error'
+     * Override CSS class name for input validation error. Default: 'input-validation-error'
      */
     ValidationInputCssClassName = "input-validation-error";
 
@@ -1061,4 +1061,14 @@ export class ValidationService {
      * Override CSS class name for valid field validation. Default: 'field-validation-valid'
      */
     ValidationMessageValidCssClassName = "field-validation-valid";
+
+    /**
+     * Override CSS class name for validation summary error. Default: 'validation-summary-errors'
+     */
+    ValidationSummaryCssClassName = "validation-summary-errors";
+
+    /**
+     * Override CSS class name for valid validation summary. Default: 'field-validation-valid'
+     */
+    ValidationSummaryValidCssClassName = "validation-summary-valid";
 }
