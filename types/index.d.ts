@@ -242,6 +242,13 @@ export declare class ValidationService {
      */
     private isHidden;
     /**
+     * Adds addClass and removes removeClass
+     * @param input Element to modify
+     * @param addClass Class to add
+     * @param removeClass Class to remove
+     */
+    private swapClasses;
+    /**
      * Load default validation providers and scans the entire document when ready.
      * @param options.watch If set to true, a MutationObserver will be used to continuously watch for new elements that provide validation directives.
      */
@@ -260,7 +267,7 @@ export declare class ValidationService {
     watch(root: HTMLElement): void;
     private observed;
     /**
-     * Override CSS class name for input validation. Default: 'input-validation-error'
+     * Override CSS class name for input validation error. Default: 'input-validation-error'
      */
     ValidationInputCssClassName: string;
     /**
@@ -275,4 +282,12 @@ export declare class ValidationService {
      * Override CSS class name for valid field validation. Default: 'field-validation-valid'
      */
     ValidationMessageValidCssClassName: string;
+    /**
+     * Override CSS class name for validation summary error. Default: 'validation-summary-errors'
+     */
+    ValidationSummaryCssClassName: string;
+    /**
+     * Override CSS class name for valid validation summary. Default: 'field-validation-valid'
+     */
+    ValidationSummaryValidCssClassName: string;
 }

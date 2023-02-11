@@ -745,8 +745,12 @@ export class ValidationService {
 
             for (let uid of uids) {
                 let input = this.elementByUID[uid] as HTMLInputElement;
-                input.classList.remove(this.ValidationInputCssClassName);
-                input.classList.remove(this.ValidationInputValidCssClassName);
+                if (input.classList.contains(this.ValidationInputCssClassName)) {
+                    input.classList.remove(this.ValidationInputCssClassName);
+                }
+                if (input.classList.contains(this.ValidationInputValidCssClassName)) {
+                    input.classList.remove(this.ValidationInputValidCssClassName);
+                }
 
                 let spans = this.messageFor[input.name];
                 if (spans) {
@@ -862,10 +866,14 @@ export class ValidationService {
             let e = summaryElements[i];
             e.innerHTML = '';
             if (ul) {
-                e.className = this.ValidationSummaryCssClassName;
+                this.swapClasses(e,
+                    this.ValidationSummaryCssClassName,
+                    this.ValidationSummaryValidCssClassName)
                 e.appendChild(ul.cloneNode(true));
             } else {
-                e.className = this.ValidationSummaryValidCssClassName;
+                this.swapClasses(e,
+                    this.ValidationSummaryValidCssClassName,
+                    this.ValidationSummaryCssClassName)
             }
         }
     }
@@ -880,12 +888,15 @@ export class ValidationService {
         if (spans) {
             for (let i = 0; i < spans.length; i++) {
                 spans[i].innerHTML = message;
-                spans[i].className = this.ValidationMessageCssClassName;
+                this.swapClasses(input,
+                    this.ValidationMessageCssClassName,
+                    this.ValidationMessageValidCssClassName);
             }
         }
 
-        input.classList.remove(this.ValidationInputValidCssClassName);
-        input.classList.add(this.ValidationInputCssClassName);
+        this.swapClasses(input,
+            this.ValidationInputCssClassName,
+            this.ValidationInputValidCssClassName);
 
         let uid = this.getElementUID(input);
         this.summary[uid] = message;
@@ -901,12 +912,15 @@ export class ValidationService {
         if (spans) {
             for (let i = 0; i < spans.length; i++) {
                 spans[i].innerHTML = '';
-                spans[i].className = this.ValidationMessageValidCssClassName;
+                this.swapClasses(input,
+                    this.ValidationMessageValidCssClassName,
+                    this.ValidationMessageCssClassName);
             }
         }
 
-        input.classList.remove(this.ValidationInputCssClassName);
-        input.classList.add(this.ValidationInputValidCssClassName);
+        this.swapClasses(input,
+            this.ValidationInputValidCssClassName,
+            this.ValidationInputCssClassName);
 
         let uid = this.getElementUID(input);
         delete this.summary[uid];
@@ -973,6 +987,21 @@ export class ValidationService {
      */
     private isHidden(input: HTMLElement) {
         return !(this.allowHiddenFields || input.offsetWidth || input.offsetHeight || input.getClientRects().length );
+    }
+
+    /**
+     * Adds addClass and removes removeClass
+     * @param input Element to modify
+     * @param addClass Class to add
+     * @param removeClass Class to remove
+     */
+    private swapClasses(input: Element, addClass: string, removeClass: string) {
+        if (!input.classList.contains(addClass)) {
+            input.classList.add(addClass);
+        }
+        if (input.classList.contains(removeClass)) {
+            input.classList.remove(removeClass);
+        }
     }
 
     /**
