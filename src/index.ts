@@ -984,20 +984,23 @@ export class ValidationService {
 
         this.addMvcProviders();
         let document = window.document;
+        const root = options.root || document.body;
+        const init = () => {
+            this.scan(root);
+
+            // Watch for further mutations after initial scan
+            if (options.watch) {
+                this.watch(root);
+            }
+        }
+
         // If the document is done loading, scan it now.
         if(document.readyState === 'complete' || document.readyState === 'interactive') {
-            this.scan(options.root || window.document.body);
+            init();
         }
         else {
             // Otherwise wait until the document is done loading.
-            window.document.addEventListener('DOMContentLoaded', event => {
-                this.scan(options.root || window.document.body);
-            });
-        }
-
-        // Watch for further mutations
-        if (options.watch) {
-            this.watch(options.root);
+            document.addEventListener('DOMContentLoaded', init);
         }
     }
 
