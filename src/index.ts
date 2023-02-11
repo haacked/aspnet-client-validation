@@ -1005,6 +1005,7 @@ export class ValidationService {
      * Scans the provided root element for any validation directives and attaches behavior to them.
      */
     scan(root: HTMLElement) {
+        this.logger.log('Scanning', root);
         this.scanMessages(root);
         this.scanInputs(root);
     }
@@ -1031,13 +1032,23 @@ export class ValidationService {
         if(mutation.type === 'childList') {
             for(let i = 0; i < mutation.addedNodes.length; i++) {
                 let node = mutation.addedNodes[i];
+                this.logger.log('Added node', node);
                 if (node instanceof HTMLElement) {
                     this.scan(node);
                 }
             }
         } else if(mutation.type === 'attributes') {
             if (mutation.target instanceof HTMLElement) {
-                this.scan(mutation.target);
+                const oldValue = mutation.oldValue ?? '';
+                const newValue = mutation.target.attributes[mutation.attributeName]?.value ?? '';
+                this.logger.log(`Attribute '%s' changed from '%s' to '%s'`,
+                    mutation.attributeName,
+                    oldValue,
+                    newValue,
+                    mutation.target);
+                if (oldValue !== newValue) {
+                    this.scan(mutation.target);
+                }
             }
         }
     }
