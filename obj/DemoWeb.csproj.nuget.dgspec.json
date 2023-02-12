@@ -1,0 +1,65 @@
+{
+  "format": 1,
+  "restore": {
+    "/Users/haacked/dev/haacked/aspnet-client-validation/DemoWeb.csproj": {}
+  },
+  "projects": {
+    "/Users/haacked/dev/haacked/aspnet-client-validation/DemoWeb.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/Users/haacked/dev/haacked/aspnet-client-validation/DemoWeb.csproj",
+        "projectName": "DemoWeb",
+        "projectPath": "/Users/haacked/dev/haacked/aspnet-client-validation/DemoWeb.csproj",
+        "packagesPath": "/Users/haacked/.nuget/packages/",
+        "outputPath": "/Users/haacked/dev/haacked/aspnet-client-validation/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/Users/haacked/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net7.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net7.0": {
+            "targetAlias": "net7.0",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "allWarningsAsErrors": true,
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net7.0": {
+          "targetAlias": "net7.0",
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.AspNetCore.App": {
+              "privateAssets": "none"
+            },
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/7.0.100/RuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}
