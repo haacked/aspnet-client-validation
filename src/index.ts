@@ -403,7 +403,7 @@ export class ValidationService {
     debounce = 300;
 
     /**
-     * Allow hidden fields validation     
+     * Allow hidden fields validation
      */
     allowHiddenFields = false;
 
@@ -710,7 +710,7 @@ export class ValidationService {
 					form.dispatchEvent(validationEvent);
 
 					//Resubmit the form here, after the async validation is completed.
-					form.submit();
+					form.requestSubmit();
 
                     return;
 				}
@@ -1050,7 +1050,7 @@ export class ValidationService {
      /**
       * Override CSS class name for field validation error. Default: 'field-validation-error'
       */
-     ValidationMessageCssClassName = "field-validation-error";  
+     ValidationMessageCssClassName = "field-validation-error";
 
      /**
       * Override CSS class name for valid field validation. Default: 'field-validation-valid'

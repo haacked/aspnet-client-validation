@@ -728,7 +728,7 @@ var ValidationService = /** @class */ (function () {
                     });
                     form.dispatchEvent(validationEvent_1);
                     //Resubmit the form here, after the async validation is completed.
-                    form.submit();
+                    form.requestSubmit();
                     return;
                 }
                 var validationEvent = new CustomEvent('validation', {
