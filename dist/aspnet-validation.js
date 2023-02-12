@@ -888,7 +888,7 @@ var ValidationService = /** @class */ (function () {
         if (spans) {
             for (var i = 0; i < spans.length; i++) {
                 spans[i].innerHTML = message;
-                this.swapClasses(input, this.ValidationMessageCssClassName, this.ValidationMessageValidCssClassName);
+                this.swapClasses(spans[i], this.ValidationMessageCssClassName, this.ValidationMessageValidCssClassName);
             }
         }
         this.swapClasses(input, this.ValidationInputCssClassName, this.ValidationInputValidCssClassName);

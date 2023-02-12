@@ -888,7 +888,7 @@ export class ValidationService {
         if (spans) {
             for (let i = 0; i < spans.length; i++) {
                 spans[i].innerHTML = message;
-                this.swapClasses(input,
+                this.swapClasses(spans[i],
                     this.ValidationMessageCssClassName,
                     this.ValidationMessageValidCssClassName);
             }
