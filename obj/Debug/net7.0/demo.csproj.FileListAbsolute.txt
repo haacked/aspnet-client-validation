@@ -1,0 +1,8 @@
+/Users/haacked/dev/haacked/aspnet-client-validation/obj/Debug/net7.0/demo.csproj.AssemblyReference.cache
+/Users/haacked/dev/haacked/aspnet-client-validation/obj/Debug/net7.0/demo.GeneratedMSBuildEditorConfig.editorconfig
+/Users/haacked/dev/haacked/aspnet-client-validation/obj/Debug/net7.0/demo.AssemblyInfoInputs.cache
+/Users/haacked/dev/haacked/aspnet-client-validation/obj/Debug/net7.0/demo.AssemblyInfo.cs
+/Users/haacked/dev/haacked/aspnet-client-validation/obj/Debug/net7.0/demo.csproj.CoreCompileInputs.cache
+/Users/haacked/dev/haacked/aspnet-client-validation/obj/Debug/net7.0/demo.MvcApplicationPartsAssemblyInfo.cache
+/Users/haacked/dev/haacked/aspnet-client-validation/obj/Debug/net7.0/demo.RazorAssemblyInfo.cache
+/Users/haacked/dev/haacked/aspnet-client-validation/obj/Debug/net7.0/demo.RazorAssemblyInfo.cs

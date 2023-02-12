@@ -1,0 +1,26 @@
+{
+  "name": "aspnet-client-validation",
+  "version": "0.8.1",
+  "description": "Enables ASP.NET MVC client-side validation, without jQuery!",
+  "main": "dist/aspnet-validation.js",
+  "style": "dist/aspnet-validation.css",
+  "types": "types/index.d.ts",
+  "repository": "https://github.com/haacked/aspnet-client-validation",
+  "bugs": {
+    "url": "https://github.com/haacked/aspnet-client-validation/issues"
+  },
+  "homepage": "https://github.com/haacked/aspnet-client-validation#readme",
+  "author": "Ryan Elian, Phil Haack",
+  "license": "MIT",
+  "scripts": {
+    "build": "cp src/aspnet-validation.css dist && webpack && webpack --config webpack.config.min.js",
+    "build-windows": "copy src\\aspnet-validation.css dist && webpack && webpack --config webpack.config.min.js"
+  },
+  "devDependencies": {
+    "ts-loader": "^5.3.1",
+    "typescript": "^3.2.1",
+    "webpack": "^4.26.1",
+    "webpack-cli": "^3.1.2"
+  },
+  "dependencies": {}
+}
