@@ -4,3 +4,12 @@ dist
 Desktop.ini
 Thumbs.db
 
+.store
+tools/
+*.pkg
+*.dmg
+build/
+*.exe
+
+bin/
+obj/

@@ -1,0 +1,36 @@
+@page
+@model IndexModel
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>ASP.NET Client Validation Demo Page</title>
+    <link rel="stylesheet" href="css/site.css">
+    <link rel="stylesheet" href="/dist/aspnet-validation.css" />
+</head>
+<body>
+
+<h1 class="status-message">@Model.StatusMessage</h1>
+
+<form method="post">
+    <div class="form-field">
+        <label asp-for="Id"></label>
+        <input asp-for="Id"/>
+        <span asp-validation-for="Id"></span>
+    </div>
+
+    <div class="form-field">
+        <label asp-for="Control"></label>
+        <input asp-for="Control"/>
+        <span asp-validation-for="Control"></span>
+    </div>
+
+    <button type="submit" class="btn">Save</button>
+</form>
+
+<script src="/dist/aspnet-validation.js"></script>
+<script>
+    const service = new aspnetValidation.ValidationService();
+    service.bootstrap();
+</script>
+</body>
+</html>
