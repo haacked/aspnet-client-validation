@@ -243,7 +243,7 @@ export declare class ValidationService {
     private isHidden;
     /**
      * Adds addClass and removes removeClass
-     * @param input Element to modify
+     * @param element Element to modify
      * @param addClass Class to add
      * @param removeClass Class to remove
      */

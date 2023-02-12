@@ -905,7 +905,7 @@ var ValidationService = /** @class */ (function () {
         if (spans) {
             for (var i = 0; i < spans.length; i++) {
                 spans[i].innerHTML = '';
-                this.swapClasses(input, this.ValidationMessageValidCssClassName, this.ValidationMessageCssClassName);
+                this.swapClasses(spans[i], this.ValidationMessageValidCssClassName, this.ValidationMessageCssClassName);
             }
         }
         this.swapClasses(input, this.ValidationInputValidCssClassName, this.ValidationInputCssClassName);
@@ -989,16 +989,16 @@ var ValidationService = /** @class */ (function () {
     };
     /**
      * Adds addClass and removes removeClass
-     * @param input Element to modify
+     * @param element Element to modify
      * @param addClass Class to add
      * @param removeClass Class to remove
      */
-    ValidationService.prototype.swapClasses = function (input, addClass, removeClass) {
-        if (!input.classList.contains(addClass)) {
-            input.classList.add(addClass);
+    ValidationService.prototype.swapClasses = function (element, addClass, removeClass) {
+        if (!element.classList.contains(addClass)) {
+            element.classList.add(addClass);
         }
-        if (input.classList.contains(removeClass)) {
-            input.classList.remove(removeClass);
+        if (element.classList.contains(removeClass)) {
+            element.classList.remove(removeClass);
         }
     };
     /**
