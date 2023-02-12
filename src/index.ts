@@ -991,16 +991,16 @@ export class ValidationService {
 
     /**
      * Adds addClass and removes removeClass
-     * @param input Element to modify
+     * @param element Element to modify
      * @param addClass Class to add
      * @param removeClass Class to remove
      */
-    private swapClasses(input: Element, addClass: string, removeClass: string) {
-        if (!input.classList.contains(addClass)) {
-            input.classList.add(addClass);
+    private swapClasses(element: Element, addClass: string, removeClass: string) {
+        if (!element.classList.contains(addClass)) {
+            element.classList.add(addClass);
         }
-        if (input.classList.contains(removeClass)) {
-            input.classList.remove(removeClass);
+        if (element.classList.contains(removeClass)) {
+            element.classList.remove(removeClass);
         }
     }
 
