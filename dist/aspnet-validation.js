@@ -512,7 +512,7 @@ var ValidationService = /** @class */ (function () {
             return _this.summary[fieldUID] != null;
         };
         /**
-         * Override CSS class name for input validation. Default: 'input-validation-error'
+         * Override CSS class name for input validation error. Default: 'input-validation-error'
          */
         this.ValidationInputCssClassName = "input-validation-error";
         /**
@@ -527,6 +527,14 @@ var ValidationService = /** @class */ (function () {
          * Override CSS class name for valid field validation. Default: 'field-validation-valid'
          */
         this.ValidationMessageValidCssClassName = "field-validation-valid";
+        /**
+         * Override CSS class name for validation summary error. Default: 'validation-summary-errors'
+         */
+        this.ValidationSummaryCssClassName = "validation-summary-errors";
+        /**
+         * Override CSS class name for valid validation summary. Default: 'field-validation-valid'
+         */
+        this.ValidationSummaryValidCssClassName = "validation-summary-valid";
         this.logger = logger || nullLogger;
     }
     /**
@@ -585,10 +593,13 @@ var ValidationService = /** @class */ (function () {
         for (var i = 0; i < validationMessageElements.length; i++) {
             var e = validationMessageElements[i];
             var name_1 = e.getAttribute('data-valmsg-for');
-            if (!this.messageFor[name_1]) {
-                this.messageFor[name_1] = [];
+            var spans = this.messageFor[name_1] || (this.messageFor[name_1] = []);
+            if (spans.indexOf(e) < 0) {
+                spans.push(e);
             }
-            this.messageFor[name_1].push(e);
+            else {
+                this.logger.log("Validation element for '%s' is already tracked", name_1, e);
+            }
         }
     };
     /**
@@ -700,6 +711,9 @@ var ValidationService = /** @class */ (function () {
         if (add) {
             this.formInputs[formUID].push(inputUID);
         }
+        else {
+            this.logger.log("Form input for UID '%s' is already tracked", inputUID);
+        }
         if (this.elementEvents[formUID]) {
             return;
         }
@@ -751,8 +765,12 @@ var ValidationService = /** @class */ (function () {
             for (var _i = 0, uids_1 = uids; _i < uids_1.length; _i++) {
                 var uid = uids_1[_i];
                 var input = _this.elementByUID[uid];
-                input.classList.remove(_this.ValidationInputCssClassName);
-                input.classList.remove(_this.ValidationInputValidCssClassName);
+                if (input.classList.contains(_this.ValidationInputCssClassName)) {
+                    input.classList.remove(_this.ValidationInputCssClassName);
+                }
+                if (input.classList.contains(_this.ValidationInputValidCssClassName)) {
+                    input.classList.remove(_this.ValidationInputValidCssClassName);
+                }
                 var spans = _this.messageFor[input.name];
                 if (spans) {
                     for (var i = 0; i < spans.length; i++) {
@@ -852,11 +870,11 @@ var ValidationService = /** @class */ (function () {
             var e = summaryElements[i];
             e.innerHTML = '';
             if (ul) {
-                e.className = 'validation-summary-errors';
+                this.swapClasses(e, this.ValidationSummaryCssClassName, this.ValidationSummaryValidCssClassName);
                 e.appendChild(ul.cloneNode(true));
             }
             else {
-                e.className = 'validation-summary-valid';
+                this.swapClasses(e, this.ValidationSummaryValidCssClassName, this.ValidationSummaryCssClassName);
             }
         }
     };
@@ -870,11 +888,10 @@ var ValidationService = /** @class */ (function () {
         if (spans) {
             for (var i = 0; i < spans.length; i++) {
                 spans[i].innerHTML = message;
-                spans[i].className = this.ValidationMessageCssClassName;
+                this.swapClasses(spans[i], this.ValidationMessageCssClassName, this.ValidationMessageValidCssClassName);
             }
         }
-        input.classList.remove(this.ValidationInputValidCssClassName);
-        input.classList.add(this.ValidationInputCssClassName);
+        this.swapClasses(input, this.ValidationInputCssClassName, this.ValidationInputValidCssClassName);
         var uid = this.getElementUID(input);
         this.summary[uid] = message;
         this.renderSummary();
@@ -888,11 +905,10 @@ var ValidationService = /** @class */ (function () {
         if (spans) {
             for (var i = 0; i < spans.length; i++) {
                 spans[i].innerHTML = '';
-                spans[i].className = this.ValidationMessageValidCssClassName;
+                this.swapClasses(input, this.ValidationMessageValidCssClassName, this.ValidationMessageCssClassName);
             }
         }
-        input.classList.remove(this.ValidationInputCssClassName);
-        input.classList.add(this.ValidationInputValidCssClassName);
+        this.swapClasses(input, this.ValidationInputValidCssClassName, this.ValidationInputCssClassName);
         var uid = this.getElementUID(input);
         delete this.summary[uid];
         this.renderSummary();
@@ -972,6 +988,20 @@ var ValidationService = /** @class */ (function () {
         return !(this.allowHiddenFields || input.offsetWidth || input.offsetHeight || input.getClientRects().length);
     };
     /**
+     * Adds addClass and removes removeClass
+     * @param input Element to modify
+     * @param addClass Class to add
+     * @param removeClass Class to remove
+     */
+    ValidationService.prototype.swapClasses = function (input, addClass, removeClass) {
+        if (!input.classList.contains(addClass)) {
+            input.classList.add(addClass);
+        }
+        if (input.classList.contains(removeClass)) {
+            input.classList.remove(removeClass);
+        }
+    };
+    /**
      * Load default validation providers and scans the entire document when ready.
      * @param options.watch If set to true, a MutationObserver will be used to continuously watch for new elements that provide validation directives.
      */
@@ -980,25 +1010,28 @@ var ValidationService = /** @class */ (function () {
         options = options || {};
         this.addMvcProviders();
         var document = window.document;
+        var root = options.root || document.body;
+        var init = function () {
+            _this.scan(root);
+            // Watch for further mutations after initial scan
+            if (options.watch) {
+                _this.watch(root);
+            }
+        };
         // If the document is done loading, scan it now.
         if (document.readyState === 'complete' || document.readyState === 'interactive') {
-            this.scan(options.root || window.document.body);
+            init();
         }
         else {
             // Otherwise wait until the document is done loading.
-            window.document.addEventListener('DOMContentLoaded', function (event) {
-                _this.scan(options.root || window.document.body);
-            });
-        }
-        // Watch for further mutations
-        if (options.watch) {
-            this.watch(options.root);
+            document.addEventListener('DOMContentLoaded', init);
         }
     };
     /**
      * Scans the provided root element for any validation directives and attaches behavior to them.
      */
     ValidationService.prototype.scan = function (root) {
+        this.logger.log('Scanning', root);
         this.scanMessages(root);
         this.scanInputs(root);
     };
@@ -1021,9 +1054,11 @@ var ValidationService = /** @class */ (function () {
         this.logger.log("Watching for mutations");
     };
     ValidationService.prototype.observed = function (mutation) {
+        var _a, _b, _c;
         if (mutation.type === 'childList') {
             for (var i = 0; i < mutation.addedNodes.length; i++) {
                 var node = mutation.addedNodes[i];
+                this.logger.log('Added node', node);
                 if (node instanceof HTMLElement) {
                     this.scan(node);
                 }
@@ -1031,7 +1066,12 @@ var ValidationService = /** @class */ (function () {
         }
         else if (mutation.type === 'attributes') {
             if (mutation.target instanceof HTMLElement) {
-                this.scan(mutation.target);
+                var oldValue = (_a = mutation.oldValue) !== null && _a !== void 0 ? _a : '';
+                var newValue = (_c = (_b = mutation.target.attributes[mutation.attributeName]) === null || _b === void 0 ? void 0 : _b.value) !== null && _c !== void 0 ? _c : '';
+                this.logger.log("Attribute '%s' changed from '%s' to '%s'", mutation.attributeName, oldValue, newValue, mutation.target);
+                if (oldValue !== newValue) {
+                    this.scan(mutation.target);
+                }
             }
         }
     };

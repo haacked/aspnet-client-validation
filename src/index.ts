@@ -476,11 +476,13 @@ export class ValidationService {
             let e = validationMessageElements[i];
             let name = e.getAttribute('data-valmsg-for');
 
-            if (!this.messageFor[name]) {
-                this.messageFor[name] = [];
+            let spans = this.messageFor[name] || (this.messageFor[name] = []);
+            if (spans.indexOf(e) < 0) {
+                spans.push(e);
             }
-
-            this.messageFor[name].push(e);
+            else {
+                this.logger.log(`Validation element for '%s' is already tracked`, name, e);
+            }
         }
     }
 
@@ -675,6 +677,9 @@ export class ValidationService {
         if (add) {
             this.formInputs[formUID].push(inputUID);
         }
+        else {
+            this.logger.log(`Form input for UID '%s' is already tracked`, inputUID);
+        }
 
         if (this.elementEvents[formUID]) {
             return;
@@ -740,8 +745,12 @@ export class ValidationService {
 
             for (let uid of uids) {
                 let input = this.elementByUID[uid] as HTMLInputElement;
-                input.classList.remove(this.ValidationInputCssClassName);
-                input.classList.remove(this.ValidationInputValidCssClassName);
+                if (input.classList.contains(this.ValidationInputCssClassName)) {
+                    input.classList.remove(this.ValidationInputCssClassName);
+                }
+                if (input.classList.contains(this.ValidationInputValidCssClassName)) {
+                    input.classList.remove(this.ValidationInputValidCssClassName);
+                }
 
                 let spans = this.messageFor[input.name];
                 if (spans) {
@@ -857,10 +866,14 @@ export class ValidationService {
             let e = summaryElements[i];
             e.innerHTML = '';
             if (ul) {
-                e.className = 'validation-summary-errors';
+                this.swapClasses(e,
+                    this.ValidationSummaryCssClassName,
+                    this.ValidationSummaryValidCssClassName)
                 e.appendChild(ul.cloneNode(true));
             } else {
-                e.className = 'validation-summary-valid';
+                this.swapClasses(e,
+                    this.ValidationSummaryValidCssClassName,
+                    this.ValidationSummaryCssClassName)
             }
         }
     }
@@ -875,12 +888,15 @@ export class ValidationService {
         if (spans) {
             for (let i = 0; i < spans.length; i++) {
                 spans[i].innerHTML = message;
-                spans[i].className = this.ValidationMessageCssClassName;
+                this.swapClasses(spans[i],
+                    this.ValidationMessageCssClassName,
+                    this.ValidationMessageValidCssClassName);
             }
         }
 
-        input.classList.remove(this.ValidationInputValidCssClassName);
-        input.classList.add(this.ValidationInputCssClassName);
+        this.swapClasses(input,
+            this.ValidationInputCssClassName,
+            this.ValidationInputValidCssClassName);
 
         let uid = this.getElementUID(input);
         this.summary[uid] = message;
@@ -896,12 +912,15 @@ export class ValidationService {
         if (spans) {
             for (let i = 0; i < spans.length; i++) {
                 spans[i].innerHTML = '';
-                spans[i].className = this.ValidationMessageValidCssClassName;
+                this.swapClasses(input,
+                    this.ValidationMessageValidCssClassName,
+                    this.ValidationMessageCssClassName);
             }
         }
 
-        input.classList.remove(this.ValidationInputCssClassName);
-        input.classList.add(this.ValidationInputValidCssClassName);
+        this.swapClasses(input,
+            this.ValidationInputValidCssClassName,
+            this.ValidationInputCssClassName);
 
         let uid = this.getElementUID(input);
         delete this.summary[uid];
@@ -971,6 +990,21 @@ export class ValidationService {
     }
 
     /**
+     * Adds addClass and removes removeClass
+     * @param element Element to modify
+     * @param addClass Class to add
+     * @param removeClass Class to remove
+     */
+    private swapClasses(element: Element, addClass: string, removeClass: string) {
+        if (!element.classList.contains(addClass)) {
+            element.classList.add(addClass);
+        }
+        if (element.classList.contains(removeClass)) {
+            element.classList.remove(removeClass);
+        }
+    }
+
+    /**
      * Load default validation providers and scans the entire document when ready.
      * @param options.watch If set to true, a MutationObserver will be used to continuously watch for new elements that provide validation directives.
      */
@@ -979,20 +1013,23 @@ export class ValidationService {
 
         this.addMvcProviders();
         let document = window.document;
+        const root = options.root || document.body;
+        const init = () => {
+            this.scan(root);
+
+            // Watch for further mutations after initial scan
+            if (options.watch) {
+                this.watch(root);
+            }
+        }
+
         // If the document is done loading, scan it now.
         if(document.readyState === 'complete' || document.readyState === 'interactive') {
-            this.scan(options.root || window.document.body);
+            init();
         }
         else {
             // Otherwise wait until the document is done loading.
-            window.document.addEventListener('DOMContentLoaded', event => {
-                this.scan(options.root || window.document.body);
-            });
-        }
-
-        // Watch for further mutations
-        if (options.watch) {
-            this.watch(options.root);
+            document.addEventListener('DOMContentLoaded', init);
         }
     }
 
@@ -1000,6 +1037,7 @@ export class ValidationService {
      * Scans the provided root element for any validation directives and attaches behavior to them.
      */
     scan(root: HTMLElement) {
+        this.logger.log('Scanning', root);
         this.scanMessages(root);
         this.scanInputs(root);
     }
@@ -1026,34 +1064,54 @@ export class ValidationService {
         if(mutation.type === 'childList') {
             for(let i = 0; i < mutation.addedNodes.length; i++) {
                 let node = mutation.addedNodes[i];
+                this.logger.log('Added node', node);
                 if (node instanceof HTMLElement) {
                     this.scan(node);
                 }
             }
         } else if(mutation.type === 'attributes') {
             if (mutation.target instanceof HTMLElement) {
-                this.scan(mutation.target);
+                const oldValue = mutation.oldValue ?? '';
+                const newValue = mutation.target.attributes[mutation.attributeName]?.value ?? '';
+                this.logger.log(`Attribute '%s' changed from '%s' to '%s'`,
+                    mutation.attributeName,
+                    oldValue,
+                    newValue,
+                    mutation.target);
+                if (oldValue !== newValue) {
+                    this.scan(mutation.target);
+                }
             }
         }
     }
 
     /**
-     * Override CSS class name for input validation. Default: 'input-validation-error'
+     * Override CSS class name for input validation error. Default: 'input-validation-error'
      */
-     ValidationInputCssClassName = "input-validation-error";
+    ValidationInputCssClassName = "input-validation-error";
 
-     /**
-      * Override CSS class name for valid input validation. Default: 'input-validation-valid'
-      */
-     ValidationInputValidCssClassName = "input-validation-valid";
+    /**
+     * Override CSS class name for valid input validation. Default: 'input-validation-valid'
+     */
+    ValidationInputValidCssClassName = "input-validation-valid";
 
-     /**
-      * Override CSS class name for field validation error. Default: 'field-validation-error'
-      */
-     ValidationMessageCssClassName = "field-validation-error";
+    /**
+     * Override CSS class name for field validation error. Default: 'field-validation-error'
+     */
+    ValidationMessageCssClassName = "field-validation-error";
 
-     /**
-      * Override CSS class name for valid field validation. Default: 'field-validation-valid'
-      */
-     ValidationMessageValidCssClassName = "field-validation-valid";
+    /**
+     * Override CSS class name for valid field validation. Default: 'field-validation-valid'
+     */
+    ValidationMessageValidCssClassName = "field-validation-valid";
+
+    /**
+     * Override CSS class name for validation summary error. Default: 'validation-summary-errors'
+     */
+    ValidationSummaryCssClassName = "validation-summary-errors";
+
+    /**
+     * Override CSS class name for valid validation summary. Default: 'field-validation-valid'
+     */
+    ValidationSummaryValidCssClassName = "validation-summary-valid";
 }
