@@ -5,9 +5,9 @@ namespace DemoWeb.Controllers;
 public class ValidationsController : Controller
 {
     [HttpPost]
-    public IActionResult CheckRemote()
+    public IActionResult CheckRemote(string id)
     {
-        return Ok(false);
+        return Ok(id == "42");
     }
 
     [HttpGet]
