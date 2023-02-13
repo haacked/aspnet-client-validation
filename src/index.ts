@@ -708,7 +708,10 @@ export class ValidationService {
             }
 
             validating = true;
+            this.logger.log('Validating', form);
+
             validate.then(success => {
+                this.logger.log('Validated (success = %s)', success, form);
                 let isProgrammaticValidate = !e;
                 if (success) {
                     if (isProgrammaticValidate) {
@@ -740,7 +743,7 @@ export class ValidationService {
                     this.focusFirstInvalid(form);
                 }
             }).catch(error => {
-                console.log(error);
+                this.logger.log('Validation error', error);
             }).finally(() => {
                 validating = false;
             });
