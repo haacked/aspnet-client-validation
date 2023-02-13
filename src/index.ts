@@ -685,7 +685,13 @@ export class ValidationService {
             return;
         }
 
+        let validating = false;
         let cb = (e: Event, callback?: Function) => {
+            // Prevent recursion
+            if (validating) {
+                return;
+            }
+
             if (!this.shouldValidate(e)) {
                 return;
             }
@@ -701,6 +707,7 @@ export class ValidationService {
                 e.stopImmediatePropagation();
             }
 
+            validating = true;
             validate.then(success => {
                 let isProgrammaticValidate = !e;
                 if (success) {
@@ -734,6 +741,8 @@ export class ValidationService {
                 }
             }).catch(error => {
                 console.log(error);
+            }).finally(() => {
+                validating = false;
             });
         };
 
