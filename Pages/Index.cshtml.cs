@@ -10,6 +10,7 @@ public class IndexModel : PageModel
     public string? StatusMessage { get; set; }
 
     [BindProperty]
+    [Display(Name = "Id (42)")]
     [Required]
     [Remote("CheckRemote", "Validations", HttpMethod = "Post")]
     public string? Id { get; set; }

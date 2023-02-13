@@ -717,7 +717,12 @@ var ValidationService = /** @class */ (function () {
         if (this.elementEvents[formUID]) {
             return;
         }
+        var validating = false;
         var cb = function (e, callback) {
+            // Prevent recursion
+            if (validating) {
+                return;
+            }
             if (!_this.shouldValidate(e)) {
                 return;
             }
@@ -730,7 +735,10 @@ var ValidationService = /** @class */ (function () {
                 e.preventDefault();
                 e.stopImmediatePropagation();
             }
+            validating = true;
+            _this.logger.log('Validating', form);
             validate.then(function (success) {
+                _this.logger.log('Validated (success = %s)', success, form);
                 var isProgrammaticValidate = !e;
                 if (success) {
                     if (isProgrammaticValidate) {
@@ -756,7 +764,9 @@ var ValidationService = /** @class */ (function () {
                     _this.focusFirstInvalid(form);
                 }
             }).catch(function (error) {
-                console.log(error);
+                _this.logger.log('Validation error', error);
+            }).finally(function () {
+                validating = false;
             });
         };
         form.addEventListener('submit', cb);
