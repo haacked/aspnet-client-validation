@@ -21,7 +21,7 @@ export interface Logger {
 }
 
 const nullLogger = new (class implements Logger {
-    log(_: string, ...args: any[]): void {}
+    log(_: string, ...args: any[]): void { }
 })();
 
 /**
@@ -693,13 +693,13 @@ export class ValidationService {
             let validate = this.getFormValidationTask(formUID);
             if (!validate) {
                 return;
-			}
+            }
 
-			//Prevent the submit before validation
-			if (e) {
-				e.preventDefault();
-				e.stopImmediatePropagation();
-			}
+            //Prevent the submit before validation
+            if (e) {
+                e.preventDefault();
+                e.stopImmediatePropagation();
+            }
 
             validate.then(success => {
                 let isProgrammaticValidate = !e;
@@ -709,24 +709,22 @@ export class ValidationService {
                         return;
                     }
                     const validationEvent = new CustomEvent('validation',
-                    {
-                        detail: { valid: true }
-                    });
-					form.dispatchEvent(validationEvent);
+                        {
+                            detail: { valid: true }
+                        });
+                    form.dispatchEvent(validationEvent);
 
-					//Resubmit the form here, after the async validation is completed.
-					form.requestSubmit();
+                    //Resubmit the form here, after the async validation is completed.
+                    form.requestSubmit();
 
                     return;
-				}
-
+                }
 
                 const validationEvent = new CustomEvent('validation',
-                {
-                    detail: { valid: false }
-                });
+                    {
+                        detail: { valid: false }
+                    });
                 form.dispatchEvent(validationEvent);
-
 
                 if (isProgrammaticValidate) {
                     callback(false);
@@ -936,8 +934,7 @@ export class ValidationService {
         return async () => {
 
             // only validate visible fields
-            if (!this.isHidden(input))
-            {
+            if (!this.isHidden(input)) {
                 for (let key in directives) {
                     let directive = directives[key];
                     let provider = this.providers[key];
@@ -986,7 +983,7 @@ export class ValidationService {
      * @returns
      */
     private isHidden(input: HTMLElement) {
-        return !(this.allowHiddenFields || input.offsetWidth || input.offsetHeight || input.getClientRects().length );
+        return !(this.allowHiddenFields || input.offsetWidth || input.offsetHeight || input.getClientRects().length);
     }
 
     /**
@@ -1024,7 +1021,7 @@ export class ValidationService {
         }
 
         // If the document is done loading, scan it now.
-        if(document.readyState === 'complete' || document.readyState === 'interactive') {
+        if (document.readyState === 'complete' || document.readyState === 'interactive') {
             init();
         }
         else {
@@ -1061,15 +1058,15 @@ export class ValidationService {
     }
 
     private observed(mutation: MutationRecord) {
-        if(mutation.type === 'childList') {
-            for(let i = 0; i < mutation.addedNodes.length; i++) {
+        if (mutation.type === 'childList') {
+            for (let i = 0; i < mutation.addedNodes.length; i++) {
                 let node = mutation.addedNodes[i];
                 this.logger.log('Added node', node);
                 if (node instanceof HTMLElement) {
                     this.scan(node);
                 }
             }
-        } else if(mutation.type === 'attributes') {
+        } else if (mutation.type === 'attributes') {
             if (mutation.target instanceof HTMLElement) {
                 const oldValue = mutation.oldValue ?? '';
                 const newValue = mutation.target.attributes[mutation.attributeName]?.value ?? '';
