@@ -712,9 +712,8 @@ export class ValidationService {
 
             validate.then(success => {
                 this.logger.log('Validated (success = %s)', success, form);
-                let isProgrammaticValidate = !e;
                 if (success) {
-                    if (isProgrammaticValidate) {
+                    if (callback) {
                         callback(true);
                         return;
                     }
@@ -736,7 +735,7 @@ export class ValidationService {
                     });
                 form.dispatchEvent(validationEvent);
 
-                if (isProgrammaticValidate) {
+                if (callback) {
                     callback(false);
                 }
                 else {
