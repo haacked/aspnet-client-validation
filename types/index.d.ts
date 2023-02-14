@@ -33,6 +33,10 @@ export declare type ValidationDirective = {
  */
 export declare type ValidationProvider = (value: string, element: HTMLInputElement, params: StringKeyValuePair) => boolean | string | Promise<boolean | string>;
 /**
+ * Callback to receive the result of validating a form.
+ */
+export declare type ValidatedCallback = (success: boolean) => void;
+/**
  * Contains default implementations for ASP.NET Core MVC validation attributes.
  */
 export declare class MvcValidationProviders {
@@ -167,7 +171,20 @@ export declare class ValidationService {
      * @param form
      * @param callback
      */
-    validateForm: (form: HTMLFormElement, callback: Function) => void;
+    validateForm: (form: HTMLFormElement, callback?: ValidatedCallback) => void;
+    /**
+     * Handler for validated form submit events.
+     * Default calls `submitValidForm(form)` on success
+     * and `focusFirstInvalid(form)` on failure.
+     * @param form The form that has been validated.
+     * @param success The validation result.
+     */
+    handleValidated: (form: HTMLFormElement, success: boolean) => void;
+    /**
+     * Calls `requestSubmit()` on the provided form.
+     * @param form The validated form to submit
+     */
+    submitValidForm: (form: HTMLFormElement) => void;
     /**
      * Focuses the first invalid element within the provided form
      * @param form
@@ -180,7 +197,7 @@ export declare class ValidationService {
      * @param callback
      * @returns
      */
-    isValid: (form: HTMLFormElement, prevalidate: boolean, callback: Function) => boolean;
+    isValid: (form: HTMLFormElement, prevalidate?: boolean, callback?: ValidatedCallback) => boolean;
     /**
      * Returns true if the provided field is valid, and then calls the callback. The form will be validated before checking, unless prevalidate is set to false
      * @param form
@@ -188,7 +205,7 @@ export declare class ValidationService {
      * @param callback
      * @returns
      */
-    isFieldValid: (field: HTMLElement, prevalidate: boolean, callback: Function) => boolean;
+    isFieldValid: (field: HTMLElement, prevalidate?: boolean, callback?: ValidatedCallback) => boolean;
     /**
      * Returns true if the event triggering the form submission indicates we should validate the form.
      * @param e

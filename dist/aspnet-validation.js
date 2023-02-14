@@ -458,8 +458,30 @@ var ValidationService = /** @class */ (function () {
             var formUID = _this.getElementUID(form);
             var formValidationEvent = _this.elementEvents[formUID];
             if (formValidationEvent) {
-                formValidationEvent(null, callback);
+                formValidationEvent(undefined, callback);
             }
+        };
+        /**
+         * Handler for validated form submit events.
+         * Default calls `submitValidForm(form)` on success
+         * and `focusFirstInvalid(form)` on failure.
+         * @param form The form that has been validated.
+         * @param success The validation result.
+         */
+        this.handleValidated = function (form, success) {
+            if (success) {
+                _this.submitValidForm(form);
+            }
+            else {
+                _this.focusFirstInvalid(form);
+            }
+        };
+        /**
+         * Calls `requestSubmit()` on the provided form.
+         * @param form The validated form to submit
+         */
+        this.submitValidForm = function (form) {
+            form.requestSubmit();
         };
         /**
          * Focuses the first invalid element within the provided form
@@ -678,7 +700,7 @@ var ValidationService = /** @class */ (function () {
     ValidationService.prototype.getFormValidationTask = function (formUID) {
         var formInputUIDs = this.formInputs[formUID];
         if (!formInputUIDs || formInputUIDs.length === 0) {
-            return null;
+            return Promise.resolve(true);
         }
         var formValidators = [];
         for (var i = 0; i < formInputUIDs.length; i++) {
@@ -694,7 +716,7 @@ var ValidationService = /** @class */ (function () {
      */
     ValidationService.prototype.shouldValidate = function (e) {
         // Skip client-side validation if the form has been submitted via a button that has the "formnovalidate" attribute.
-        return !(e !== null && e['submitter'] && e['submitter']['formNoValidate']);
+        return !(e && e['submitter'] && e['submitter']['formNoValidate']);
     };
     /**
      * Tracks a <form> element as parent of an input UID. When the form is submitted, attempts to validate the said input asynchronously.
@@ -739,30 +761,15 @@ var ValidationService = /** @class */ (function () {
             _this.logger.log('Validating', form);
             validate.then(function (success) {
                 _this.logger.log('Validated (success = %s)', success, form);
-                var isProgrammaticValidate = !e;
-                if (success) {
-                    if (isProgrammaticValidate) {
-                        callback(true);
-                        return;
-                    }
-                    var validationEvent_1 = new CustomEvent('validation', {
-                        detail: { valid: true }
-                    });
-                    form.dispatchEvent(validationEvent_1);
-                    //Resubmit the form here, after the async validation is completed.
-                    form.requestSubmit();
+                if (callback) {
+                    callback(success);
                     return;
                 }
                 var validationEvent = new CustomEvent('validation', {
-                    detail: { valid: false }
+                    detail: { valid: success }
                 });
                 form.dispatchEvent(validationEvent);
-                if (isProgrammaticValidate) {
-                    callback(false);
-                }
-                else {
-                    _this.focusFirstInvalid(form);
-                }
+                _this.handleValidated(form, success);
             }).catch(function (error) {
                 _this.logger.log('Validation error', error);
             }).finally(function () {
