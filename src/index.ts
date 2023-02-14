@@ -50,6 +50,11 @@ export type ValidationDirective = {
 export type ValidationProvider = (value: string, element: HTMLInputElement, params: StringKeyValuePair) => boolean | string | Promise<boolean | string>;
 
 /**
+ * Callback to receive the result of validating a form.
+ */
+export type ValidatedCallback = (success: boolean) => void;
+
+/**
  * A callback method signature that kickstarts a new validation task for an input element, as a Boolean Promise.
  */
 type Validator = () => Promise<boolean>;
@@ -385,7 +390,7 @@ export class ValidationService {
     /**
      * A key-value map for element UID to its trigger element (submit event for <form>, input event for <textarea> and <input>).
      */
-    private elementEvents: { [id: string]: (e: Event, callback?: Function) => any } = {};
+    private elementEvents: { [id: string]: (e?: Event, callback?: ValidatedCallback) => void } = {};
 
     /**
      * A key-value map of input UID to its validation error message.
@@ -591,11 +596,11 @@ export class ValidationService {
      * @param form
      * @param callback
      */
-    validateForm = (form: HTMLFormElement, callback: Function) => {
+    validateForm = (form: HTMLFormElement, callback?: ValidatedCallback) => {
         let formUID = this.getElementUID(form);
         let formValidationEvent = this.elementEvents[formUID];
         if (formValidationEvent) {
-            formValidationEvent(null, callback);
+            formValidationEvent(undefined, callback);
         }
     }
 
@@ -624,7 +629,7 @@ export class ValidationService {
      * @param callback
      * @returns
      */
-    isValid = (form: HTMLFormElement, prevalidate: boolean = true, callback: Function) => {
+    isValid = (form: HTMLFormElement, prevalidate: boolean = true, callback?: ValidatedCallback) => {
         if (prevalidate) {
             this.validateForm(form, callback);
         }
@@ -641,7 +646,7 @@ export class ValidationService {
      * @param callback
      * @returns
      */
-    isFieldValid = (field: HTMLElement, prevalidate: boolean = true, callback: Function) => {
+    isFieldValid = (field: HTMLElement, prevalidate: boolean = true, callback?: ValidatedCallback) => {
 
         if (prevalidate) {
             let form = field.closest("form");
@@ -658,9 +663,9 @@ export class ValidationService {
      * Returns true if the event triggering the form submission indicates we should validate the form.
      * @param e
      */
-    private shouldValidate(e: Event) {
+    private shouldValidate(e?: Event) {
         // Skip client-side validation if the form has been submitted via a button that has the "formnovalidate" attribute.
-        return !(e !== null && e['submitter'] && e['submitter']['formNoValidate']);
+        return !(e && e['submitter'] && e['submitter']['formNoValidate']);
     }
 
     /**
@@ -686,7 +691,7 @@ export class ValidationService {
         }
 
         let validating = false;
-        let cb = (e: Event, callback?: Function) => {
+        let cb = (e?: Event, callback?: ValidatedCallback) => {
             // Prevent recursion
             if (validating) {
                 return;
