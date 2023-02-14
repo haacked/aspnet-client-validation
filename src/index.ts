@@ -572,7 +572,7 @@ export class ValidationService {
     private getFormValidationTask(formUID: string) {
         let formInputUIDs = this.formInputs[formUID];
         if (!formInputUIDs || formInputUIDs.length === 0) {
-            return null;
+            return Promise.resolve(true);
         }
 
         let formValidators: Validator[] = [];
