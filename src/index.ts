@@ -50,6 +50,11 @@ export type ValidationDirective = {
 export type ValidationProvider = (value: string, element: HTMLInputElement, params: StringKeyValuePair) => boolean | string | Promise<boolean | string>;
 
 /**
+ * Callback to receive the result of validating a form.
+ */
+export type ValidatedCallback = (success: boolean) => void;
+
+/**
  * A callback method signature that kickstarts a new validation task for an input element, as a Boolean Promise.
  */
 type Validator = () => Promise<boolean>;
@@ -385,7 +390,7 @@ export class ValidationService {
     /**
      * A key-value map for element UID to its trigger element (submit event for <form>, input event for <textarea> and <input>).
      */
-    private elementEvents: { [id: string]: (e: Event, callback?: Function) => any } = {};
+    private elementEvents: { [id: string]: (e?: Event, callback?: ValidatedCallback) => void } = {};
 
     /**
      * A key-value map of input UID to its validation error message.
@@ -572,7 +577,7 @@ export class ValidationService {
     private getFormValidationTask(formUID: string) {
         let formInputUIDs = this.formInputs[formUID];
         if (!formInputUIDs || formInputUIDs.length === 0) {
-            return null;
+            return Promise.resolve(true);
         }
 
         let formValidators: Validator[] = [];
@@ -591,14 +596,37 @@ export class ValidationService {
      * @param form
      * @param callback
      */
-    validateForm = (form: HTMLFormElement, callback: Function) => {
+    validateForm = (form: HTMLFormElement, callback?: ValidatedCallback) => {
         let formUID = this.getElementUID(form);
         let formValidationEvent = this.elementEvents[formUID];
         if (formValidationEvent) {
-            formValidationEvent(null, callback);
+            formValidationEvent(undefined, callback);
         }
     }
 
+    /**
+     * Handler for validated form submit events.
+     * Default calls `submitValidForm(form)` on success
+     * and `focusFirstInvalid(form)` on failure.
+     * @param form The form that has been validated.
+     * @param success The validation result.
+     */
+    handleValidated = (form: HTMLFormElement, success: boolean) => {
+        if (success) {
+            this.submitValidForm(form);
+        }
+        else {
+            this.focusFirstInvalid(form);
+        }
+    }
+
+    /**
+     * Calls `requestSubmit()` on the provided form.
+     * @param form The validated form to submit
+     */
+    submitValidForm = (form: HTMLFormElement) => {
+        form.requestSubmit();
+    }
 
     /**
      * Focuses the first invalid element within the provided form
@@ -624,7 +652,7 @@ export class ValidationService {
      * @param callback
      * @returns
      */
-    isValid = (form: HTMLFormElement, prevalidate: boolean = true, callback: Function) => {
+    isValid = (form: HTMLFormElement, prevalidate: boolean = true, callback?: ValidatedCallback) => {
         if (prevalidate) {
             this.validateForm(form, callback);
         }
@@ -641,7 +669,7 @@ export class ValidationService {
      * @param callback
      * @returns
      */
-    isFieldValid = (field: HTMLElement, prevalidate: boolean = true, callback: Function) => {
+    isFieldValid = (field: HTMLElement, prevalidate: boolean = true, callback?: ValidatedCallback) => {
 
         if (prevalidate) {
             let form = field.closest("form");
@@ -658,9 +686,9 @@ export class ValidationService {
      * Returns true if the event triggering the form submission indicates we should validate the form.
      * @param e
      */
-    private shouldValidate(e: Event) {
+    private shouldValidate(e?: Event) {
         // Skip client-side validation if the form has been submitted via a button that has the "formnovalidate" attribute.
-        return !(e !== null && e['submitter'] && e['submitter']['formNoValidate']);
+        return !(e && e['submitter'] && e['submitter']['formNoValidate']);
     }
 
     /**
@@ -686,7 +714,7 @@ export class ValidationService {
         }
 
         let validating = false;
-        let cb = (e: Event, callback?: Function) => {
+        let cb = (e?: Event, callback?: ValidatedCallback) => {
             // Prevent recursion
             if (validating) {
                 return;
@@ -712,36 +740,18 @@ export class ValidationService {
 
             validate.then(success => {
                 this.logger.log('Validated (success = %s)', success, form);
-                let isProgrammaticValidate = !e;
-                if (success) {
-                    if (isProgrammaticValidate) {
-                        callback(true);
-                        return;
-                    }
-                    const validationEvent = new CustomEvent('validation',
-                        {
-                            detail: { valid: true }
-                        });
-                    form.dispatchEvent(validationEvent);
-
-                    //Resubmit the form here, after the async validation is completed.
-                    form.requestSubmit();
-
+                if (callback) {
+                    callback(success);
                     return;
                 }
 
                 const validationEvent = new CustomEvent('validation',
                     {
-                        detail: { valid: false }
+                        detail: { valid: success }
                     });
                 form.dispatchEvent(validationEvent);
 
-                if (isProgrammaticValidate) {
-                    callback(false);
-                }
-                else {
-                    this.focusFirstInvalid(form);
-                }
+                this.handleValidated(form, success);
             }).catch(error => {
                 this.logger.log('Validation error', error);
             }).finally(() => {
