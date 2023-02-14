@@ -604,6 +604,29 @@ export class ValidationService {
         }
     }
 
+    /**
+     * Handler for validated form submit events.
+     * Default calls `submitValidForm(form)` on success
+     * and `focusFirstInvalid(form)` on failure.
+     * @param form The form that has been validated.
+     * @param success The validation result.
+     */
+    handleValidated = (form: HTMLFormElement, success: boolean) => {
+        if (success) {
+            this.submitValidForm(form);
+        }
+        else {
+            this.focusFirstInvalid(form);
+        }
+    }
+
+    /**
+     * Calls `requestSubmit()` on the provided form.
+     * @param form The validated form to submit
+     */
+    submitValidForm = (form: HTMLFormElement) => {
+        form.requestSubmit();
+    }
 
     /**
      * Focuses the first invalid element within the provided form
@@ -717,35 +740,18 @@ export class ValidationService {
 
             validate.then(success => {
                 this.logger.log('Validated (success = %s)', success, form);
-                if (success) {
-                    if (callback) {
-                        callback(true);
-                        return;
-                    }
-                    const validationEvent = new CustomEvent('validation',
-                        {
-                            detail: { valid: true }
-                        });
-                    form.dispatchEvent(validationEvent);
-
-                    //Resubmit the form here, after the async validation is completed.
-                    form.requestSubmit();
-
+                if (callback) {
+                    callback(success);
                     return;
                 }
 
                 const validationEvent = new CustomEvent('validation',
                     {
-                        detail: { valid: false }
+                        detail: { valid: success }
                     });
                 form.dispatchEvent(validationEvent);
 
-                if (callback) {
-                    callback(false);
-                }
-                else {
-                    this.focusFirstInvalid(form);
-                }
+                this.handleValidated(form, success);
             }).catch(error => {
                 this.logger.log('Validation error', error);
             }).finally(() => {
