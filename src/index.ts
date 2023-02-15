@@ -605,6 +605,16 @@ export class ValidationService {
     }
 
     /**
+     * Called before validating form submit events.
+     * Default calls `preventDefault()` and `stopImmediatePropagation()`.
+     * @param submitEvent The `SubmitEvent`.
+     */
+    preValidate = (submitEvent: SubmitEvent) => {
+        submitEvent.preventDefault();
+        submitEvent.stopImmediatePropagation();
+    }
+
+    /**
      * Handler for validated form submit events.
      * Default calls `submitValidForm(form)` on success
      * and `focusFirstInvalid(form)` on failure.
@@ -732,8 +742,7 @@ export class ValidationService {
 
             //Prevent the submit before validation
             if (e) {
-                e.preventDefault();
-                e.stopImmediatePropagation();
+                this.preValidate(e);
             }
 
             validating = true;
