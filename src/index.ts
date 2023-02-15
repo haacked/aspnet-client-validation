@@ -390,7 +390,7 @@ export class ValidationService {
     /**
      * A key-value map for element UID to its trigger element (submit event for <form>, input event for <textarea> and <input>).
      */
-    private elementEvents: { [id: string]: (e?: Event, callback?: ValidatedCallback) => void } = {};
+    private elementEvents: { [id: string]: (e?: SubmitEvent, callback?: ValidatedCallback) => void } = {};
 
     /**
      * A key-value map of input UID to its validation error message.
@@ -714,7 +714,7 @@ export class ValidationService {
         }
 
         let validating = false;
-        let cb = (e?: Event, callback?: ValidatedCallback) => {
+        let cb = (e?: SubmitEvent, callback?: ValidatedCallback) => {
             // Prevent recursion
             if (validating) {
                 return;
