@@ -18,10 +18,12 @@ interface ElementUID {
  */
 export interface Logger {
     log(message: string, ...args: any[]): void;
+    warn(message: string, ...args: any[]): void;
 }
 
 const nullLogger = new (class implements Logger {
-    log(_: string, ...args: any[]): void { }
+    log(_: string, ..._args: any[]): void { }
+    warn = globalThis.console.warn;
 })();
 
 /**
@@ -303,7 +305,6 @@ export class MvcValidationProviders {
         }
 
         let url: string = params['url'];
-        // console.log(fields);
 
         let encodedParams: string[] = [];
         for (let fieldName in fields) {
@@ -311,7 +312,6 @@ export class MvcValidationProviders {
             encodedParams.push(encodedParam);
         }
         let payload = encodedParams.join('&');
-        // console.log(payload);
 
         return new Promise((ok, reject) => {
             let request = new XMLHttpRequest();
@@ -431,7 +431,7 @@ export class ValidationService {
             // Allows developers to override the default MVC Providers by adding custom providers BEFORE bootstrap() is called!
             return;
         }
-        this.logger.log(`Registered provider: ${name}`);
+        this.logger.log(`Registered provider: %s`, name);
         this.providers[name] = callback;
     }
 
@@ -531,7 +531,6 @@ export class ValidationService {
             }
         }
 
-        // console.log(directives);
         return directives;
     }
 
@@ -888,7 +887,6 @@ export class ValidationService {
         }
 
         // Prevents wasteful re-rendering of summary list element with identical items!
-        // console.log('RENDERING VALIDATION SUMMARY');
         this.renderedSummaryJSON = shadow;
         let ul = this.createSummaryDOM();
 
@@ -972,10 +970,10 @@ export class ValidationService {
                     let provider = this.providers[key];
 
                     if (!provider) {
-                        console.log('aspnet-validation provider not implemented: ' + key);
+                        this.logger.log('aspnet-validation provider not implemented: %s', key);
                         continue;
                     }
-                    this.logger.log(`Running ${key} validator on element`, input);
+                    this.logger.log(`Running %s validator on element`, key, input);
 
                     let result = provider(input.value, input, directive.params);
                     let valid = false;

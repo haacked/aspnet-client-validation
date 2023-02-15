@@ -249,6 +249,7 @@ The `window.console` object satisfies this interface automatically:
 // The Logger interface, for reference
 export interface Logger {
     log(message: string, ...args: any[]): void;
+    warn(message: string, ...args: any[]): void;
 }
 
 let v = new aspnetValidation.ValidationService(console);
