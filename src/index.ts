@@ -431,7 +431,7 @@ export class ValidationService {
             // Allows developers to override the default MVC Providers by adding custom providers BEFORE bootstrap() is called!
             return;
         }
-        this.logger.log(`Registered provider: %s`, name);
+        this.logger.log("Registered provider: %s", name);
         this.providers[name] = callback;
     }
 
@@ -486,7 +486,7 @@ export class ValidationService {
                 spans.push(e);
             }
             else {
-                this.logger.log(`Validation element for '%s' is already tracked`, name, e);
+                this.logger.log("Validation element for '%s' is already tracked", name, e);
             }
         }
     }
@@ -724,7 +724,7 @@ export class ValidationService {
             this.formInputs[formUID].push(inputUID);
         }
         else {
-            this.logger.log(`Form input for UID '%s' is already tracked`, inputUID);
+            this.logger.log("Form input for UID '%s' is already tracked", inputUID);
         }
 
         if (this.elementEvents[formUID]) {
@@ -981,7 +981,7 @@ export class ValidationService {
                         this.logger.log('aspnet-validation provider not implemented: %s', key);
                         continue;
                     }
-                    this.logger.log(`Running %s validator on element`, key, input);
+                    this.logger.log("Running %s validator on element", key, input);
 
                     let result = provider(input.value, input, directive.params);
                     let valid = false;
@@ -1108,7 +1108,7 @@ export class ValidationService {
             if (mutation.target instanceof HTMLElement) {
                 const oldValue = mutation.oldValue ?? '';
                 const newValue = mutation.target.attributes[mutation.attributeName]?.value ?? '';
-                this.logger.log(`Attribute '%s' changed from '%s' to '%s'`,
+                this.logger.log("Attribute '%s' changed from '%s' to '%s'",
                     mutation.attributeName,
                     oldValue,
                     newValue,
