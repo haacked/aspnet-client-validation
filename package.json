@@ -13,8 +13,9 @@
   "author": "Ryan Elian, Phil Haack",
   "license": "MIT",
   "scripts": {
-    "build": "cp src/aspnet-validation.css dist && webpack && webpack --config webpack.config.min.js",
-    "build-windows": "copy src\\aspnet-validation.css dist && webpack && webpack --config webpack.config.min.js"
+    "prebuild": "node ./script/prebuild.js",
+    "build": "webpack && webpack --config webpack.config.min.js",
+    "prepare": "npm run build"
   },
   "devDependencies": {
     "ts-loader": "^5.3.1",
