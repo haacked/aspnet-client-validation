@@ -615,15 +615,15 @@ export class ValidationService {
 
     /**
      * Handler for validated form submit events.
-     * Default calls `submitValidForm(form)` on success
+     * Default calls `submitValidForm(form, submitEvent)` on success
      * and `focusFirstInvalid(form)` on failure.
      * @param form The form that has been validated.
      * @param success The validation result.
      * @param submitEvent The `SubmitEvent`.
      */
-    handleValidated = (form: HTMLFormElement, success: boolean, _submitEvent: SubmitEvent) => {
+    handleValidated = (form: HTMLFormElement, success: boolean, submitEvent: SubmitEvent) => {
         if (success) {
-            this.submitValidForm(form);
+            this.submitValidForm(form, submitEvent);
         }
         else {
             this.focusFirstInvalid(form);
@@ -631,11 +631,19 @@ export class ValidationService {
     }
 
     /**
-     * Calls `requestSubmit()` on the provided form.
+     * Dispatches a new `SubmitEvent` on the provided form,
+     * then calls `form.submit()` unless `submitEvent` is cancelable
+     * and `preventDefault()` was called by a handler that received the new event.
+     *
+     * This is equivalent to `form.requestSubmit()`, but more flexible.
      * @param form The validated form to submit
+     * @param submitEvent The `SubmitEvent`.
      */
-    submitValidForm = (form: HTMLFormElement) => {
-        form.requestSubmit();
+    submitValidForm = (form: HTMLFormElement, submitEvent: SubmitEvent) => {
+        const newEvent = new SubmitEvent('submit', submitEvent);
+        if (form.dispatchEvent(newEvent)) {
+            form.submit();
+        }
     }
 
     /**
