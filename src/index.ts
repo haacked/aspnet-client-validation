@@ -747,7 +747,7 @@ export class ValidationService {
                 return;
             }
 
-            //Prevent the submit before validation
+            //`preValidate` typically prevents submit before validation
             if (e) {
                 this.preValidate(e);
             }

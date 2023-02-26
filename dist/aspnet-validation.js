@@ -768,7 +768,7 @@ var ValidationService = /** @class */ (function () {
             if (!validate) {
                 return;
             }
-            //Prevent the submit before validation
+            //`preValidate` typically prevents submit before validation
             if (e) {
                 _this.preValidate(e);
             }
