@@ -30,8 +30,7 @@ blob/
 mono_crash.*
 
 # Build results
-dist/
-!src/product/Serious.Razor/wwwroot/dist
+wwwroot/dist
 [Dd]ebug/
 [Dd]ebugPublic/
 [Rr]elease/

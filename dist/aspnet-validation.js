@@ -122,7 +122,7 @@ var __generator = (undefined && undefined.__generator) || function (thisArg, bod
     function verb(n) { return function (v) { return step([n, v]); }; }
     function step(op) {
         if (f) throw new TypeError("Generator is already executing.");
-        while (_) try {
+        while (g && (g = 0, op[0] && (_ = 0)), _) try {
             if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
             if (y = 0, t) op = [op[0] & 2, t.value];
             switch (op[0]) {
@@ -145,11 +145,12 @@ var __generator = (undefined && undefined.__generator) || function (thisArg, bod
 };
 var nullLogger = new (/** @class */ (function () {
     function class_1() {
+        this.warn = globalThis.console.warn;
     }
     class_1.prototype.log = function (_) {
-        var args = [];
+        var _args = [];
         for (var _i = 1; _i < arguments.length; _i++) {
-            args[_i - 1] = arguments[_i];
+            _args[_i - 1] = arguments[_i];
         }
     };
     return class_1;
@@ -354,14 +355,12 @@ var MvcValidationProviders = /** @class */ (function () {
                 fields[fieldName] = fieldElement.value;
             }
             var url = params['url'];
-            // console.log(fields);
             var encodedParams = [];
             for (var fieldName in fields) {
                 var encodedParam = encodeURIComponent(fieldName) + '=' + encodeURIComponent(fields[fieldName]);
                 encodedParams.push(encodedParam);
             }
             var payload = encodedParams.join('&');
-            // console.log(payload);
             return new Promise(function (ok, reject) {
                 var request = new XMLHttpRequest();
                 if (params.type === 'Post') {
@@ -462,26 +461,44 @@ var ValidationService = /** @class */ (function () {
             }
         };
         /**
+         * Called before validating form submit events.
+         * Default calls `preventDefault()` and `stopImmediatePropagation()`.
+         * @param submitEvent The `SubmitEvent`.
+         */
+        this.preValidate = function (submitEvent) {
+            submitEvent.preventDefault();
+            submitEvent.stopImmediatePropagation();
+        };
+        /**
          * Handler for validated form submit events.
-         * Default calls `submitValidForm(form)` on success
+         * Default calls `submitValidForm(form, submitEvent)` on success
          * and `focusFirstInvalid(form)` on failure.
          * @param form The form that has been validated.
          * @param success The validation result.
+         * @param submitEvent The `SubmitEvent`.
          */
-        this.handleValidated = function (form, success) {
+        this.handleValidated = function (form, success, submitEvent) {
             if (success) {
-                _this.submitValidForm(form);
+                _this.submitValidForm(form, submitEvent);
             }
             else {
                 _this.focusFirstInvalid(form);
             }
         };
         /**
-         * Calls `requestSubmit()` on the provided form.
+         * Dispatches a new `SubmitEvent` on the provided form,
+         * then calls `form.submit()` unless `submitEvent` is cancelable
+         * and `preventDefault()` was called by a handler that received the new event.
+         *
+         * This is equivalent to `form.requestSubmit()`, but more flexible.
          * @param form The validated form to submit
+         * @param submitEvent The `SubmitEvent`.
          */
-        this.submitValidForm = function (form) {
-            form.requestSubmit();
+        this.submitValidForm = function (form, submitEvent) {
+            var newEvent = new SubmitEvent('submit', submitEvent);
+            if (form.dispatchEvent(newEvent)) {
+                form.submit();
+            }
         };
         /**
          * Focuses the first invalid element within the provided form
@@ -571,7 +588,7 @@ var ValidationService = /** @class */ (function () {
             // Allows developers to override the default MVC Providers by adding custom providers BEFORE bootstrap() is called!
             return;
         }
-        this.logger.log("Registered provider: " + name);
+        this.logger.log("Registered provider: %s", name);
         this.providers[name] = callback;
     };
     /**
@@ -660,7 +677,6 @@ var ValidationService = /** @class */ (function () {
         for (var key in validationAtributes) {
             _loop_1(key);
         }
-        // console.log(directives);
         return directives;
     };
     /**
@@ -752,10 +768,9 @@ var ValidationService = /** @class */ (function () {
             if (!validate) {
                 return;
             }
-            //Prevent the submit before validation
+            //`preValidate` typically prevents submit before validation
             if (e) {
-                e.preventDefault();
-                e.stopImmediatePropagation();
+                _this.preValidate(e);
             }
             validating = true;
             _this.logger.log('Validating', form);
@@ -769,7 +784,7 @@ var ValidationService = /** @class */ (function () {
                     detail: { valid: success }
                 });
                 form.dispatchEvent(validationEvent);
-                _this.handleValidated(form, success);
+                _this.handleValidated(form, success, e);
             }).catch(function (error) {
                 _this.logger.log('Validation error', error);
             }).finally(function () {
@@ -880,7 +895,6 @@ var ValidationService = /** @class */ (function () {
             return;
         }
         // Prevents wasteful re-rendering of summary list element with identical items!
-        // console.log('RENDERING VALIDATION SUMMARY');
         this.renderedSummaryJSON = shadow;
         var ul = this.createSummaryDOM();
         for (var i = 0; i < summaryElements.length; i++) {
@@ -938,26 +952,29 @@ var ValidationService = /** @class */ (function () {
     ValidationService.prototype.createValidator = function (input, directives) {
         var _this = this;
         return function () { return __awaiter(_this, void 0, void 0, function () {
-            var _a, _b, _i, key, directive, provider, result, valid, error, resolution;
-            return __generator(this, function (_c) {
-                switch (_c.label) {
+            var _a, _b, _c, _i, key, directive, provider, result, valid, error, resolution;
+            return __generator(this, function (_d) {
+                switch (_d.label) {
                     case 0:
                         if (!!this.isHidden(input)) return [3 /*break*/, 7];
-                        _a = [];
-                        for (_b in directives)
-                            _a.push(_b);
+                        _a = directives;
+                        _b = [];
+                        for (_c in _a)
+                            _b.push(_c);
                         _i = 0;
-                        _c.label = 1;
+                        _d.label = 1;
                     case 1:
-                        if (!(_i < _a.length)) return [3 /*break*/, 7];
-                        key = _a[_i];
+                        if (!(_i < _b.length)) return [3 /*break*/, 7];
+                        _c = _b[_i];
+                        if (!(_c in _a)) return [3 /*break*/, 6];
+                        key = _c;
                         directive = directives[key];
                         provider = this.providers[key];
                         if (!provider) {
-                            console.log('aspnet-validation provider not implemented: ' + key);
+                            this.logger.log('aspnet-validation provider not implemented: %s', key);
                             return [3 /*break*/, 6];
                         }
-                        this.logger.log("Running " + key + " validator on element", input);
+                        this.logger.log("Running %s validator on element", key, input);
                         result = provider(input.value, input, directive.params);
                         valid = false;
                         error = directive.error;
@@ -971,7 +988,7 @@ var ValidationService = /** @class */ (function () {
                         return [3 /*break*/, 5];
                     case 3: return [4 /*yield*/, result];
                     case 4:
-                        resolution = _c.sent();
+                        resolution = _d.sent();
                         if (typeof resolution === 'boolean') {
                             valid = resolution;
                         }
@@ -979,13 +996,13 @@ var ValidationService = /** @class */ (function () {
                             valid = false;
                             error = resolution;
                         }
-                        _c.label = 5;
+                        _d.label = 5;
                     case 5:
                         if (!valid) {
                             this.addError(input, error);
                             return [2 /*return*/, false];
                         }
-                        _c.label = 6;
+                        _d.label = 6;
                     case 6:
                         _i++;
                         return [3 /*break*/, 1];

@@ -1,1 +1,1 @@
-npm run build-windows
+npm run build

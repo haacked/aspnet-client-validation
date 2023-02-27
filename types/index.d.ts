@@ -9,6 +9,7 @@ export interface StringKeyValuePair {
  */
 export interface Logger {
     log(message: string, ...args: any[]): void;
+    warn(message: string, ...args: any[]): void;
 }
 /**
  * Parameters passed into validation providers from the element attributes.
@@ -22,7 +23,7 @@ export interface ValidationDirectiveBindings {
 /**
  * A key-value pair describing what validations to enforce to an input element, with respective parameters.
  */
-export declare type ValidationDirective = {
+export type ValidationDirective = {
     [key: string]: ValidationDirectiveBindings;
 };
 /**
@@ -31,11 +32,11 @@ export declare type ValidationDirective = {
  * String return signifies failed validation, which then will be used as the validation error message.
  * Promise return signifies asynchronous plugin behavior, with same behavior as Boolean or String.
  */
-export declare type ValidationProvider = (value: string, element: HTMLInputElement, params: StringKeyValuePair) => boolean | string | Promise<boolean | string>;
+export type ValidationProvider = (value: string, element: HTMLInputElement, params: StringKeyValuePair) => boolean | string | Promise<boolean | string>;
 /**
  * Callback to receive the result of validating a form.
  */
-export declare type ValidatedCallback = (success: boolean) => void;
+export type ValidatedCallback = (success: boolean) => void;
 /**
  * Contains default implementations for ASP.NET Core MVC validation attributes.
  */
@@ -173,18 +174,30 @@ export declare class ValidationService {
      */
     validateForm: (form: HTMLFormElement, callback?: ValidatedCallback) => void;
     /**
+     * Called before validating form submit events.
+     * Default calls `preventDefault()` and `stopImmediatePropagation()`.
+     * @param submitEvent The `SubmitEvent`.
+     */
+    preValidate: (submitEvent: SubmitEvent) => void;
+    /**
      * Handler for validated form submit events.
-     * Default calls `submitValidForm(form)` on success
+     * Default calls `submitValidForm(form, submitEvent)` on success
      * and `focusFirstInvalid(form)` on failure.
      * @param form The form that has been validated.
      * @param success The validation result.
+     * @param submitEvent The `SubmitEvent`.
      */
-    handleValidated: (form: HTMLFormElement, success: boolean) => void;
+    handleValidated: (form: HTMLFormElement, success: boolean, submitEvent: SubmitEvent) => void;
     /**
-     * Calls `requestSubmit()` on the provided form.
+     * Dispatches a new `SubmitEvent` on the provided form,
+     * then calls `form.submit()` unless `submitEvent` is cancelable
+     * and `preventDefault()` was called by a handler that received the new event.
+     *
+     * This is equivalent to `form.requestSubmit()`, but more flexible.
      * @param form The validated form to submit
+     * @param submitEvent The `SubmitEvent`.
      */
-    submitValidForm: (form: HTMLFormElement) => void;
+    submitValidForm: (form: HTMLFormElement, submitEvent: SubmitEvent) => void;
     /**
      * Focuses the first invalid element within the provided form
      * @param form
