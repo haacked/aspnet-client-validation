@@ -847,7 +847,7 @@ export class ValidationService {
     /**
      * Scans the entire document for input elements to be validated.
      */
-    private scanInputs(root: HTMLElement) {
+    private scanInputs(root: HTMLElement, addNoValidate: boolean) {
         let inputs = Array.from(root.querySelectorAll<HTMLElement>('[data-val="true"]'));
 
         // querySelectorAll does not include the root element itself.
@@ -859,6 +859,9 @@ export class ValidationService {
         for (let i = 0; i < inputs.length; i++) {
             let input = inputs[i] as HTMLInputElement;
             this.addInput(input);
+            if (addNoValidate) {
+                input.closest('form')?.setAttribute('novalidate', 'novalidate');
+            }
         }
     }
 
@@ -1042,19 +1045,21 @@ export class ValidationService {
     /**
      * Load default validation providers and scans the entire document when ready.
      * @param options.watch If set to true, a MutationObserver will be used to continuously watch for new elements that provide validation directives.
+     * @param options.addNoValidate If set to true (the default), a novalidate attribute will be added to the containing form in validate elemets.
      */
-    bootstrap(options?: { watch?: boolean, root?: HTMLElement }) {
+    bootstrap(options?: { watch?: boolean, root?: HTMLElement, addNoValidate?: boolean }) {
         options = options || {};
 
         this.addMvcProviders();
         let document = window.document;
         const root = options.root || document.body;
+        const addNoValidate = options.addNoValidate || true;
         const init = () => {
-            this.scan(root);
+            this.scan(root, addNoValidate);
 
             // Watch for further mutations after initial scan
             if (options.watch) {
-                this.watch(root);
+                this.watch(root, addNoValidate);
             }
         }
 
@@ -1071,20 +1076,21 @@ export class ValidationService {
     /**
      * Scans the provided root element for any validation directives and attaches behavior to them.
      */
-    scan(root: HTMLElement) {
+    scan(root: HTMLElement, addNoValidate: boolean) {
         this.logger.log('Scanning', root);
         this.scanMessages(root);
-        this.scanInputs(root);
+        this.scanInputs(root, addNoValidate);
     }
 
     /**
      * Watches the provided root element for mutations, and scans for new validation directives to attach behavior.
      * @param root The root element to use, defaults to the document.documentElement.
+     * @param addNoValidate If set to true (the default), a novalidate attribute will be added to the containing form in validate elemets.
      */
-    watch(root: HTMLElement) {
+    watch(root: HTMLElement, addNoValidate: boolean) {
         this.observer = new MutationObserver(mutations => {
             mutations.forEach(mutation => {
-                this.observed(mutation);
+                this.observed(mutation, addNoValidate);
             });
         });
         this.observer.observe(root, {
@@ -1095,13 +1101,13 @@ export class ValidationService {
         this.logger.log("Watching for mutations");
     }
 
-    private observed(mutation: MutationRecord) {
+    private observed(mutation: MutationRecord, addNoValidate: boolean) {
         if (mutation.type === 'childList') {
             for (let i = 0; i < mutation.addedNodes.length; i++) {
                 let node = mutation.addedNodes[i];
                 this.logger.log('Added node', node);
                 if (node instanceof HTMLElement) {
-                    this.scan(node);
+                    this.scan(node, addNoValidate);
                 }
             }
         } else if (mutation.type === 'attributes') {
@@ -1114,7 +1120,7 @@ export class ValidationService {
                     newValue,
                     mutation.target);
                 if (oldValue !== newValue) {
-                    this.scan(mutation.target);
+                    this.scan(mutation.target, addNoValidate);
                 }
             }
         }
