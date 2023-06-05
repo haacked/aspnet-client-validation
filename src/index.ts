@@ -934,6 +934,14 @@ export class ValidationService {
             this.ValidationInputCssClassName,
             this.ValidationInputValidCssClassName);
 
+        // Adding an error to one input should also add it to others with the same name (i.e. for radio button and checkbox lists).
+        const inputs = input.form.querySelectorAll('input[name="' + input.name + '"]');
+        for (let i = 0; i < inputs.length; i++) {
+            this.swapClasses(inputs[i],
+                this.ValidationInputCssClassName,
+                this.ValidationInputValidCssClassName);
+        }
+
         let uid = this.getElementUID(input);
         this.summary[uid] = message;
         this.renderSummary();
@@ -957,6 +965,14 @@ export class ValidationService {
         this.swapClasses(input,
             this.ValidationInputValidCssClassName,
             this.ValidationInputCssClassName);
+
+        // Removing an error from one input should also remove it from others with the same name (i.e. for radio button and checkbox lists).
+        const inputs = input.form.querySelectorAll('input[name="' + input.name + '"]');
+        for (let i = 0; i < inputs.length; i++) {
+            this.swapClasses(inputs[i],
+                this.ValidationInputValidCssClassName,
+                this.ValidationInputCssClassName);
+        }
 
         let uid = this.getElementUID(input);
         delete this.summary[uid];
