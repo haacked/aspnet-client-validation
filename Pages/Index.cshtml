@@ -84,6 +84,20 @@
     </form>
 </fieldset>
 
+<fieldset>
+    <legend>External Form</legend>
+        <div class="form-field">
+            <label asp-for="Input.SomeRequiredField" form="external"></label>
+            <input asp-for="Input.SomeRequiredField" form="external"/>
+            <span asp-validation-for="Input.SomeRequiredField" form="external"></span>
+        </div>
+        <button type="submit" class="btn">Save</button>
+</fieldset>
+
+
+<form id="external">
+
+</form>
 
 <script src="/dist/aspnet-validation.js"></script>
 <script>
