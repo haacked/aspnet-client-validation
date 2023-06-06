@@ -63,20 +63,21 @@ type Validator = () => Promise<boolean>;
 
 /**
  * Resolves and returns the element referred by original element using ASP.NET selector logic.
- * @param elementName
+ * @param elementName - The name of the element to validate
+ * @param selector - Used to find the field. Ex. *.Password where * replaces whatever prefixes asp.net might add.
  */
 function getRelativeFormElement(elementName: string, selector: string) {
     // example elementName: Form.PasswordConfirm, Form.Email
     // example selector (dafuq): *.Password, *.__RequestVerificationToken
     // example result element name: Form.Password, __RequestVerificationToken
 
-    let realSelector = selector.substr(2); // Password, __RequestVerificationToken
+    let realSelector = selector.substring(2); // Password, __RequestVerificationToken
     let objectName = '';
 
     let dotLocation = elementName.lastIndexOf('.');
     if (dotLocation > -1) {
         // Form
-        objectName = elementName.substr(0, dotLocation);
+        objectName = elementName.substring(0, dotLocation);
 
         // Form.Password
         let relativeElementName = objectName + '.' + realSelector;
