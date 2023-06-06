@@ -42,4 +42,13 @@ public class IndexModel : PageModel
         StatusMessage = "Form submission successful";
         return Page();
     }
+
+    [BindProperty]
+    public InputModel Input { get; set; } = new();
+
+    public class InputModel
+    {
+        [Required]
+        public string? SomeRequiredField { get; set; }
+    }
 }
