@@ -935,7 +935,7 @@ export class ValidationService {
             this.ValidationInputValidCssClassName);
 
         // Adding an error to one input should also add it to others with the same name (i.e. for radio button and checkbox lists).
-        const inputs = input.form.querySelectorAll('input[name="' + input.name + '"]');
+        const inputs = input.form.querySelectorAll(`input[name="${input.name}"]`);
         for (let i = 0; i < inputs.length; i++) {
             this.swapClasses(inputs[i],
                 this.ValidationInputCssClassName,
@@ -967,7 +967,7 @@ export class ValidationService {
             this.ValidationInputCssClassName);
 
         // Removing an error from one input should also remove it from others with the same name (i.e. for radio button and checkbox lists).
-        const inputs = input.form.querySelectorAll('input[name="' + input.name + '"]');
+        const inputs = input.form.querySelectorAll(`input[name="${input.name}"]`);
         for (let i = 0; i < inputs.length; i++) {
             this.swapClasses(inputs[i],
                 this.ValidationInputValidCssClassName,
