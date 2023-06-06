@@ -812,9 +812,8 @@ export class ValidationService {
         let uid = this.getElementUID(input);
 
         let directives = this.parseDirectives(input.attributes);
-        let validate = this.createValidator(input, directives);
+        this.validators[uid] = this.createValidator(input, directives);
 
-        this.validators[uid] = validate;
         if (input.form) {
             this.trackFormInput(input.form, uid);
         }
