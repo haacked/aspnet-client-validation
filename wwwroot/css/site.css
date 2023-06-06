@@ -31,3 +31,19 @@ body {
   font-size: 2em;
   font-weight: bold;
 }
+
+.input-validation-error + label {
+    color: red;
+}
+
+.input-validation-valid + label {
+    color: green;
+}
+
+table.form-data {
+    margin-bottom: 10px;
+}
+
+table.form-data th {
+    text-align: left;
+}

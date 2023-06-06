@@ -9,7 +9,31 @@
 </head>
 <body>
 
-<h1 class="status-message">@Model.StatusMessage</h1>
+@if (Model.StatusMessage != null)
+{
+    <h1 class="status-message">@Model.StatusMessage</h1>
+
+    <h2>Submitted Values</h2>
+
+    <table class="form-data">
+        <tr>
+            <th>Id: </th>
+            <td>@Model.Id</td>
+        </tr>
+        <tr>
+            <th>Control: </th>
+            <td>@Model.Control</td>
+        </tr>
+        <tr>
+            <th>Selected Animals: </th>
+            <td>@(Model.SelectedAnimals != null ? string.Join(", ", Model.SelectedAnimals) : null)</td>
+        </tr>
+        <tr>
+            <th>Selected Color: </th>
+            <td>@Model.SelectedColor</td>
+        </tr>
+    </table>
+}
 
 <fieldset>
     <legend>Form 1</legend>
@@ -27,14 +51,35 @@
         </div>
 
         <div class="form-field">
-            <label>
-                <input asp-for="Color" /> Red
-            </label>
+            @foreach (var animal in Model.Animals)
+            {
+                <input name="SelectedAnimals"
+                       type="checkbox"
+                       value="@animal"
+                       data-val="true"
+                       data-val-required="Please select at least one animal"
+                       data-rule-required="true"
+                       data-msg-required="Please select at least one animal"
+                       @if (Model.SelectedAnimals != null && Model.SelectedAnimals.Contains(animal)) { <text>checked</text> } />
+                <label>@animal</label>
+            }
+            <span asp-validation-for="SelectedAnimals"></span>
+        </div>
 
-            <label>
-                <input asp-for="Color" /> Blue
-            </label>
-            <span asp-validation-for="Color"></span>
+        <div class="form-field">
+            @foreach (var color in Model.Colors)
+            {
+                <input name="SelectedColor"
+                       type="radio"
+                       value="@color"
+                       data-val="true"
+                       data-val-required="Please select at least one animal"
+                       data-rule-required="true"
+                       data-msg-required="Please select at least one animal"
+                       @if (Model.SelectedColor == color) { <text>checked</text> } />
+                <label>@color</label>
+            }
+            <span asp-validation-for="SelectedColor"></span>
         </div>
 
         <button type="submit" class="btn">Save</button>
@@ -45,6 +90,27 @@
 <script src="/dist/aspnet-validation.js"></script>
 <script>
     const service = new aspnetValidation.ValidationService(console);
+
+    var customRequired = function (value, element) {
+
+        // Handle single and multiple checkboxes/radio buttons.
+        if (element.type.toLowerCase() === "checkbox" || element.type.toLowerCase() === "radio") {
+            const allElementsOfThisName = element.form.querySelectorAll("input[name='" + element.name + "']");
+            for (let i = 0; i < allElementsOfThisName.length; i++) {
+                if (allElementsOfThisName[i].checked === true) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        // Use default required for all other field types.
+        return Boolean(value);
+    }
+
+    service.addProvider("required", customRequired);
+
     service.bootstrap();
 </script>
 </body>
