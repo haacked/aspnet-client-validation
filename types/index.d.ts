@@ -83,7 +83,7 @@ export declare class MvcValidationProviders {
     remote: ValidationProvider;
 }
 /**
- * Responsibles for managing the DOM elements and running the validation providers.
+ * Responsible for managing the DOM elements and running the validation providers.
  */
 export declare class ValidationService {
     /**
@@ -167,6 +167,7 @@ export declare class ValidationService {
      * @param formUID
      */
     private getFormValidationTask;
+    private getMessageFor;
     /**
      * Fires off validation for elements within the provided form and then calls the callback
      * @param form
@@ -213,7 +214,7 @@ export declare class ValidationService {
     isValid: (form: HTMLFormElement, prevalidate?: boolean, callback?: ValidatedCallback) => boolean;
     /**
      * Returns true if the provided field is valid, and then calls the callback. The form will be validated before checking, unless prevalidate is set to false
-     * @param form
+     * @param field
      * @param prevalidate
      * @param callback
      * @returns
