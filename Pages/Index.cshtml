@@ -41,6 +41,63 @@
     </form>
 </fieldset>
 
+<fieldset>
+    <legend>Form 2</legend>
+    <form method="post">
+        <div class="form-field">
+            <label asp-for="Id"></label>
+            <input asp-for="Id"/>
+            <span asp-validation-for="Id"></span>
+        </div>
+
+        <div class="form-field">
+            <label asp-for="Control"></label>
+            <input asp-for="Control"/>
+            <span asp-validation-for="Control"></span>
+        </div>
+
+        <button type="submit" class="btn">Save</button>
+    </form>
+</fieldset>
+
+<fieldset>
+    <legend>Form 3</legend>
+    <form method="post">
+        <div class="form-field">
+            <label asp-for="Input.SomeRequiredField"></label>
+            <input asp-for="Input.SomeRequiredField"/>
+            <span asp-validation-for="Input.SomeRequiredField"></span>
+        </div>
+        <button type="submit" class="btn">Save</button>
+    </form>
+</fieldset>
+
+<fieldset>
+    <legend>Form 4</legend>
+    <form method="post">
+        <div class="form-field">
+            <label asp-for="Input.SomeRequiredField"></label>
+            <input asp-for="Input.SomeRequiredField"/>
+            <span asp-validation-for="Input.SomeRequiredField"></span>
+        </div>
+        <button type="submit" class="btn">Save</button>
+    </form>
+</fieldset>
+
+<fieldset>
+    <legend>External Form</legend>
+        <div class="form-field">
+            <label asp-for="Input.SomeRequiredField" form="external"></label>
+            <input asp-for="Input.SomeRequiredField" form="external"/>
+            <span asp-validation-for="Input.SomeRequiredField" form="external"></span>
+        </div>
+        <button type="submit" class="btn">Save</button>
+</fieldset>
+
+
+<form id="external">
+
+</form>
 
 <script src="/dist/aspnet-validation.js"></script>
 <script>
