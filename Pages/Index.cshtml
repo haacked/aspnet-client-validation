@@ -147,27 +147,6 @@
 <script src="/dist/aspnet-validation.js"></script>
 <script>
     const service = new aspnetValidation.ValidationService(console);
-
-    var customRequired = function (value, element) {
-
-        // Handle single and multiple checkboxes/radio buttons.
-        if (element.type.toLowerCase() === "checkbox" || element.type.toLowerCase() === "radio") {
-            const allElementsOfThisName = element.form.querySelectorAll("input[name='" + element.name + "']");
-            for (let i = 0; i < allElementsOfThisName.length; i++) {
-                if (allElementsOfThisName[i].checked === true) {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-        // Use default required for all other field types.
-        return Boolean(value);
-    }
-
-    service.addProvider("required", customRequired);
-
     service.bootstrap();
 </script>
 </body>

@@ -100,6 +100,19 @@ export class MvcValidationProviders {
      * Validates whether the input has a value.
      */
     required: ValidationProvider = (value, element, params) => {
+        // Handle single and multiple checkboxes/radio buttons.
+        const elementType = element.type.toLowerCase();
+        if (elementType === "checkbox" || elementType) {
+            const allElementsOfThisName = Array.from(element.form.querySelectorAll(`input[name='${element.name}'][type='${elementType}']`));
+            for (let element of allElementsOfThisName) {
+                if (element instanceof HTMLInputElement && element.checked === true) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+        // Default behavior otherwise.
         return Boolean(value);
     }
 
