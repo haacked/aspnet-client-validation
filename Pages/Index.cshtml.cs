@@ -19,6 +19,10 @@ public class IndexModel : PageModel
     [Required]
     public string? Control { get; set; }
 
+    [BindProperty]
+    [Required]
+    public string? Color { get; set; }
+
     public IActionResult OnPost()
     {
         if (!ModelState.IsValid)

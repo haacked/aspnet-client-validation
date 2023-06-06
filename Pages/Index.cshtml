@@ -11,21 +11,36 @@
 
 <h1 class="status-message">@Model.StatusMessage</h1>
 
-<form method="post">
-    <div class="form-field">
-        <label asp-for="Id"></label>
-        <input asp-for="Id"/>
-        <span asp-validation-for="Id"></span>
-    </div>
+<fieldset>
+    <legend>Form 1</legend>
+    <form method="post">
+        <div class="form-field">
+            <label asp-for="Id"></label>
+            <input asp-for="Id"/>
+            <span asp-validation-for="Id"></span>
+        </div>
 
-    <div class="form-field">
-        <label asp-for="Control"></label>
-        <input asp-for="Control"/>
-        <span asp-validation-for="Control"></span>
-    </div>
+        <div class="form-field">
+            <label asp-for="Control"></label>
+            <input asp-for="Control"/>
+            <span asp-validation-for="Control"></span>
+        </div>
 
-    <button type="submit" class="btn">Save</button>
-</form>
+        <div class="form-field">
+            <label>
+                <input asp-for="Color" /> Red
+            </label>
+
+            <label>
+                <input asp-for="Color" /> Blue
+            </label>
+            <span asp-validation-for="Color"></span>
+        </div>
+
+        <button type="submit" class="btn">Save</button>
+    </form>
+</fieldset>
+
 
 <script src="/dist/aspnet-validation.js"></script>
 <script>
