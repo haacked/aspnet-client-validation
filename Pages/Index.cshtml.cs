@@ -21,7 +21,15 @@ public class IndexModel : PageModel
 
     [BindProperty]
     [Required]
-    public string? Color { get; set; }
+    public List<string>? SelectedAnimals { get; set; }
+
+    public string[] Animals = new[] { "Dog", "Cat", "Fish" };
+
+    [BindProperty]
+    [Required]
+    public string? SelectedColor { get; set; }
+
+    public string[] Colors = new[] { "Red", "Green", "Blue" };
 
     public IActionResult OnPost()
     {
