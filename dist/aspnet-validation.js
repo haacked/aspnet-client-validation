@@ -190,6 +190,19 @@ var MvcValidationProviders = /** @class */ (function () {
          * Validates whether the input has a value.
          */
         this.required = function (value, element, params) {
+            // Handle single and multiple checkboxes/radio buttons.
+            var elementType = element.type.toLowerCase();
+            if (elementType === "checkbox" || elementType) {
+                var allElementsOfThisName = Array.from(element.form.querySelectorAll("input[name='".concat(element.name, "'][type='").concat(elementType, "']")));
+                for (var _i = 0, allElementsOfThisName_1 = allElementsOfThisName; _i < allElementsOfThisName_1.length; _i++) {
+                    var element_1 = allElementsOfThisName_1[_i];
+                    if (element_1 instanceof HTMLInputElement && element_1.checked === true) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+            // Default behavior otherwise.
             return Boolean(value);
         };
         /**
