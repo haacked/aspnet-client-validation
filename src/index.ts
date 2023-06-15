@@ -494,8 +494,8 @@ export class ValidationService {
         }
 
         // Otherwise if a validation message span is inside a form, we group the span with the form it's inside.
-        let forms = Array.from(root.querySelectorAll<HTMLElement>('form'));
-        if (root.tagName === 'form') {
+        let forms = Array.from(root.querySelectorAll<HTMLFormElement>('form'));
+        if (root instanceof HTMLFormElement) {
             // querySelectorAll does not include the root element itself.
             // we could use 'matches', but that's newer than querySelectorAll so we'll keep it simple and compatible.
             forms.push(root);
