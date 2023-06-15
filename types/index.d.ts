@@ -286,17 +286,17 @@ export declare class ValidationService {
      */
     bootstrap(options?: {
         watch?: boolean;
-        root?: HTMLElement;
+        root?: ParentNode;
     }): void;
     /**
      * Scans the provided root element for any validation directives and attaches behavior to them.
      */
-    scan(root: HTMLElement): void;
+    scan(root: ParentNode): void;
     /**
      * Watches the provided root element for mutations, and scans for new validation directives to attach behavior.
      * @param root The root element to use, defaults to the document.documentElement.
      */
-    watch(root: HTMLElement): void;
+    watch(root: ParentNode): void;
     private observed;
     /**
      * Override CSS class name for input validation error. Default: 'input-validation-error'
