@@ -12,6 +12,16 @@ export interface Logger {
     warn(message: string, ...args: any[]): void;
 }
 /**
+ * An `HTMLElement` that can be validated (`input`, `select`, `textarea`).
+ */
+export type ValidatableElement = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
+/**
+ * Checks if `element` is validatable (`input`, `select`, `textarea`).
+ * @param element The element to check.
+ * @returns `true` if validatable, otherwise `false`.
+ */
+export declare const isValidatable: (element: Node) => element is ValidatableElement;
+/**
  * Parameters passed into validation providers from the element attributes.
  * error property is read from data-val-[Provider Name] attribute.
  * params property is populated from data-val-[Provider Name]-[Parameter Name] attributes.
@@ -32,7 +42,7 @@ export type ValidationDirective = {
  * String return signifies failed validation, which then will be used as the validation error message.
  * Promise return signifies asynchronous plugin behavior, with same behavior as Boolean or String.
  */
-export type ValidationProvider = (value: string, element: HTMLInputElement, params: StringKeyValuePair) => boolean | string | Promise<boolean | string>;
+export type ValidationProvider = (value: string, element: ValidatableElement, params: StringKeyValuePair) => boolean | string | Promise<boolean | string>;
 /**
  * Callback to receive the result of validating a form.
  */
@@ -237,7 +247,7 @@ export declare class ValidationService {
      * Triggers a debounced live validation when input value changes.
      * @param input
      */
-    addInput(input: HTMLInputElement): void;
+    addInput(input: ValidatableElement): void;
     /**
      * Scans the entire document for input elements to be validated.
      */
@@ -255,18 +265,18 @@ export declare class ValidationService {
      * @param input
      * @param message
      */
-    addError(input: HTMLInputElement, message: string): void;
+    addError(input: ValidatableElement, message: string): void;
     /**
      * Removes an error message from an input element, which also updates the validation message elements and validation summary elements.
      * @param input
      */
-    removeError(input: HTMLInputElement): void;
+    removeError(input: ValidatableElement): void;
     /**
      * Returns a validation Promise factory for an input element, using given validation directives.
      * @param input
      * @param directives
      */
-    createValidator(input: HTMLInputElement, directives: ValidationDirective): () => Promise<boolean>;
+    createValidator(input: ValidatableElement, directives: ValidationDirective): () => Promise<boolean>;
     /**
      * Checks if the provided input is hidden from the browser
      * @param input

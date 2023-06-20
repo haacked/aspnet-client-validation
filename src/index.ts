@@ -27,6 +27,31 @@ const nullLogger = new (class implements Logger {
 })();
 
 /**
+ * An `HTMLElement` that can be validated (`input`, `select`, `textarea`).
+ */
+export type ValidatableElement = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
+
+/**
+ * Checks if `element` is validatable (`input`, `select`, `textarea`).
+ * @param element The element to check.
+ * @returns `true` if validatable, otherwise `false`.
+ */
+export const isValidatable = (element: Node): element is ValidatableElement =>
+    element instanceof HTMLInputElement
+    || element instanceof HTMLSelectElement
+    || element instanceof HTMLTextAreaElement;
+
+const validatableElementTypes = ['input', 'select', 'textarea'];
+
+/**
+ * Generates a selector to match validatable elements (`input`, `select`, `textarea`).
+ * @param selector An optional selector to apply to the valid input types, e.g. `[data-val="true"]`.
+ * @returns The validatable elements.
+ */
+const validatableSelector = (selector?: string) =>
+    validatableElementTypes.map(t => `${t}${selector || ''}`).join(',');
+
+/**
  * Parameters passed into validation providers from the element attributes.
  * error property is read from data-val-[Provider Name] attribute.
  * params property is populated from data-val-[Provider Name]-[Parameter Name] attributes.
@@ -49,7 +74,7 @@ export type ValidationDirective = {
  * String return signifies failed validation, which then will be used as the validation error message.
  * Promise return signifies asynchronous plugin behavior, with same behavior as Boolean or String.
  */
-export type ValidationProvider = (value: string, element: HTMLInputElement, params: StringKeyValuePair) => boolean | string | Promise<boolean | string>;
+export type ValidationProvider = (value: string, element: ValidatableElement, params: StringKeyValuePair) => boolean | string | Promise<boolean | string>;
 
 /**
  * Callback to receive the result of validating a form.
@@ -66,7 +91,7 @@ type Validator = () => Promise<boolean>;
  * @param element - The input to validate
  * @param selector - Used to find the field. Ex. *.Password where * replaces whatever prefixes asp.net might add.
  */
-function getRelativeFormElement(element: HTMLInputElement, selector: string) {
+function getRelativeFormElement(element: ValidatableElement, selector: string): ValidatableElement {
     // example elementName: Form.PasswordConfirm, Form.Email
     // example selector (dafuq): *.Password, *.__RequestVerificationToken
     // example result element name: Form.Password, __RequestVerificationToken
@@ -83,13 +108,13 @@ function getRelativeFormElement(element: HTMLInputElement, selector: string) {
         // Form.Password
         let relativeElementName = objectName + '.' + selectedName;
         let relativeElement = document.getElementsByName(relativeElementName)[0];
-        if (relativeElement) {
+        if (isValidatable(relativeElement)) {
             return relativeElement;
         }
     }
 
     // __RequestVerificationToken
-    return element.form.querySelector(`[name=${selectedName}]`);
+    return element.form.querySelector(validatableSelector(`[name=${selectedName}]`));
 }
 
 /**
@@ -149,7 +174,7 @@ export class MvcValidationProviders {
             return true;
         }
 
-        let otherElement = getRelativeFormElement(element, params.other) as HTMLInputElement;
+        let otherElement = getRelativeFormElement(element, params.other);
         if (!otherElement) {
             return true;
         }
@@ -309,7 +334,7 @@ export class MvcValidationProviders {
 
         for (let fieldSelector of fieldSelectors) {
             let fieldName = fieldSelector.substr(2);
-            let fieldElement = getRelativeFormElement(element, fieldSelector) as HTMLInputElement;
+            let fieldElement = getRelativeFormElement(element, fieldSelector);
 
             let hasValue = Boolean(fieldElement && fieldElement.value);
             if (!hasValue) {
@@ -622,7 +647,7 @@ export class ValidationService {
     }
 
     // Retrieves the validation span for the input.
-    private getMessageFor(input: HTMLInputElement) {
+    private getMessageFor(input: ValidatableElement) {
         let formId = this.getElementUID(input.form);
         let name = `${formId}:${input.name}`;
         return this.messageFor[name];
@@ -819,7 +844,7 @@ export class ValidationService {
             let uids = this.formInputs[formUID];
 
             for (let uid of uids) {
-                let input = this.elementByUID[uid] as HTMLInputElement;
+                let input = this.elementByUID[uid] as ValidatableElement;
                 if (input.classList.contains(this.ValidationInputCssClassName)) {
                     input.classList.remove(this.ValidationInputCssClassName);
                 }
@@ -846,7 +871,7 @@ export class ValidationService {
      * Triggers a debounced live validation when input value changes.
      * @param input
      */
-    addInput(input: HTMLInputElement) {
+    addInput(input: ValidatableElement) {
         let uid = this.getElementUID(input);
 
         let directives = this.parseDirectives(input.attributes);
@@ -885,16 +910,16 @@ export class ValidationService {
      * Scans the entire document for input elements to be validated.
      */
     private scanInputs(root: ParentNode) {
-        let inputs = Array.from(root.querySelectorAll<HTMLElement>('[data-val="true"]'));
+        let inputs = Array.from(root.querySelectorAll<ValidatableElement>(validatableSelector('[data-val="true"]')));
 
         // querySelectorAll does not include the root element itself.
         // we could use 'matches', but that's newer than querySelectorAll so we'll keep it simple and compatible.
-        if (root instanceof HTMLElement && root.getAttribute("data-val") === "true") {
+        if (isValidatable(root) && root.getAttribute("data-val") === "true") {
             inputs.push(root);
         }
 
         for (let i = 0; i < inputs.length; i++) {
-            let input = inputs[i] as HTMLInputElement;
+            let input = inputs[i];
             this.addInput(input);
         }
     }
@@ -956,7 +981,7 @@ export class ValidationService {
      * @param input
      * @param message
      */
-    addError(input: HTMLInputElement, message: string) {
+    addError(input: ValidatableElement, message: string) {
         let spans = this.getMessageFor(input);
         if (spans) {
             for (let i = 0; i < spans.length; i++) {
@@ -989,7 +1014,7 @@ export class ValidationService {
      * Removes an error message from an input element, which also updates the validation message elements and validation summary elements.
      * @param input
      */
-    removeError(input: HTMLInputElement) {
+    removeError(input: ValidatableElement) {
         let spans = this.getMessageFor(input);
         if (spans) {
             for (let i = 0; i < spans.length; i++) {
@@ -1022,7 +1047,7 @@ export class ValidationService {
      * @param input
      * @param directives
      */
-    createValidator(input: HTMLInputElement, directives: ValidationDirective) {
+    createValidator(input: ValidatableElement, directives: ValidationDirective) {
         return async () => {
 
             // only validate visible fields
