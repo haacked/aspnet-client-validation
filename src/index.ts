@@ -72,7 +72,7 @@ function getRelativeFormElement(element: HTMLInputElement, selector: string) {
     // example result element name: Form.Password, __RequestVerificationToken
 
     let elementName = element.name;
-    let realSelector = selector.substring(2); // Password, __RequestVerificationToken
+    let selectedName = selector.substring(2); // Password, __RequestVerificationToken
     let objectName = '';
 
     let dotLocation = elementName.lastIndexOf('.');
@@ -81,7 +81,7 @@ function getRelativeFormElement(element: HTMLInputElement, selector: string) {
         objectName = elementName.substring(0, dotLocation);
 
         // Form.Password
-        let relativeElementName = objectName + '.' + realSelector;
+        let relativeElementName = objectName + '.' + selectedName;
         let relativeElement = document.getElementsByName(relativeElementName)[0];
         if (relativeElement) {
             return relativeElement;
@@ -89,7 +89,7 @@ function getRelativeFormElement(element: HTMLInputElement, selector: string) {
     }
 
     // __RequestVerificationToken
-    return element.form.querySelector(`[name=${realSelector}]`);
+    return element.form.querySelector(`[name=${selectedName}]`);
 }
 
 /**
