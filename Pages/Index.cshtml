@@ -51,6 +51,12 @@
         </div>
 
         <div class="form-field">
+            <label asp-for="TextArea"></label>
+            <textarea asp-for="TextArea"></textarea>
+            <span asp-validation-for="TextArea"></span>
+        </div>
+
+        <div class="form-field">
             @foreach (var animal in Model.Animals)
             {
                 <input name="SelectedAnimals"

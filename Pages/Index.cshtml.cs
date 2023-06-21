@@ -21,6 +21,10 @@ public class IndexModel : PageModel
 
     [BindProperty]
     [Required]
+    public string? TextArea { get; set; }
+
+    [BindProperty]
+    [Required]
     public List<string>? SelectedAnimals { get; set; }
 
     public string[] Animals = new[] { "Dog", "Cat", "Fish" };
