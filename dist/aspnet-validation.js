@@ -100,11 +100,12 @@ return /******/ (function(modules) { // webpackBootstrap
 /*!**********************!*\
   !*** ./src/index.ts ***!
   \**********************/
-/*! exports provided: MvcValidationProviders, ValidationService */
+/*! exports provided: isValidatable, MvcValidationProviders, ValidationService */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isValidatable", function() { return isValidatable; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "MvcValidationProviders", function() { return MvcValidationProviders; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ValidationService", function() { return ValidationService; });
 var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
@@ -156,6 +157,25 @@ var nullLogger = new (/** @class */ (function () {
     return class_1;
 }()))();
 /**
+ * Checks if `element` is validatable (`input`, `select`, `textarea`).
+ * @param element The element to check.
+ * @returns `true` if validatable, otherwise `false`.
+ */
+var isValidatable = function (element) {
+    return element instanceof HTMLInputElement
+        || element instanceof HTMLSelectElement
+        || element instanceof HTMLTextAreaElement;
+};
+var validatableElementTypes = ['input', 'select', 'textarea'];
+/**
+ * Generates a selector to match validatable elements (`input`, `select`, `textarea`).
+ * @param selector An optional selector to apply to the valid input types, e.g. `[data-val="true"]`.
+ * @returns The validatable elements.
+ */
+var validatableSelector = function (selector) {
+    return validatableElementTypes.map(function (t) { return "".concat(t).concat(selector || ''); }).join(',');
+};
+/**
  * Resolves and returns the element referred by original element using ASP.NET selector logic.
  * @param element - The input to validate
  * @param selector - Used to find the field. Ex. *.Password where * replaces whatever prefixes asp.net might add.
@@ -165,21 +185,21 @@ function getRelativeFormElement(element, selector) {
     // example selector (dafuq): *.Password, *.__RequestVerificationToken
     // example result element name: Form.Password, __RequestVerificationToken
     var elementName = element.name;
-    var realSelector = selector.substring(2); // Password, __RequestVerificationToken
+    var selectedName = selector.substring(2); // Password, __RequestVerificationToken
     var objectName = '';
     var dotLocation = elementName.lastIndexOf('.');
     if (dotLocation > -1) {
         // Form
         objectName = elementName.substring(0, dotLocation);
         // Form.Password
-        var relativeElementName = objectName + '.' + realSelector;
+        var relativeElementName = objectName + '.' + selectedName;
         var relativeElement = document.getElementsByName(relativeElementName)[0];
-        if (relativeElement) {
+        if (isValidatable(relativeElement)) {
             return relativeElement;
         }
     }
     // __RequestVerificationToken
-    return element.form.querySelector("[name=".concat(realSelector, "]"));
+    return element.form.querySelector(validatableSelector("[name=".concat(selectedName, "]")));
 }
 /**
  * Contains default implementations for ASP.NET Core MVC validation attributes.
@@ -649,7 +669,7 @@ var ValidationService = /** @class */ (function () {
         }
         // Otherwise if a validation message span is inside a form, we group the span with the form it's inside.
         var forms = Array.from(root.querySelectorAll('form'));
-        if (root.tagName === 'form') {
+        if (root instanceof HTMLFormElement) {
             // querySelectorAll does not include the root element itself.
             // we could use 'matches', but that's newer than querySelectorAll so we'll keep it simple and compatible.
             forms.push(root);
@@ -893,10 +913,10 @@ var ValidationService = /** @class */ (function () {
      * Scans the entire document for input elements to be validated.
      */
     ValidationService.prototype.scanInputs = function (root) {
-        var inputs = Array.from(root.querySelectorAll('[data-val="true"]'));
+        var inputs = Array.from(root.querySelectorAll(validatableSelector('[data-val="true"]')));
         // querySelectorAll does not include the root element itself.
         // we could use 'matches', but that's newer than querySelectorAll so we'll keep it simple and compatible.
-        if (root.getAttribute("data-val") === "true") {
+        if (isValidatable(root) && root.getAttribute("data-val") === "true") {
             inputs.push(root);
         }
         for (var i = 0; i < inputs.length; i++) {
