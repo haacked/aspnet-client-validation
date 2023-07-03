@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>@ViewData["Title"]</title>
+    <title>ASP.NET Client Validation Demo Page</title>
+    <link rel="stylesheet" href="/css/site.css">
+    <link rel="stylesheet" href="/dist/aspnet-validation.css" /></head>
+<body>
+
+@RenderBody()
+
+<script src="/dist/aspnet-validation.js"></script>
+<script>
+    const service = new aspnetValidation.ValidationService(console);
+    service.bootstrap();
+</script>
+
+</body>
+</html>

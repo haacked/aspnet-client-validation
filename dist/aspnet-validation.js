@@ -220,6 +220,15 @@ var MvcValidationProviders = /** @class */ (function () {
                         return true;
                     }
                 }
+                // Checkboxes do not submit a value when unchecked. To work around this, platforms such as ASP.NET render a
+                // hidden input with the same name as the checkbox so that a value ("false") is still submitted even when
+                // the checkbox is not checked. We check this special case here.
+                if (elementType === "checkbox") {
+                    var checkboxHiddenInput = element.form.querySelector("input[name='".concat(element.name, "'][type='hidden']"));
+                    if (checkboxHiddenInput instanceof HTMLInputElement && checkboxHiddenInput.value === "false") {
+                        return true;
+                    }
+                }
                 return false;
             }
             // Default behavior otherwise.

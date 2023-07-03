@@ -1,0 +1,7 @@
+@model string?
+
+@if (Model is { Length: > 0 } statusMessage) {
+    <h1 class="status-message">
+        @statusMessage
+    </h1>
+}
