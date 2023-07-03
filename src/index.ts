@@ -715,6 +715,21 @@ export class ValidationService {
     submitValidForm = (form: HTMLFormElement, submitEvent: SubmitEvent) => {
         const newEvent = new SubmitEvent('submit', submitEvent);
         if (form.dispatchEvent(newEvent)) {
+            // Because the submitter is not propagated when calling
+            // form.submit(), we recreate it here.
+            const submitter = submitEvent.submitter;
+            if (submitter) {
+                const name = submitter.getAttribute('name');
+                // If name is null, a submit button is not submitted.
+                if (name) {
+                    const submitterInput = document.createElement('input');
+                    submitterInput.type = 'hidden';
+                    submitterInput.name = name;
+                    submitterInput.value = submitter.getAttribute('value');
+                    form.appendChild(submitterInput)
+                }
+            }
+
             form.submit();
         }
     }

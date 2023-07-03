@@ -541,6 +541,20 @@ var ValidationService = /** @class */ (function () {
         this.submitValidForm = function (form, submitEvent) {
             var newEvent = new SubmitEvent('submit', submitEvent);
             if (form.dispatchEvent(newEvent)) {
+                // Because the submitter is not propagated when calling
+                // form.submit(), we recreate it here.
+                var submitter = submitEvent.submitter;
+                if (submitter) {
+                    var name_1 = submitter.getAttribute('name');
+                    // If name is null, a submit button is not submitted.
+                    if (name_1) {
+                        var submitterInput = document.createElement('input');
+                        submitterInput.type = 'hidden';
+                        submitterInput.name = name_1;
+                        submitterInput.value = submitter.getAttribute('value');
+                        form.appendChild(submitterInput);
+                    }
+                }
                 form.submit();
             }
         };
