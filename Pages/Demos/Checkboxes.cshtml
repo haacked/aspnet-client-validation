@@ -1,0 +1,63 @@
+@page
+@model DemoWeb.Pages.Demos.Checkboxes
+
+@{
+    Layout = "Shared/_Layout";
+}
+
+<partial name="Shared/_StatusMessage" model="Model.StatusMessage"/>
+
+<fieldset>
+    <legend>Required ASP.NET Checkboxes with hidden input</legend>
+
+    <form method="post">
+        <div class="form-field">
+            <p>
+                ASP.NET renders a checkbox and a hidden input for each boolean property.
+                The hidden input is used to ensure that a value is sent for the checkbox,
+                even if it is unchecked. Unchecking it should not fail validation.
+            </p>
+            <label>Is checked
+                <input asp-for="Input.IsChecked"/>
+            </label>
+            <span asp-validation-for="Input.IsChecked"></span>
+            @if (Model.Input.IsChecked) {
+                <em class="results">This is checked.</em>
+            } else {
+                <em class="results">This is not checked</em>
+            }
+        </div>
+
+        <div class="form-field">
+            <p>
+                However, if you manually render a checkbox, the checkbox is only submitted
+                when checked. So this allows cases where we require at least one checkbox
+                is selected.
+            </p>
+            @foreach (var animal in Model.Animals) {
+                <input name="SelectedAnimals"
+                       type="checkbox"
+                       value="@animal"
+                       data-val="true"
+                       data-val-required="Please select at least one animal"
+                       data-rule-required="true"
+                       data-msg-required="Please select at least one animal"
+                       @if (Model.SelectedAnimals != null && Model.SelectedAnimals.Contains(animal)) {
+                           <text>checked</text>
+                       }/>
+                <label>@animal</label>
+            }
+            <span asp-validation-for="SelectedAnimals"></span>
+            @if (Model.SelectedAnimals.Any()) {
+                <em class="results">Selected animals: @string.Join(", ", Model.SelectedAnimals)</em>
+            }
+        </div>
+
+        <input type="submit" value="Submit"/>
+    </form>
+</fieldset>
+
+@if (Model.StatusMessage is not null) {
+    <a href="">Reset</a>
+}
+

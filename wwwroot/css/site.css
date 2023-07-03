@@ -47,3 +47,8 @@ table.form-data {
 table.form-data th {
     text-align: left;
 }
+
+.results {
+    margin-left: 4px;
+    color: cadetblue;
+}

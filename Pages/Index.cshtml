@@ -1,16 +1,15 @@
 @page
 @model IndexModel
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <title>ASP.NET Client Validation Demo Page</title>
-    <link rel="stylesheet" href="css/site.css">
-    <link rel="stylesheet" href="/dist/aspnet-validation.css" />
-</head>
-<body>
+@{
+    Layout = "Shared/_Layout";
+    ViewData["Title"] = "ASP.NET Client Validation Demo Page";
+}
+<h1>Other Demos</h1>
+<ul>
+    <li><a asp-page="Demos/Checkboxes">Checkboxes</a></li>
+</ul>
 
-@if (Model.StatusMessage != null)
-{
+@if (Model.StatusMessage != null) {
     <h1 class="status-message">@Model.StatusMessage</h1>
 
     <h2>Submitted Values</h2>
@@ -23,10 +22,6 @@
         <tr>
             <th>Control: </th>
             <td>@Model.Control</td>
-        </tr>
-        <tr>
-            <th>Selected Animals: </th>
-            <td>@(Model.SelectedAnimals != null ? string.Join(", ", Model.SelectedAnimals) : null)</td>
         </tr>
         <tr>
             <th>Selected Color: </th>
@@ -57,24 +52,7 @@
         </div>
 
         <div class="form-field">
-            @foreach (var animal in Model.Animals)
-            {
-                <input name="SelectedAnimals"
-                       type="checkbox"
-                       value="@animal"
-                       data-val="true"
-                       data-val-required="Please select at least one animal"
-                       data-rule-required="true"
-                       data-msg-required="Please select at least one animal"
-                       @if (Model.SelectedAnimals != null && Model.SelectedAnimals.Contains(animal)) { <text>checked</text> } />
-                <label>@animal</label>
-            }
-            <span asp-validation-for="SelectedAnimals"></span>
-        </div>
-
-        <div class="form-field">
-            @foreach (var color in Model.Colors)
-            {
+            @foreach (var color in Model.Colors) {
                 <input name="SelectedColor"
                        type="radio"
                        value="@color"
@@ -82,7 +60,9 @@
                        data-val-required="Please select a color"
                        data-rule-required="true"
                        data-msg-required="Please select a color"
-                       @if (Model.SelectedColor == color) { <text>checked</text> } />
+                       @if (Model.SelectedColor == color) {
+                           <text>checked</text>
+                       }/>
                 <label>@color</label>
             }
             <span asp-validation-for="SelectedColor"></span>
@@ -137,12 +117,12 @@
 
 <fieldset>
     <legend>External Form</legend>
-        <div class="form-field">
-            <label asp-for="Input.SomeRequiredField" form="external"></label>
-            <input asp-for="Input.SomeRequiredField" form="external"/>
-            <span asp-validation-for="Input.SomeRequiredField" form="external"></span>
-        </div>
-        <button type="submit" class="btn">Save</button>
+    <div class="form-field">
+        <label asp-for="Input.SomeRequiredField" form="external"></label>
+        <input asp-for="Input.SomeRequiredField" form="external"/>
+        <span asp-validation-for="Input.SomeRequiredField" form="external"></span>
+    </div>
+    <button type="submit" class="btn">Save</button>
 </fieldset>
 
 
@@ -150,10 +130,3 @@
 
 </form>
 
-<script src="/dist/aspnet-validation.js"></script>
-<script>
-    const service = new aspnetValidation.ValidationService(console);
-    service.bootstrap();
-</script>
-</body>
-</html>
