@@ -1,0 +1,44 @@
+@page
+@model DemoWeb.Pages.Demos.SubmitButton
+
+@{
+    Layout = "Shared/_Layout";
+}
+
+<fieldset>
+<legend>Required ASP.NET Checkboxes with hidden input</legend>
+
+<form method="post">
+    <div class="form-field">
+        <p>
+            This simple test demonstrates that we ensure that submit buttons.
+        </p>
+
+        <input type="submit" asp-for="SubmitButtonValue" value="Input Type Submit" />
+        <input type="submit" value="Input Type Submit No Name" />
+        <input type="submit" name="SubmitButtonValue" />
+        <button type="submit" name="SubmitButtonValue" value="Submit That!">Button with name and value</button>
+
+        <button type="submit" value="Submit That!">Button no name</button>
+        <button type="submit" name="SubmitButtonValue">Button with name, no value</button>
+
+        @if (Model.SubmitButtonValue is not null) {
+            <span class="results">
+                The submitted button value is "@Model.SubmitButtonValue".
+            </span>
+
+            <p>The submitted form collection:</p>
+            <table class="form-data">
+                @foreach (var item in Request.Form) {
+                    <tr>
+                        <th>@item.Key</th>
+                        <td>@item.Value</td>
+                    </tr>
+                }
+            </table>
+        }
+
+
+    </div>
+</form>
+</fieldset>

@@ -27,6 +27,9 @@ public class IndexModel : PageModel
     [Required]
     public string? SelectedColor { get; set; }
 
+    [BindProperty]
+    public string? SubmitButton { get; set; }
+
     public string[] Colors = new[] { "Red", "Green", "Blue" };
 
     public IActionResult OnPost()

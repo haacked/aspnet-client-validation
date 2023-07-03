@@ -7,6 +7,7 @@
 <h1>Other Demos</h1>
 <ul>
     <li><a asp-page="Demos/Checkboxes">Checkboxes</a></li>
+    <li><a asp-page="Demos/SubmitButton">Submit Button</a></li>
 </ul>
 
 @if (Model.StatusMessage != null) {
@@ -26,6 +27,10 @@
         <tr>
             <th>Selected Color: </th>
             <td>@Model.SelectedColor</td>
+        </tr>
+        <tr>
+            <th>Button Value: </th>
+            <td>@Model.SubmitButton</td>
         </tr>
     </table>
 }
@@ -68,7 +73,7 @@
             <span asp-validation-for="SelectedColor"></span>
         </div>
 
-        <button type="submit" class="btn">Save</button>
+        <input type="submit" asp-for="SubmitButton" class="btn" value="Save" />
     </form>
 </fieldset>
 
