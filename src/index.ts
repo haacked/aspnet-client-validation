@@ -658,6 +658,9 @@ export class ValidationService {
 
     // Retrieves the validation span for the input.
     private getMessageFor(input: ValidatableElement) {
+        if (!input.form) {
+            return [];
+        }
         let formId = this.getElementUID(input.form);
         let name = `${formId}:${input.name}`;
         return this.messageFor[name];
@@ -1022,12 +1025,15 @@ export class ValidationService {
             this.ValidationInputCssClassName,
             this.ValidationInputValidCssClassName);
 
-        // Adding an error to one input should also add it to others with the same name (i.e. for radio button and checkbox lists).
-        const inputs = input.form.querySelectorAll(`input[name="${input.name}"]`);
-        for (let i = 0; i < inputs.length; i++) {
-            this.swapClasses(inputs[i],
-                this.ValidationInputCssClassName,
-                this.ValidationInputValidCssClassName);
+        if (input.form) {
+
+            // Adding an error to one input should also add it to others with the same name (i.e. for radio button and checkbox lists).
+            const inputs = input.form.querySelectorAll(`input[name="${input.name}"]`);
+            for (let i = 0; i < inputs.length; i++) {
+                this.swapClasses(inputs[i],
+                    this.ValidationInputCssClassName,
+                    this.ValidationInputValidCssClassName);
+            }
         }
 
         let uid = this.getElementUID(input);
@@ -1055,11 +1061,13 @@ export class ValidationService {
             this.ValidationInputCssClassName);
 
         // Removing an error from one input should also remove it from others with the same name (i.e. for radio button and checkbox lists).
-        const inputs = input.form.querySelectorAll(`input[name="${input.name}"]`);
-        for (let i = 0; i < inputs.length; i++) {
-            this.swapClasses(inputs[i],
-                this.ValidationInputValidCssClassName,
-                this.ValidationInputCssClassName);
+        if (input.form) {
+            const inputs = input.form.querySelectorAll(`input[name="${input.name}"]`);
+            for (let i = 0; i < inputs.length; i++) {
+                this.swapClasses(inputs[i],
+                    this.ValidationInputValidCssClassName,
+                    this.ValidationInputCssClassName);
+            }
         }
 
         let uid = this.getElementUID(input);
