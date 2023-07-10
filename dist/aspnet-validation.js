@@ -804,6 +804,9 @@ var ValidationService = /** @class */ (function () {
     };
     // Retrieves the validation span for the input.
     ValidationService.prototype.getMessageFor = function (input) {
+        if (!input.form) {
+            return [];
+        }
         var formId = this.getElementUID(input.form);
         var name = "".concat(formId, ":").concat(input.name);
         return this.messageFor[name];
@@ -1005,10 +1008,12 @@ var ValidationService = /** @class */ (function () {
             }
         }
         this.swapClasses(input, this.ValidationInputCssClassName, this.ValidationInputValidCssClassName);
-        // Adding an error to one input should also add it to others with the same name (i.e. for radio button and checkbox lists).
-        var inputs = input.form.querySelectorAll("input[name=\"".concat(input.name, "\"]"));
-        for (var i = 0; i < inputs.length; i++) {
-            this.swapClasses(inputs[i], this.ValidationInputCssClassName, this.ValidationInputValidCssClassName);
+        if (input.form) {
+            // Adding an error to one input should also add it to others with the same name (i.e. for radio button and checkbox lists).
+            var inputs = input.form.querySelectorAll("input[name=\"".concat(input.name, "\"]"));
+            for (var i = 0; i < inputs.length; i++) {
+                this.swapClasses(inputs[i], this.ValidationInputCssClassName, this.ValidationInputValidCssClassName);
+            }
         }
         var uid = this.getElementUID(input);
         this.summary[uid] = message;
@@ -1028,9 +1033,11 @@ var ValidationService = /** @class */ (function () {
         }
         this.swapClasses(input, this.ValidationInputValidCssClassName, this.ValidationInputCssClassName);
         // Removing an error from one input should also remove it from others with the same name (i.e. for radio button and checkbox lists).
-        var inputs = input.form.querySelectorAll("input[name=\"".concat(input.name, "\"]"));
-        for (var i = 0; i < inputs.length; i++) {
-            this.swapClasses(inputs[i], this.ValidationInputValidCssClassName, this.ValidationInputCssClassName);
+        if (input.form) {
+            var inputs = input.form.querySelectorAll("input[name=\"".concat(input.name, "\"]"));
+            for (var i = 0; i < inputs.length; i++) {
+                this.swapClasses(inputs[i], this.ValidationInputValidCssClassName, this.ValidationInputCssClassName);
+            }
         }
         var uid = this.getElementUID(input);
         delete this.summary[uid];

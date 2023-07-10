@@ -14,16 +14,10 @@
            the target , it would enumerate the files during evaluation, before
            the build starts, which may miss files created during the build. -->
       <MySourceFiles Include="dist\*.*" />
-      <Copy
-              SourceFiles="@(MySourceFiles)"
-              DestinationFiles="wwwroot\dist\%(RecursiveDir)%(Filename)%(Extension)"
-      />
+      <Copy SourceFiles="@(MySourceFiles)" DestinationFiles="wwwroot\dist\%(RecursiveDir)%(Filename)%(Extension)" />
     </ItemGroup>
 
-    <Copy
-        SourceFiles="@(MySourceFiles)"
-        DestinationFiles="wwwroot\dist\%(RecursiveDir)%(Filename)%(Extension)"
-    />
+    <Copy SourceFiles="@(MySourceFiles)" DestinationFiles="wwwroot\dist\%(RecursiveDir)%(Filename)%(Extension)" />
   </Target>
 
 
