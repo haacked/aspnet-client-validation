@@ -26,6 +26,12 @@ public class Checkboxes : PageModel
 
     public IReadOnlyList<string> Animals = new List<string> { "Dog", "Cat", "Fish" };
 
+    [BindProperty]
+    [Required]
+    public string SelectedFruit { get; set; } = string.Empty;
+
+    public IReadOnlyList<string> Fruits = new List<string> { "Apple", "Banana", "Strawberry" };
+
     public class InputModel
     {
         public bool IsChecked { get; set; }

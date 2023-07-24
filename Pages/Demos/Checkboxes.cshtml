@@ -7,8 +7,12 @@
 
 <partial name="Shared/_StatusMessage" model="Model.StatusMessage"/>
 
+<div asp-validation-summary="All">
+    <span>Please correct the following errors</span>
+</div>
+
 <fieldset>
-    <legend>Required ASP.NET Checkboxes with hidden input</legend>
+    <legend>Required ASP.NET Checkboxes (with hidden input) and Radio buttons</legend>
 
     <form method="post">
         <div class="form-field">
@@ -50,6 +54,29 @@
             <span asp-validation-for="SelectedAnimals"></span>
             @if (Model.SelectedAnimals.Any()) {
                 <em class="results">Selected animals: @string.Join(", ", Model.SelectedAnimals)</em>
+            }
+        </div>
+
+        <div class="form-field">
+            <p>
+                Similarly, with a required radio button list, one element should be checked.
+            </p>
+            @foreach (var fruit in Model.Fruits) {
+                <input name="SelectedFruit"
+                       type="radio"
+                       value="@fruit"
+                       data-val="true"
+                       data-val-required="Please select at least one fruit"
+                       data-rule-required="true"
+                       data-msg-required="Please select at least one fruit"
+                       @if (Model.SelectedFruit == fruit) {
+                           <text>checked</text>
+                       }/>
+                <label>@fruit</label>
+            }
+            <span asp-validation-for="SelectedFruit"></span>
+            @if (Model.SelectedFruit != string.Empty) {
+                <em class="results">Selected fruit: @Model.SelectedFruit</em>
             }
         </div>
 

@@ -957,11 +957,28 @@ var ValidationService = /** @class */ (function () {
         if (!Object.keys(this.summary).length) {
             return null;
         }
+        var renderedMessages = [];
         var ul = document.createElement('ul');
         for (var key in this.summary) {
+            // It could be that the message we are rendering belongs to one of a fieldset of multiple inputs that's not selected,
+            // even if another one in the fieldset is. In that case the fieldset is valid, and we shouldn't render the message.
+            var matchingElement = this.elementByUID[key];
+            if (matchingElement instanceof HTMLInputElement) {
+                if (matchingElement.type === "checkbox" || matchingElement.type === "radio") {
+                    if (matchingElement.className === this.ValidationInputValidCssClassName) {
+                        continue;
+                    }
+                }
+            }
+            // With required multiple inputs, such as a checkbox list, we'll have one message per input.
+            // It's one from the inputs that's required, not all, so we should only have one message displayed.
+            if (renderedMessages.indexOf(this.summary[key]) > -1) {
+                continue;
+            }
             var li = document.createElement('li');
             li.innerHTML = this.summary[key];
             ul.appendChild(li);
+            renderedMessages.push(this.summary[key]);
         }
         return ul;
     };
@@ -973,6 +990,7 @@ var ValidationService = /** @class */ (function () {
         if (!summaryElements.length) {
             return;
         }
+        // Prevents wasteful re-rendering of summary list element with identical items!
         // Using JSON.stringify for quick and painless deep compare of simple KVP. You need to sort the keys first, tho...
         var shadow = JSON.stringify(this.summary, Object.keys(this.summary).sort());
         if (shadow === this.renderedSummaryJSON) {
@@ -983,8 +1001,13 @@ var ValidationService = /** @class */ (function () {
         var ul = this.createSummaryDOM();
         for (var i = 0; i < summaryElements.length; i++) {
             var e = summaryElements[i];
-            e.innerHTML = '';
-            if (ul) {
+            // Remove existing list elements, but keep the summary's message.
+            var listElements = e.querySelectorAll("ul");
+            for (var j = 0; j < listElements.length; j++) {
+                listElements[j].remove();
+            }
+            // Style the summary element as valid/invalid depending on whether there are any messages to display.
+            if (ul && ul.hasChildNodes()) {
                 this.swapClasses(e, this.ValidationSummaryCssClassName, this.ValidationSummaryValidCssClassName);
                 e.appendChild(ul.cloneNode(true));
             }
@@ -1013,10 +1036,10 @@ var ValidationService = /** @class */ (function () {
             var inputs = input.form.querySelectorAll("input[name=\"".concat(input.name, "\"]"));
             for (var i = 0; i < inputs.length; i++) {
                 this.swapClasses(inputs[i], this.ValidationInputCssClassName, this.ValidationInputValidCssClassName);
+                var uid = this.getElementUID(inputs[i]);
+                this.summary[uid] = message;
             }
         }
-        var uid = this.getElementUID(input);
-        this.summary[uid] = message;
         this.renderSummary();
     };
     /**
@@ -1037,10 +1060,10 @@ var ValidationService = /** @class */ (function () {
             var inputs = input.form.querySelectorAll("input[name=\"".concat(input.name, "\"]"));
             for (var i = 0; i < inputs.length; i++) {
                 this.swapClasses(inputs[i], this.ValidationInputValidCssClassName, this.ValidationInputCssClassName);
+                var uid = this.getElementUID(inputs[i]);
+                delete this.summary[uid];
             }
         }
-        var uid = this.getElementUID(input);
-        delete this.summary[uid];
         this.renderSummary();
     };
     /**
