@@ -17,3 +17,7 @@
     color: red;
     font-style: italic;
 }
+
+.validation-summary-valid span {
+    display: none;
+}
