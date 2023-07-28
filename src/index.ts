@@ -787,7 +787,7 @@ export class ValidationService {
         }
 
         let fieldUID = this.getElementUID(field);
-        return this.summary[fieldUID] != null;
+        return this.summary[fieldUID] === undefined;
     }
 
     /**
