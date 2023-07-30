@@ -213,7 +213,7 @@ var MvcValidationProviders = /** @class */ (function () {
             // Handle single and multiple checkboxes/radio buttons.
             var elementType = element.type.toLowerCase();
             if (elementType === "checkbox" || elementType === "radio") {
-                var allElementsOfThisName = Array.from(element.form.querySelectorAll("input[name='".concat(element.name, "'][type='").concat(elementType, "']")));
+                var allElementsOfThisName = Array.from(element.form.querySelectorAll(validatableSelector("[name='".concat(element.name, "'][type='").concat(elementType, "']"))));
                 for (var _i = 0, allElementsOfThisName_1 = allElementsOfThisName; _i < allElementsOfThisName_1.length; _i++) {
                     var element_1 = allElementsOfThisName_1[_i];
                     if (element_1 instanceof HTMLInputElement && element_1.checked === true) {
@@ -606,7 +606,7 @@ var ValidationService = /** @class */ (function () {
                 }
             }
             var fieldUID = _this.getElementUID(field);
-            return _this.summary[fieldUID] != null;
+            return _this.summary[fieldUID] === undefined;
         };
         /**
          * Override CSS class name for input validation error. Default: 'input-validation-error'
@@ -1045,7 +1045,7 @@ var ValidationService = /** @class */ (function () {
         this.swapClasses(input, this.ValidationInputCssClassName, this.ValidationInputValidCssClassName);
         if (input.form) {
             // Adding an error to one input should also add it to others with the same name (i.e. for radio button and checkbox lists).
-            var inputs = input.form.querySelectorAll("input[name=\"".concat(input.name, "\"]"));
+            var inputs = input.form.querySelectorAll(validatableSelector("[name=\"".concat(input.name, "\"]")));
             for (var i = 0; i < inputs.length; i++) {
                 this.swapClasses(inputs[i], this.ValidationInputCssClassName, this.ValidationInputValidCssClassName);
                 var uid = this.getElementUID(inputs[i]);
@@ -1069,7 +1069,7 @@ var ValidationService = /** @class */ (function () {
         this.swapClasses(input, this.ValidationInputValidCssClassName, this.ValidationInputCssClassName);
         // Removing an error from one input should also remove it from others with the same name (i.e. for radio button and checkbox lists).
         if (input.form) {
-            var inputs = input.form.querySelectorAll("input[name=\"".concat(input.name, "\"]"));
+            var inputs = input.form.querySelectorAll(validatableSelector("[name=\"".concat(input.name, "\"]")));
             for (var i = 0; i < inputs.length; i++) {
                 this.swapClasses(inputs[i], this.ValidationInputValidCssClassName, this.ValidationInputCssClassName);
                 var uid = this.getElementUID(inputs[i]);
