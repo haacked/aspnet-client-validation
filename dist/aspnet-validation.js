@@ -859,18 +859,30 @@ var ValidationService = /** @class */ (function () {
             }
             validating = true;
             _this.logger.log('Validating', form);
-            validate.then(function (success) {
-                _this.logger.log('Validated (success = %s)', success, form);
-                if (callback) {
-                    callback(success);
-                    return;
-                }
-                var validationEvent = new CustomEvent('validation', {
-                    detail: { valid: success }
+            validate.then(function (success) { return __awaiter(_this, void 0, void 0, function () {
+                var validationEvent;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0:
+                            this.logger.log('Validated (success = %s)', success, form);
+                            if (callback) {
+                                callback(success);
+                                return [2 /*return*/];
+                            }
+                            validationEvent = new CustomEvent('validation', {
+                                detail: { valid: success }
+                            });
+                            form.dispatchEvent(validationEvent);
+                            // Firefox fix: redispatch 'submit' after finished handling this event
+                            return [4 /*yield*/, new Promise(function (resolve) { return setTimeout(resolve, 0); })];
+                        case 1:
+                            // Firefox fix: redispatch 'submit' after finished handling this event
+                            _a.sent();
+                            this.handleValidated(form, success, e);
+                            return [2 /*return*/];
+                    }
                 });
-                form.dispatchEvent(validationEvent);
-                _this.handleValidated(form, success, e);
-            }).catch(function (error) {
+            }); }).catch(function (error) {
                 _this.logger.log('Validation error', error);
             }).finally(function () {
                 validating = false;
