@@ -12,8 +12,9 @@
 <script src="/dist/aspnet-validation.js"></script>
 <script>
     const service = new aspnetValidation.ValidationService(console);
-    service.bootstrap();
+    service.bootstrap(console.log);
 </script>
+@RenderSection("scripts", required: false)
 
 </body>
 </html>

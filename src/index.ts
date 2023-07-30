@@ -779,7 +779,6 @@ export class ValidationService {
      * @returns
      */
     isFieldValid = (field: HTMLElement, prevalidate: boolean = true, callback?: ValidatedCallback) => {
-
         if (prevalidate) {
             let form = field.closest("form");
             if (form != null) {
@@ -846,7 +845,7 @@ export class ValidationService {
             validating = true;
             this.logger.log('Validating', form);
 
-            validate.then(success => {
+            validate.then(async success => {
                 this.logger.log('Validated (success = %s)', success, form);
                 if (callback) {
                     callback(success);
@@ -859,6 +858,8 @@ export class ValidationService {
                     });
                 form.dispatchEvent(validationEvent);
 
+                // Firefox fix: redispatch 'submit' after finished handling this event
+                await new Promise(resolve => setTimeout(resolve, 0));
                 this.handleValidated(form, success, e);
             }).catch(error => {
                 this.logger.log('Validation error', error);
@@ -963,7 +964,6 @@ export class ValidationService {
         let renderedMessages = [];
         let ul = document.createElement('ul');
         for (let key in this.summary) {
-
             // It could be that the message we are rendering belongs to one of a fieldset of multiple inputs that's not selected,
             // even if another one in the fieldset is. In that case the fieldset is valid, and we shouldn't render the message.
             const matchingElement = this.elementByUID[key];
@@ -1054,7 +1054,6 @@ export class ValidationService {
             this.ValidationInputValidCssClassName);
 
         if (input.form) {
-
             // Adding an error to one input should also add it to others with the same name (i.e. for radio button and checkbox lists).
             const inputs = input.form.querySelectorAll(`input[name="${input.name}"]`);
             for (let i = 0; i < inputs.length; i++) {
@@ -1112,7 +1111,6 @@ export class ValidationService {
      */
     createValidator(input: ValidatableElement, directives: ValidationDirective) {
         return async () => {
-
             // only validate visible fields
             if (!this.isHidden(input)) {
                 for (let key in directives) {
@@ -1153,7 +1151,6 @@ export class ValidationService {
 
             this.removeError(input);
             return true;
-
         };
     }
 
