@@ -109,9 +109,21 @@
     </form>
 </fieldset>
 
+@section scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            console.log('Listening to Form 4')
+            document.getElementById('prevent-default').addEventListener('submit', function (e) {
+                e.preventDefault();
+                let data = new FormData(e.currentTarget);
+                alert(new URLSearchParams(data));
+            });
+        });
+    </script>
+}
 <fieldset>
-    <legend>Form 4</legend>
-    <form method="post">
+    <legend>Form 4 (<code>preventDefault()</code>)</legend>
+    <form method="post" id="prevent-default">
         <div class="form-field">
             <label asp-for="Input.SomeRequiredField"></label>
             <input asp-for="Input.SomeRequiredField"/>
