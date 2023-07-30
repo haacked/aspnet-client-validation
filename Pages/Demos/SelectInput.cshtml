@@ -1,0 +1,26 @@
+@page
+@model DemoWeb.Pages.Demos.SelectInput
+@{
+    Layout = "Shared/_Layout";
+}
+
+<div asp-validation-summary="All">
+    <span>Please correct the following errors</span>
+</div>
+
+<fieldset>
+    <legend>Required Select input with validation summary.</legend>
+    <form method="post">
+        <div class="form-field">
+            <label asp-for="Animal"></label>
+            <select asp-for="Animal" asp-items="Model.Animals"></select>
+            <span asp-validation-for="Animal"></span>
+        </div>
+        <div class="form-field">
+            <label asp-for="AnotherRequiredField"></label>
+            <input asp-for="AnotherRequiredField" />
+            <span asp-validation-for="AnotherRequiredField"></span>
+        </div>
+        <input type="submit" value="Submit"/>
+    </form>
+</fieldset>
