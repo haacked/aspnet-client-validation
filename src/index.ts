@@ -846,7 +846,7 @@ export class ValidationService {
             validating = true;
             this.logger.log('Validating', form);
 
-            validate.then(success => {
+            validate.then(async success => {
                 this.logger.log('Validated (success = %s)', success, form);
                 if (callback) {
                     callback(success);
@@ -859,6 +859,8 @@ export class ValidationService {
                     });
                 form.dispatchEvent(validationEvent);
 
+                // Firefox fix: redispatch 'submit' after finished handling this event
+                await new Promise(resolve => setTimeout(resolve, 0));
                 this.handleValidated(form, success, e);
             }).catch(error => {
                 this.logger.log('Validation error', error);
