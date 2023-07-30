@@ -128,7 +128,7 @@ export class MvcValidationProviders {
         // Handle single and multiple checkboxes/radio buttons.
         const elementType = element.type.toLowerCase();
         if (elementType === "checkbox" || elementType === "radio") {
-            const allElementsOfThisName = Array.from(element.form.querySelectorAll(`input[name='${element.name}'][type='${elementType}']`));
+            const allElementsOfThisName = Array.from(element.form.querySelectorAll(validatableSelector(`[name='${element.name}'][type='${elementType}']`)));
             for (let element of allElementsOfThisName) {
                 if (element instanceof HTMLInputElement && element.checked === true) {
                     return true;
@@ -1090,7 +1090,7 @@ export class ValidationService {
 
         // Removing an error from one input should also remove it from others with the same name (i.e. for radio button and checkbox lists).
         if (input.form) {
-            const inputs = input.form.querySelectorAll(`input[name="${input.name}"]`);
+            const inputs = input.form.querySelectorAll(validatableSelector(`[name="${input.name}"]`));
             for (let i = 0; i < inputs.length; i++) {
                 this.swapClasses(inputs[i],
                     this.ValidationInputValidCssClassName,
