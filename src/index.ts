@@ -535,6 +535,11 @@ export class ValidationService {
             // we could use 'matches', but that's newer than querySelectorAll so we'll keep it simple and compatible.
             forms.push(root);
         }
+        // If root is the descendant of a form, we want to include that form too.
+        const containingForm = (root as HTMLElement).closest('form');
+        if (containingForm) {
+            forms.push(containingForm);
+        }
 
         for (let form of forms) {
             let validationMessageElements = Array.from(form.querySelectorAll<HTMLElement>('[data-valmsg-for]'));
