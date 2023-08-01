@@ -536,7 +536,7 @@ export class ValidationService {
             forms.push(root);
         }
         // If root is the descendant of a form, we want to include that form too.
-        const containingForm = (root as HTMLElement).closest('form');
+        const containingForm = (root instanceof Element) ? root.closest('form') : null;
         if (containingForm) {
             forms.push(containingForm);
         }
