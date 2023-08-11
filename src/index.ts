@@ -404,6 +404,14 @@ export class MvcValidationProviders {
 }
 
 /**
+ * Configuration for @type {ValidationService}.
+ */
+export interface ValidationServiceOptions {
+    watch: boolean;
+    root: ParentNode;
+}
+
+/**
  * Responsible for managing the DOM elements and running the validation providers.
  */
 export class ValidationService {
@@ -1179,20 +1187,28 @@ export class ValidationService {
     }
 
     /**
+     * Options for this instance of @type {ValidationService}.
+     */
+    private options: ValidationServiceOptions = {
+        root: document.body,
+        watch: false,
+    }
+
+    /**
      * Load default validation providers and scans the entire document when ready.
      * @param options.watch If set to true, a MutationObserver will be used to continuously watch for new elements that provide validation directives.
      */
-    bootstrap(options?: { watch?: boolean, root?: ParentNode }) {
-        options = options || {};
+    bootstrap(options?: Partial<ValidationServiceOptions>) {
+        Object.assign(this.options, options);
 
         this.addMvcProviders();
         let document = window.document;
-        const root = options.root || document.body;
+        const root = this.options.root;
         const init = () => {
             this.scan(root);
 
             // Watch for further mutations after initial scan
-            if (options.watch) {
+            if (this.options.watch) {
                 this.watch(root);
             }
         }
