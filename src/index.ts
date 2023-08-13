@@ -409,6 +409,7 @@ export class MvcValidationProviders {
 export interface ValidationServiceOptions {
     watch: boolean;
     root: ParentNode;
+    addNoValidate: boolean;
 }
 
 /**
@@ -958,6 +959,9 @@ export class ValidationService {
         for (let i = 0; i < inputs.length; i++) {
             let input = inputs[i];
             this.addInput(input);
+            if (this.options.addNoValidate) {
+                input.closest('form')?.setAttribute('novalidate', 'novalidate');
+            }
         }
     }
 
@@ -1192,11 +1196,13 @@ export class ValidationService {
     private options: ValidationServiceOptions = {
         root: document.body,
         watch: false,
+        addNoValidate: true,
     }
 
     /**
      * Load default validation providers and scans the entire document when ready.
      * @param options.watch If set to true, a MutationObserver will be used to continuously watch for new elements that provide validation directives.
+     * @param options.addNoValidate If set to true (the default), a novalidate attribute will be added to the containing form in validate elemets.
      */
     bootstrap(options?: Partial<ValidationServiceOptions>) {
         Object.assign(this.options, options);
