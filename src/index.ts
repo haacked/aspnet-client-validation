@@ -821,6 +821,14 @@ export class ValidationService {
         let add = (this.formInputs[formUID].indexOf(inputUID) === -1);
         if (add) {
             this.formInputs[formUID].push(inputUID);
+
+            if (this.options.addNoValidate) {
+                this.logger.log('Setting novalidate on form', form);
+                form.setAttribute('novalidate', 'novalidate');
+            }
+            else {
+                this.logger.log('Not setting novalidate on form', form);
+            }
         }
         else {
             this.logger.log("Form input for UID '%s' is already tracked", inputUID);
@@ -959,9 +967,6 @@ export class ValidationService {
         for (let i = 0; i < inputs.length; i++) {
             let input = inputs[i];
             this.addInput(input);
-            if (this.options.addNoValidate) {
-                input.closest('form')?.setAttribute('novalidate', 'novalidate');
-            }
         }
     }
 
