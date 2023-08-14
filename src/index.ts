@@ -1268,10 +1268,19 @@ export class ValidationService {
     /**
      * Scans the provided root element for any validation directives and attaches behavior to them.
      */
-    scan(root: ParentNode, remove: boolean = false) {
+    scan(root: ParentNode) {
         this.logger.log('Scanning', root);
-        this.scanMessages(root, remove);
-        this.scanInputs(root, remove);
+        this.scanMessages(root);
+        this.scanInputs(root);
+    }
+
+    /**
+     * Scans the provided root element for any validation directives and removes behavior from them.
+     */
+    remove(root: ParentNode) {
+        this.logger.log('Removing', root);
+        this.scanMessages(root, true);
+        this.scanInputs(root, true);
     }
 
     /**
@@ -1305,7 +1314,7 @@ export class ValidationService {
                 let node = mutation.removedNodes[i];
                 this.logger.log('Removed node', node);
                 if (node instanceof HTMLElement) {
-                    this.scan(node, true);
+                    this.remove(node);
                 }
             }
         } else if (mutation.type === 'attributes') {
