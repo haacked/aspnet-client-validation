@@ -568,7 +568,10 @@ export class ValidationService {
     private removeValidationMessageSpan(form: HTMLElement, span: HTMLElement) {
         let formId = this.getElementUID(form);
         let name = `${formId}:${span.getAttribute('data-valmsg-for')}`;
-        let spans = this.messageFor[name] || (this.messageFor[name] = []);
+        let spans = this.messageFor[name];
+        if (!spans) {
+            return;
+        }
         let index = spans.indexOf(span);
         if (index >= 0) {
             spans.splice(index, 1);
@@ -922,7 +925,7 @@ export class ValidationService {
     private untrackFormInput(form: HTMLFormElement, inputUID: string) {
         let formUID = this.getElementUID(form);
         if (!this.formInputs[formUID]) {
-            this.formInputs[formUID] = [];
+            return;
         }
         let indexToRemove = this.formInputs[formUID].indexOf(inputUID);
         if (indexToRemove >= 0) {
