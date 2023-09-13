@@ -703,6 +703,11 @@ var ValidationService = /** @class */ (function () {
             // we could use 'matches', but that's newer than querySelectorAll so we'll keep it simple and compatible.
             forms.push(root);
         }
+        // If root is the descendant of a form, we want to include that form too.
+        var containingForm = (root instanceof Element) ? root.closest('form') : null;
+        if (containingForm) {
+            forms.push(containingForm);
+        }
         for (var _a = 0, forms_1 = forms; _a < forms_1.length; _a++) {
             var form = forms_1[_a];
             var validationMessageElements_3 = Array.from(form.querySelectorAll('[data-valmsg-for]'));
