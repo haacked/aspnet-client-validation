@@ -80,6 +80,26 @@
             }
         </div>
 
+        <div class="form-field">
+            <p>
+                It's also common to bind a boolean property from a list to checkboxes.
+            </p>
+            @for (var i = 0; i <Model.Numbers.Count; i++) {
+                var number = Model.Numbers[i];
+
+                <label>
+                    <input type="checkbox" asp-for="Numbers[i].IsSelected" />
+                    @number.Name
+                </label>
+                @* The asp-for above appends an input with value="false" to the form. *@
+                @* An explicit hidden generates input with value="False": *@
+                @* <input type="hidden" asp-for="Numbers[i].IsSelected" /> *@
+                <input type="hidden" asp-for="Numbers[i].Name" />
+            }
+            <span asp-validation-for="Numbers"></span>
+            <em class="results">Selected numbers: @string.Join(", ", Model.Numbers.Where(n => n.IsSelected).Select(n => n.Name))</em>
+        </div>
+
         <input type="submit" value="Submit"/>
     </form>
 </fieldset>

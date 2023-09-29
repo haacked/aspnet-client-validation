@@ -8,6 +8,13 @@ public class Checkboxes : PageModel
 {
     public string? StatusMessage { get; set; }
 
+    public void OnGet()
+    {
+        Numbers.Add(new() { Name = "One" });
+        Numbers.Add(new() { Name = "Two" });
+        Numbers.Add(new() { Name = "Three" });
+    }
+
     public IActionResult OnPost()
     {
         StatusMessage = "Form was submitted: " + (ModelState.IsValid
@@ -35,5 +42,14 @@ public class Checkboxes : PageModel
     public class InputModel
     {
         public bool IsChecked { get; set; }
+    }
+
+    [BindProperty]
+    public List<Selectable> Numbers { get; } = new();
+
+    public class Selectable
+    {
+        public required string Name { get; set; }
+        public bool IsSelected { get; set; }
     }
 }
