@@ -717,6 +717,19 @@ export class ValidationService {
     }
 
     /**
+     * Fires off validation for the provided element and then calls the callback
+     * @param field The element to validate.
+     * @param callback Receives true or false indicating validity after all validation is complete.
+     */
+    validateField = (field: ValidatableElement, callback?: ValidatedCallback) => {
+        let fieldUID = this.getElementUID(field);
+        let fieldValidationEvent = this.inputEvents[fieldUID];
+        if (fieldValidationEvent) {
+            fieldValidationEvent(undefined, callback);
+        }
+    }
+
+    /**
      * Called before validating form submit events.
      * Default calls `preventDefault()` and `stopImmediatePropagation()`.
      * @param submitEvent The `SubmitEvent`.
@@ -810,18 +823,16 @@ export class ValidationService {
     }
 
     /**
-     * Returns true if the provided field is valid, and then calls the callback. The form will be validated before checking, unless prevalidate is set to false
-     * @param field
-     * @param prevalidate
-     * @param callback
-     * @returns
+     * Returns true if the provided field is currently valid.
+     * The field will be validated unless prevalidate is set to false.
+     * @param field The field to validate.
+     * @param prevalidate Whether the field should be validated before returning.
+     * @param callback A callback that receives true or false indicating validity after all validation is complete. Ignored if prevalidate is false.
+     * @returns The current state of the field. May be inaccurate if any validation is asynchronous (e.g. remote); consider using `callback` instead.
      */
-    isFieldValid = (field: HTMLElement, prevalidate: boolean = true, callback?: ValidatedCallback) => {
+    isFieldValid = (field: ValidatableElement, prevalidate: boolean = true, callback?: ValidatedCallback) => {
         if (prevalidate) {
-            let form = field.closest("form");
-            if (form != null) {
-                this.validateForm(form, callback);
-            }
+            this.validateField(field, callback);
         }
 
         let fieldUID = this.getElementUID(field);
