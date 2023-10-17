@@ -477,9 +477,13 @@ var ValidationService = /** @class */ (function () {
          */
         this.validators = {};
         /**
-         * A key-value map for element UID to its trigger element (submit event for <form>, input event for <textarea> and <input>).
+         * A key-value map for form UID to its trigger element (submit event for <form>).
          */
-        this.elementEvents = {};
+        this.formEvents = {};
+        /**
+         * A key-value map for element UID to its trigger element (input event for <textarea> and <input>, change event for <select>).
+         */
+        this.inputEvents = {};
         /**
          * A key-value map of input UID to its validation error message.
          */
@@ -494,14 +498,26 @@ var ValidationService = /** @class */ (function () {
         this.allowHiddenFields = false;
         /**
          * Fires off validation for elements within the provided form and then calls the callback
-         * @param form
-         * @param callback
+         * @param form The form to validate.
+         * @param callback Receives true or false indicating validity after all validation is complete.
          */
         this.validateForm = function (form, callback) {
             var formUID = _this.getElementUID(form);
-            var formValidationEvent = _this.elementEvents[formUID];
+            var formValidationEvent = _this.formEvents[formUID];
             if (formValidationEvent) {
                 formValidationEvent(undefined, callback);
+            }
+        };
+        /**
+         * Fires off validation for the provided element and then calls the callback
+         * @param field The element to validate.
+         * @param callback Receives true or false indicating validity after all validation is complete.
+         */
+        this.validateField = function (field, callback) {
+            var fieldUID = _this.getElementUID(field);
+            var fieldValidationEvent = _this.inputEvents[fieldUID];
+            if (fieldValidationEvent) {
+                fieldValidationEvent(undefined, callback);
             }
         };
         /**
@@ -574,11 +590,12 @@ var ValidationService = /** @class */ (function () {
             }
         };
         /**
-         * Returns true if the provided form is valid, and then calls the callback. The form will be validated before checking, unless prevalidate is set to false
-         * @param form
-         * @param prevalidate
-         * @param callback
-         * @returns
+         * Returns true if the provided form is currently valid.
+         * The form will be validated unless prevalidate is set to false.
+         * @param form The form to validate.
+         * @param prevalidate Whether the form should be validated before returning.
+         * @param callback A callback that receives true or false indicating validity after all validation is complete. Ignored if prevalidate is false.
+         * @returns The current state of the form. May be inaccurate if any validation is asynchronous (e.g. remote); consider using `callback` instead.
          */
         this.isValid = function (form, prevalidate, callback) {
             if (prevalidate === void 0) { prevalidate = true; }
@@ -591,19 +608,17 @@ var ValidationService = /** @class */ (function () {
             return invalidFormInputUIDs.length == 0;
         };
         /**
-         * Returns true if the provided field is valid, and then calls the callback. The form will be validated before checking, unless prevalidate is set to false
-         * @param field
-         * @param prevalidate
-         * @param callback
-         * @returns
+         * Returns true if the provided field is currently valid.
+         * The field will be validated unless prevalidate is set to false.
+         * @param field The field to validate.
+         * @param prevalidate Whether the field should be validated before returning.
+         * @param callback A callback that receives true or false indicating validity after all validation is complete. Ignored if prevalidate is false.
+         * @returns The current state of the field. May be inaccurate if any validation is asynchronous (e.g. remote); consider using `callback` instead.
          */
         this.isFieldValid = function (field, prevalidate, callback) {
             if (prevalidate === void 0) { prevalidate = true; }
             if (prevalidate) {
-                var form = field.closest("form");
-                if (form != null) {
-                    _this.validateForm(form, callback);
-                }
+                _this.validateField(field, callback);
             }
             var fieldUID = _this.getElementUID(field);
             return _this.summary[fieldUID] === undefined;
@@ -871,7 +886,7 @@ var ValidationService = /** @class */ (function () {
         else {
             this.logger.log("Form input for UID '%s' is already tracked", inputUID);
         }
-        if (this.elementEvents[formUID]) {
+        if (this.formEvents[formUID]) {
             return;
         }
         var validating = false;
@@ -944,7 +959,7 @@ var ValidationService = /** @class */ (function () {
             }
             _this.renderSummary();
         });
-        this.elementEvents[formUID] = cb;
+        this.formEvents[formUID] = cb;
     };
     ValidationService.prototype.untrackFormInput = function (form, inputUID) {
         var formUID = this.getElementUID(form);
@@ -972,14 +987,20 @@ var ValidationService = /** @class */ (function () {
         if (input.form) {
             this.trackFormInput(input.form, uid);
         }
-        if (this.elementEvents[uid]) {
+        if (this.inputEvents[uid]) {
             return;
         }
-        var delay;
-        var cb = function (e) {
+        var debounceTimeoutID = 0;
+        var cb = function (e, callback) {
             var validate = _this.validators[uid];
-            clearTimeout(delay);
-            delay = setTimeout(validate, _this.debounce);
+            clearTimeout(debounceTimeoutID);
+            debounceTimeoutID = setTimeout(function () {
+                validate()
+                    .then(callback)
+                    .catch(function (error) {
+                    _this.logger.log('Validation error', error);
+                });
+            }, _this.debounce);
         };
         var isDropdown = input.tagName.toLowerCase() === 'select';
         var validateEvent = input.dataset.valEvent;
@@ -992,12 +1013,12 @@ var ValidationService = /** @class */ (function () {
         else {
             input.addEventListener('input', cb);
         }
-        this.elementEvents[uid] = cb;
+        this.inputEvents[uid] = cb;
     };
     ValidationService.prototype.removeInput = function (input) {
         var uid = this.getElementUID(input);
         delete this.summary[uid];
-        delete this.elementEvents[uid];
+        delete this.inputEvents[uid];
         delete this.validators[uid];
         if (input.form) {
             this.untrackFormInput(input.form, uid);
