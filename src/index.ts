@@ -705,8 +705,8 @@ export class ValidationService {
 
     /**
      * Fires off validation for elements within the provided form and then calls the callback
-     * @param form
-     * @param callback
+     * @param form The form to validate.
+     * @param callback Receives true or false indicating validity after all validation is complete.
      */
     validateForm = (form: HTMLFormElement, callback?: ValidatedCallback) => {
         let formUID = this.getElementUID(form);
@@ -792,11 +792,12 @@ export class ValidationService {
     }
 
     /**
-     * Returns true if the provided form is valid, and then calls the callback. The form will be validated before checking, unless prevalidate is set to false
-     * @param form
-     * @param prevalidate
-     * @param callback
-     * @returns
+     * Returns true if the provided form is currently valid.
+     * The form will be validated unless prevalidate is set to false.
+     * @param form The form to validate.
+     * @param prevalidate Whether the form should be validated before returning.
+     * @param callback A callback that receives true or false indicating validity after all validation is complete. Ignored if prevalidate is false.
+     * @returns The current state of the form. May be inaccurate if any validation is asynchronous (e.g. remote); consider using `callback` instead.
      */
     isValid = (form: HTMLFormElement, prevalidate: boolean = true, callback?: ValidatedCallback) => {
         if (prevalidate) {
