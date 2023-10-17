@@ -966,10 +966,16 @@ export class ValidationService {
         }
 
         let debounceTimeoutID = 0;
-        let cb = e => {
+        let cb = (e: Event, callback?: ValidatedCallback) => {
             let validate = this.validators[uid];
             clearTimeout(debounceTimeoutID);
-            debounceTimeoutID = setTimeout(validate, this.debounce);
+            debounceTimeoutID = setTimeout(() => {
+                validate()
+                    .then(callback)
+                    .catch(error => {
+                        this.logger.log('Validation error', error);
+                    });
+            }, this.debounce);
         };
 
         let isDropdown = input.tagName.toLowerCase() === 'select';
