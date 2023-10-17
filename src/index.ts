@@ -965,11 +965,11 @@ export class ValidationService {
             return;
         }
 
-        let delay;
+        let debounceTimeoutID = 0;
         let cb = e => {
             let validate = this.validators[uid];
-            clearTimeout(delay);
-            delay = setTimeout(validate, this.debounce);
+            clearTimeout(debounceTimeoutID);
+            debounceTimeoutID = setTimeout(validate, this.debounce);
         };
 
         let isDropdown = input.tagName.toLowerCase() === 'select';
