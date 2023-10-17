@@ -990,15 +990,13 @@ export class ValidationService {
             }, this.debounce);
         };
 
-        let isDropdown = input.tagName.toLowerCase() === 'select';
         let validateEvent = input.dataset.valEvent;
-        if (isDropdown) {
-            input.addEventListener('change', cb);
-        } else if (validateEvent) {
+        if (validateEvent) {
             input.addEventListener(validateEvent, cb);
         }
         else {
-            input.addEventListener('input', cb);
+            let eventType = input instanceof HTMLSelectElement ? 'change' : 'input';
+            input.addEventListener(eventType, cb);
         }
 
         this.inputEvents[uid] = cb;
