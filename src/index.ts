@@ -438,9 +438,14 @@ export class ValidationService {
     private validators: { [inputUID: string]: Validator } = {};
 
     /**
-     * A key-value map for element UID to its trigger element (submit event for <form>, input event for <textarea> and <input>).
+     * A key-value map for form UID to its trigger element (submit event for <form>).
      */
-    private elementEvents: { [id: string]: (e?: SubmitEvent, callback?: ValidatedCallback) => void } = {};
+    private formEvents: { [id: string]: (e?: SubmitEvent, callback?: ValidatedCallback) => void } = {};
+
+    /**
+     * A key-value map for element UID to its trigger element (input event for <textarea> and <input>, change event for <select>).
+     */
+    private inputEvents: { [id: string]: (e?: Event, callback?: ValidatedCallback) => void } = {};
 
     /**
      * A key-value map of input UID to its validation error message.
@@ -705,7 +710,7 @@ export class ValidationService {
      */
     validateForm = (form: HTMLFormElement, callback?: ValidatedCallback) => {
         let formUID = this.getElementUID(form);
-        let formValidationEvent = this.elementEvents[formUID];
+        let formValidationEvent = this.formEvents[formUID];
         if (formValidationEvent) {
             formValidationEvent(undefined, callback);
         }
@@ -849,7 +854,7 @@ export class ValidationService {
             this.logger.log("Form input for UID '%s' is already tracked", inputUID);
         }
 
-        if (this.elementEvents[formUID]) {
+        if (this.formEvents[formUID]) {
             return;
         }
 
@@ -924,7 +929,7 @@ export class ValidationService {
             }
             this.renderSummary();
         });
-        this.elementEvents[formUID] = cb;
+        this.formEvents[formUID] = cb;
     }
 
     private untrackFormInput(form: HTMLFormElement, inputUID: string) {
@@ -956,7 +961,7 @@ export class ValidationService {
             this.trackFormInput(input.form, uid);
         }
 
-        if (this.elementEvents[uid]) {
+        if (this.inputEvents[uid]) {
             return;
         }
 
@@ -978,14 +983,14 @@ export class ValidationService {
             input.addEventListener('input', cb);
         }
 
-        this.elementEvents[uid] = cb;
+        this.inputEvents[uid] = cb;
     }
 
     removeInput(input: ValidatableElement) {
         let uid = this.getElementUID(input);
 
         delete this.summary[uid];
-        delete this.elementEvents[uid];
+        delete this.inputEvents[uid];
         delete this.validators[uid];
 
         if (input.form) {
