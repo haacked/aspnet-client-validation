@@ -1002,16 +1002,13 @@ var ValidationService = /** @class */ (function () {
                 });
             }, _this.debounce);
         };
-        var isDropdown = input.tagName.toLowerCase() === 'select';
         var validateEvent = input.dataset.valEvent;
-        if (isDropdown) {
-            input.addEventListener('change', cb);
-        }
-        else if (validateEvent) {
+        if (validateEvent) {
             input.addEventListener(validateEvent, cb);
         }
         else {
-            input.addEventListener('input', cb);
+            var eventType = input instanceof HTMLSelectElement ? 'change' : 'input';
+            input.addEventListener(eventType, cb);
         }
         this.inputEvents[uid] = cb;
     };
