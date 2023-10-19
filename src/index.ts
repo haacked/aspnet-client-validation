@@ -438,9 +438,14 @@ export class ValidationService {
     private validators: { [inputUID: string]: Validator } = {};
 
     /**
-     * A key-value map for element UID to its trigger element (submit event for <form>, input event for <textarea> and <input>).
+     * A key-value map for form UID to its trigger element (submit event for <form>).
      */
-    private elementEvents: { [id: string]: (e?: SubmitEvent, callback?: ValidatedCallback) => void } = {};
+    private formEvents: { [id: string]: (e?: SubmitEvent, callback?: ValidatedCallback) => void } = {};
+
+    /**
+     * A key-value map for element UID to its trigger element (input event for <textarea> and <input>, change event for <select>).
+     */
+    private inputEvents: { [id: string]: (e?: Event, callback?: ValidatedCallback) => void } = {};
 
     /**
      * A key-value map of input UID to its validation error message.
@@ -700,14 +705,27 @@ export class ValidationService {
 
     /**
      * Fires off validation for elements within the provided form and then calls the callback
-     * @param form
-     * @param callback
+     * @param form The form to validate.
+     * @param callback Receives true or false indicating validity after all validation is complete.
      */
     validateForm = (form: HTMLFormElement, callback?: ValidatedCallback) => {
         let formUID = this.getElementUID(form);
-        let formValidationEvent = this.elementEvents[formUID];
+        let formValidationEvent = this.formEvents[formUID];
         if (formValidationEvent) {
             formValidationEvent(undefined, callback);
+        }
+    }
+
+    /**
+     * Fires off validation for the provided element and then calls the callback
+     * @param field The element to validate.
+     * @param callback Receives true or false indicating validity after all validation is complete.
+     */
+    validateField = (field: ValidatableElement, callback?: ValidatedCallback) => {
+        let fieldUID = this.getElementUID(field);
+        let fieldValidationEvent = this.inputEvents[fieldUID];
+        if (fieldValidationEvent) {
+            fieldValidationEvent(undefined, callback);
         }
     }
 
@@ -787,11 +805,12 @@ export class ValidationService {
     }
 
     /**
-     * Returns true if the provided form is valid, and then calls the callback. The form will be validated before checking, unless prevalidate is set to false
-     * @param form
-     * @param prevalidate
-     * @param callback
-     * @returns
+     * Returns true if the provided form is currently valid.
+     * The form will be validated unless prevalidate is set to false.
+     * @param form The form to validate.
+     * @param prevalidate Whether the form should be validated before returning.
+     * @param callback A callback that receives true or false indicating validity after all validation is complete. Ignored if prevalidate is false.
+     * @returns The current state of the form. May be inaccurate if any validation is asynchronous (e.g. remote); consider using `callback` instead.
      */
     isValid = (form: HTMLFormElement, prevalidate: boolean = true, callback?: ValidatedCallback) => {
         if (prevalidate) {
@@ -804,18 +823,16 @@ export class ValidationService {
     }
 
     /**
-     * Returns true if the provided field is valid, and then calls the callback. The form will be validated before checking, unless prevalidate is set to false
-     * @param field
-     * @param prevalidate
-     * @param callback
-     * @returns
+     * Returns true if the provided field is currently valid.
+     * The field will be validated unless prevalidate is set to false.
+     * @param field The field to validate.
+     * @param prevalidate Whether the field should be validated before returning.
+     * @param callback A callback that receives true or false indicating validity after all validation is complete. Ignored if prevalidate is false.
+     * @returns The current state of the field. May be inaccurate if any validation is asynchronous (e.g. remote); consider using `callback` instead.
      */
-    isFieldValid = (field: HTMLElement, prevalidate: boolean = true, callback?: ValidatedCallback) => {
+    isFieldValid = (field: ValidatableElement, prevalidate: boolean = true, callback?: ValidatedCallback) => {
         if (prevalidate) {
-            let form = field.closest("form");
-            if (form != null) {
-                this.validateForm(form, callback);
-            }
+            this.validateField(field, callback);
         }
 
         let fieldUID = this.getElementUID(field);
@@ -849,7 +866,7 @@ export class ValidationService {
             this.logger.log("Form input for UID '%s' is already tracked", inputUID);
         }
 
-        if (this.elementEvents[formUID]) {
+        if (this.formEvents[formUID]) {
             return;
         }
 
@@ -924,7 +941,7 @@ export class ValidationService {
             }
             this.renderSummary();
         });
-        this.elementEvents[formUID] = cb;
+        this.formEvents[formUID] = cb;
     }
 
     private untrackFormInput(form: HTMLFormElement, inputUID: string) {
@@ -956,36 +973,40 @@ export class ValidationService {
             this.trackFormInput(input.form, uid);
         }
 
-        if (this.elementEvents[uid]) {
+        if (this.inputEvents[uid]) {
             return;
         }
 
-        let delay;
-        let cb = e => {
+        let debounceTimeoutID = 0;
+        let cb = (e: Event, callback?: ValidatedCallback) => {
             let validate = this.validators[uid];
-            clearTimeout(delay);
-            delay = setTimeout(validate, this.debounce);
+            clearTimeout(debounceTimeoutID);
+            debounceTimeoutID = setTimeout(() => {
+                validate()
+                    .then(callback)
+                    .catch(error => {
+                        this.logger.log('Validation error', error);
+                    });
+            }, this.debounce);
         };
 
-        let isDropdown = input.tagName.toLowerCase() === 'select';
         let validateEvent = input.dataset.valEvent;
-        if (isDropdown) {
-            input.addEventListener('change', cb);
-        } else if (validateEvent) {
+        if (validateEvent) {
             input.addEventListener(validateEvent, cb);
         }
         else {
-            input.addEventListener('input', cb);
+            let eventType = input instanceof HTMLSelectElement ? 'change' : 'input';
+            input.addEventListener(eventType, cb);
         }
 
-        this.elementEvents[uid] = cb;
+        this.inputEvents[uid] = cb;
     }
 
     removeInput(input: ValidatableElement) {
         let uid = this.getElementUID(input);
 
         delete this.summary[uid];
-        delete this.elementEvents[uid];
+        delete this.inputEvents[uid];
         delete this.validators[uid];
 
         if (input.form) {
