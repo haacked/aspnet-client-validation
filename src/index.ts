@@ -860,7 +860,9 @@ export class ValidationService {
 
                 // Firefox fix: redispatch 'submit' after finished handling this event
                 await new Promise(resolve => setTimeout(resolve, 0));
-                this.handleValidated(form, success, e);
+                if (e) {
+                    this.handleValidated(form, success, e);
+                }
             }).catch(error => {
                 this.logger.log('Validation error', error);
             }).finally(() => {
