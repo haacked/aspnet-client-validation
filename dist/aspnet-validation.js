@@ -626,6 +626,14 @@ var ValidationService = /** @class */ (function () {
             return _this.summary[fieldUID] === undefined;
         };
         /**
+         * Options for this instance of @type {ValidationService}.
+         */
+        this.options = {
+            root: document.body,
+            watch: false,
+            addNoValidate: true,
+        };
+        /**
          * Override CSS class name for input validation error. Default: 'input-validation-error'
          */
         this.ValidationInputCssClassName = "input-validation-error";
@@ -884,6 +892,13 @@ var ValidationService = /** @class */ (function () {
         var add = (this.formInputs[formUID].indexOf(inputUID) === -1);
         if (add) {
             this.formInputs[formUID].push(inputUID);
+            if (this.options.addNoValidate) {
+                this.logger.log('Setting novalidate on form', form);
+                form.setAttribute('novalidate', 'novalidate');
+            }
+            else {
+                this.logger.log('Not setting novalidate on form', form);
+            }
         }
         else {
             this.logger.log("Form input for UID '%s' is already tracked", inputUID);
@@ -1254,17 +1269,18 @@ var ValidationService = /** @class */ (function () {
     /**
      * Load default validation providers and scans the entire document when ready.
      * @param options.watch If set to true, a MutationObserver will be used to continuously watch for new elements that provide validation directives.
+     * @param options.addNoValidate If set to true (the default), a novalidate attribute will be added to the containing form in validate elemets.
      */
     ValidationService.prototype.bootstrap = function (options) {
         var _this = this;
-        options = options || {};
+        Object.assign(this.options, options);
         this.addMvcProviders();
         var document = window.document;
-        var root = options.root || document.body;
+        var root = this.options.root;
         var init = function () {
             _this.scan(root);
             // Watch for further mutations after initial scan
-            if (options.watch) {
+            if (_this.options.watch) {
                 _this.watch(root);
             }
         };
