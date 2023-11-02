@@ -121,9 +121,13 @@ export declare class ValidationService {
      */
     private validators;
     /**
-     * A key-value map for element UID to its trigger element (submit event for <form>, input event for <textarea> and <input>).
+     * A key-value map for form UID to its trigger element (submit event for <form>).
      */
-    private elementEvents;
+    private formEvents;
+    /**
+     * A key-value map for element UID to its trigger element (input event for <textarea> and <input>, change event for <select>).
+     */
+    private inputEvents;
     /**
      * A key-value map of input UID to its validation error message.
      */
@@ -159,6 +163,7 @@ export declare class ValidationService {
      */
     private scanMessages;
     private pushValidationMessageSpan;
+    private removeValidationMessageSpan;
     /**
      * Given attribute map for an HTML input, returns the validation directives to be executed.
      * @param attributes
@@ -181,10 +186,16 @@ export declare class ValidationService {
     private getMessageFor;
     /**
      * Fires off validation for elements within the provided form and then calls the callback
-     * @param form
-     * @param callback
+     * @param form The form to validate.
+     * @param callback Receives true or false indicating validity after all validation is complete.
      */
     validateForm: (form: HTMLFormElement, callback?: ValidatedCallback) => void;
+    /**
+     * Fires off validation for the provided element and then calls the callback
+     * @param field The element to validate.
+     * @param callback Receives true or false indicating validity after all validation is complete.
+     */
+    validateField: (field: ValidatableElement, callback?: ValidatedCallback) => void;
     /**
      * Called before validating form submit events.
      * Default calls `preventDefault()` and `stopImmediatePropagation()`.
@@ -199,7 +210,7 @@ export declare class ValidationService {
      * @param success The validation result.
      * @param submitEvent The `SubmitEvent`.
      */
-    handleValidated: (form: HTMLFormElement, success: boolean, submitEvent: SubmitEvent) => void;
+    handleValidated: (form: HTMLFormElement, success: boolean, submitEvent?: SubmitEvent) => void;
     /**
      * Dispatches a new `SubmitEvent` on the provided form,
      * then calls `form.submit()` unless `submitEvent` is cancelable
@@ -216,21 +227,23 @@ export declare class ValidationService {
      */
     focusFirstInvalid: (form: HTMLFormElement) => void;
     /**
-     * Returns true if the provided form is valid, and then calls the callback. The form will be validated before checking, unless prevalidate is set to false
-     * @param form
-     * @param prevalidate
-     * @param callback
-     * @returns
+     * Returns true if the provided form is currently valid.
+     * The form will be validated unless prevalidate is set to false.
+     * @param form The form to validate.
+     * @param prevalidate Whether the form should be validated before returning.
+     * @param callback A callback that receives true or false indicating validity after all validation is complete. Ignored if prevalidate is false.
+     * @returns The current state of the form. May be inaccurate if any validation is asynchronous (e.g. remote); consider using `callback` instead.
      */
     isValid: (form: HTMLFormElement, prevalidate?: boolean, callback?: ValidatedCallback) => boolean;
     /**
-     * Returns true if the provided field is valid, and then calls the callback. The form will be validated before checking, unless prevalidate is set to false
-     * @param field
-     * @param prevalidate
-     * @param callback
-     * @returns
+     * Returns true if the provided field is currently valid.
+     * The field will be validated unless prevalidate is set to false.
+     * @param field The field to validate.
+     * @param prevalidate Whether the field should be validated before returning.
+     * @param callback A callback that receives true or false indicating validity after all validation is complete. Ignored if prevalidate is false.
+     * @returns The current state of the field. May be inaccurate if any validation is asynchronous (e.g. remote); consider using `callback` instead.
      */
-    isFieldValid: (field: HTMLElement, prevalidate?: boolean, callback?: ValidatedCallback) => boolean;
+    isFieldValid: (field: ValidatableElement, prevalidate?: boolean, callback?: ValidatedCallback) => boolean;
     /**
      * Returns true if the event triggering the form submission indicates we should validate the form.
      * @param e
@@ -242,12 +255,14 @@ export declare class ValidationService {
      * @param inputUID
      */
     private trackFormInput;
+    private untrackFormInput;
     /**
      * Adds an input element to be managed and validated by the service.
      * Triggers a debounced live validation when input value changes.
      * @param input
      */
     addInput(input: ValidatableElement): void;
+    removeInput(input: ValidatableElement): void;
     /**
      * Scans the entire document for input elements to be validated.
      */
@@ -302,6 +317,10 @@ export declare class ValidationService {
      * Scans the provided root element for any validation directives and attaches behavior to them.
      */
     scan(root: ParentNode): void;
+    /**
+     * Scans the provided root element for any validation directives and removes behavior from them.
+     */
+    remove(root: ParentNode): void;
     /**
      * Watches the provided root element for mutations, and scans for new validation directives to attach behavior.
      * @param root The root element to use, defaults to the document.documentElement.
