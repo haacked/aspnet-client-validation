@@ -210,7 +210,7 @@ export declare class ValidationService {
      * @param success The validation result.
      * @param submitEvent The `SubmitEvent`.
      */
-    handleValidated: (form: HTMLFormElement, success: boolean, submitEvent: SubmitEvent) => void;
+    handleValidated: (form: HTMLFormElement, success: boolean, submitEvent?: SubmitEvent) => void;
     /**
      * Dispatches a new `SubmitEvent` on the provided form,
      * then calls `form.submit()` unless `submitEvent` is cancelable

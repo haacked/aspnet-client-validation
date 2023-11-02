@@ -539,7 +539,9 @@ var ValidationService = /** @class */ (function () {
          */
         this.handleValidated = function (form, success, submitEvent) {
             if (success) {
-                _this.submitValidForm(form, submitEvent);
+                if (submitEvent) {
+                    _this.submitValidForm(form, submitEvent);
+                }
             }
             else {
                 _this.focusFirstInvalid(form);
@@ -1242,7 +1244,7 @@ var ValidationService = /** @class */ (function () {
      * @param removeClass Class to remove
      */
     ValidationService.prototype.swapClasses = function (element, addClass, removeClass) {
-        if (!element.classList.contains(addClass)) {
+        if (addClass && !element.classList.contains(addClass)) {
             element.classList.add(addClass);
         }
         if (element.classList.contains(removeClass)) {
