@@ -1256,7 +1256,7 @@ export class ValidationService {
      * @param removeClass Class to remove
      */
     private swapClasses(element: Element, addClass: string, removeClass: string) {
-        if (!element.classList.contains(addClass)) {
+        if (addClass && !element.classList.contains(addClass)) {
             element.classList.add(addClass);
         }
         if (element.classList.contains(removeClass)) {
