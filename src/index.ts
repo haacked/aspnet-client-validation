@@ -747,9 +747,11 @@ export class ValidationService {
      * @param success The validation result.
      * @param submitEvent The `SubmitEvent`.
      */
-    handleValidated = (form: HTMLFormElement, success: boolean, submitEvent: SubmitEvent) => {
+    handleValidated = (form: HTMLFormElement, success: boolean, submitEvent?: SubmitEvent) => {
         if (success) {
-            this.submitValidForm(form, submitEvent);
+            if (submitEvent) {
+                this.submitValidForm(form, submitEvent);
+            }
         }
         else {
             this.focusFirstInvalid(form);
