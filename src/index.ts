@@ -404,6 +404,15 @@ export class MvcValidationProviders {
 }
 
 /**
+ * Configuration for @type {ValidationService}.
+ */
+export interface ValidationServiceOptions {
+    watch: boolean;
+    root: ParentNode;
+    addNoValidate: boolean;
+}
+
+/**
  * Responsible for managing the DOM elements and running the validation providers.
  */
 export class ValidationService {
@@ -863,6 +872,14 @@ export class ValidationService {
         let add = (this.formInputs[formUID].indexOf(inputUID) === -1);
         if (add) {
             this.formInputs[formUID].push(inputUID);
+
+            if (this.options.addNoValidate) {
+                this.logger.log('Setting novalidate on form', form);
+                form.setAttribute('novalidate', 'novalidate');
+            }
+            else {
+                this.logger.log('Not setting novalidate on form', form);
+            }
         }
         else {
             this.logger.log("Form input for UID '%s' is already tracked", inputUID);
@@ -1265,20 +1282,30 @@ export class ValidationService {
     }
 
     /**
+     * Options for this instance of @type {ValidationService}.
+     */
+    private options: ValidationServiceOptions = {
+        root: document.body,
+        watch: false,
+        addNoValidate: true,
+    }
+
+    /**
      * Load default validation providers and scans the entire document when ready.
      * @param options.watch If set to true, a MutationObserver will be used to continuously watch for new elements that provide validation directives.
+     * @param options.addNoValidate If set to true (the default), a novalidate attribute will be added to the containing form in validate elemets.
      */
-    bootstrap(options?: { watch?: boolean, root?: ParentNode }) {
-        options = options || {};
+    bootstrap(options?: Partial<ValidationServiceOptions>) {
+        Object.assign(this.options, options);
 
         this.addMvcProviders();
         let document = window.document;
-        const root = options.root || document.body;
+        const root = this.options.root;
         const init = () => {
             this.scan(root);
 
             // Watch for further mutations after initial scan
-            if (options.watch) {
+            if (this.options.watch) {
                 this.watch(root);
             }
         }

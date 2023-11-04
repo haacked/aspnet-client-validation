@@ -93,6 +93,14 @@ export declare class MvcValidationProviders {
     remote: ValidationProvider;
 }
 /**
+ * Configuration for @type {ValidationService}.
+ */
+export interface ValidationServiceOptions {
+    watch: boolean;
+    root: ParentNode;
+    addNoValidate: boolean;
+}
+/**
  * Responsible for managing the DOM elements and running the validation providers.
  */
 export declare class ValidationService {
@@ -306,13 +314,15 @@ export declare class ValidationService {
      */
     private swapClasses;
     /**
+     * Options for this instance of @type {ValidationService}.
+     */
+    private options;
+    /**
      * Load default validation providers and scans the entire document when ready.
      * @param options.watch If set to true, a MutationObserver will be used to continuously watch for new elements that provide validation directives.
+     * @param options.addNoValidate If set to true (the default), a novalidate attribute will be added to the containing form in validate elemets.
      */
-    bootstrap(options?: {
-        watch?: boolean;
-        root?: ParentNode;
-    }): void;
+    bootstrap(options?: Partial<ValidationServiceOptions>): void;
     /**
      * Scans the provided root element for any validation directives and attaches behavior to them.
      */
