@@ -396,7 +396,13 @@ var MvcValidationProviders = /** @class */ (function () {
                 if (!hasValue) {
                     continue;
                 }
-                fields[fieldName] = fieldElement.value;
+                if (fieldElement instanceof HTMLInputElement &&
+                    (fieldElement.type === 'checkbox' || fieldElement.type === 'radio')) {
+                    fields[fieldName] = fieldElement.checked ? fieldElement.value : '';
+                }
+                else {
+                    fields[fieldName] = fieldElement.value;
+                }
             }
             var url = params['url'];
             var encodedParams = [];
