@@ -1,0 +1,14 @@
+@page
+@model DemoWeb.Pages.Demos.FormAction
+
+
+@{
+    Layout = "Shared/_Layout";
+}
+
+<partial name="Shared/_StatusMessage" model="Model.StatusMessage"/>
+
+<form method="post">
+    <input type="submit" value="Submit" asp-page-handler="Submit" />
+    <input type="submit" value="Save" asp-page-handler="Save"/>
+</form>
