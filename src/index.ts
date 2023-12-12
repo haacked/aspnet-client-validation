@@ -351,7 +351,12 @@ export class MvcValidationProviders {
                 continue;
             }
 
-            fields[fieldName] = fieldElement.value;
+            if (fieldElement instanceof HTMLInputElement &&
+                (fieldElement.type === 'checkbox' || fieldElement.type === 'radio')) {
+                fields[fieldName] = fieldElement.checked ? fieldElement.value : '';
+            } else {
+                fields[fieldName] = fieldElement.value;
+            }
         }
 
         let url: string = params['url'];

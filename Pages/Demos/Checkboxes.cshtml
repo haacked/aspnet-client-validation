@@ -52,8 +52,8 @@
                 <label>@animal</label>
             }
             <span asp-validation-for="SelectedAnimals"></span>
-            @if (Model.SelectedAnimals.Any()) {
-                <em class="results">Selected animals: @string.Join(", ", Model.SelectedAnimals)</em>
+            @if (Model.SelectedAnimals!.Any()) {
+                <em class="results">Selected animals: @string.Join(", ", Model.SelectedAnimals!)</em>
             }
         </div>
 
