@@ -10,6 +10,12 @@ public class ValidationsController : Controller
         return Ok(id == "42");
     }
 
+    [HttpPost]
+    public IActionResult CheckboxRemote(bool isChecked)
+    {
+        return Ok(isChecked);
+    }
+
     [HttpGet]
     public IActionResult Test()
     {

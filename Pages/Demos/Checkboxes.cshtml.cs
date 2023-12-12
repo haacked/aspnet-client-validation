@@ -41,6 +41,7 @@ public class Checkboxes : PageModel
 
     public class InputModel
     {
+        [Remote("CheckboxRemote", "Validations", HttpMethod = "Post")]
         public bool IsChecked { get; set; }
     }
 
@@ -50,6 +51,7 @@ public class Checkboxes : PageModel
     public class Selectable
     {
         public required string Name { get; set; }
+
         public bool IsSelected { get; set; }
     }
 }
