@@ -71,6 +71,8 @@ v.bootstrap();
 **aspnet-validation.min.js:** 10.6 KB **(9.46%, ~4 KB GZIP)**
 - **promise-polyfill**: +3.06 KB (< 1 KB GZIP)
 
+Also, `jquery.validate.unobtrusive.min.js` has not been meaningfully updated in over a decade, and is hard to configure.
+
 ## Building the Source Code
 
 ```powershell
@@ -237,6 +239,21 @@ To configure this, set the `watch` option to `true` when calling `bootstrap`:
 ```js
 let v = new aspnetValidation.ValidationService();
 v.bootstrap({ watch: true });
+```
+
+## Customizing CSS for use with other libraries
+
+One can customize the CSS classes so the generated markup is compatible with various frameworks. For example, to integrate with [Bootstrap](https://getbootstrap.com/docs/5.3/forms/validation) (v5+):
+
+```js
+var v = new aspnetValidation.ValidationService();
+v.ValidationInputCssClassName          = 'is-invalid';                 // change from default of 'input-validation-error'
+v.ValidationInputValidCssClassName     = 'is-valid';                   // change from default of 'input-validation-valid'
+v.ValidationMessageCssClassName        = 'invalid-feedback';           // change from default of 'field-validation-error'
+v.ValidationMessageValidCssClassName   = 'valid-feedback';             // change from default of 'field-validation-valid'
+//v.ValidationSummaryCssClassName      = 'validation-summary-errors';  // unnecessary: bootstrap lacks validation summary component
+//v.ValidationSummaryValidCssClassName = 'validation-summary-valid';   // "
+v.bootstrap();
 ```
 
 ## Logging
