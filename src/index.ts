@@ -1419,7 +1419,7 @@ export class ValidationService {
     ValidationSummaryCssClassName = "validation-summary-errors";
 
     /**
-     * Override CSS class name for valid validation summary. Default: 'field-validation-valid'
+     * Override CSS class name for valid validation summary. Default: 'validation-summary-valid'
      */
     ValidationSummaryValidCssClassName = "validation-summary-valid";
 }
