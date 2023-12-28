@@ -239,7 +239,7 @@ let v = new aspnetValidation.ValidationService();
 v.bootstrap({ watch: true });
 ```
 
-Alternatively, to update the validation service for a specific form (which has been modified dynamically), without using a `MutationObserver`:
+Alternatively, to update the validation service for a specific form (which was created or modified dynamically) without using a `MutationObserver`:
 ```js
 let form = document.getElementById('my-form');
 v.scan(form);
