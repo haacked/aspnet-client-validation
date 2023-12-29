@@ -239,6 +239,12 @@ let v = new aspnetValidation.ValidationService();
 v.bootstrap({ watch: true });
 ```
 
+Alternatively, to update the validation service for a specific form (which was created or modified dynamically) without using a `MutationObserver`:
+```js
+let form = document.getElementById('my-form');
+v.scan(form);
+```
+
 ## Logging
 
 There is a rudimentary logging infrastructure in place if you want to get more insight into what the library is doing.
