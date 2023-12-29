@@ -241,6 +241,12 @@ let v = new aspnetValidation.ValidationService();
 v.bootstrap({ watch: true });
 ```
 
+Alternatively, to update the validation service for a specific form (which was created or modified dynamically) without using a `MutationObserver`:
+```js
+let form = document.getElementById('my-form');
+v.scan(form);
+```
+
 ## Customizing CSS for use with other libraries
 
 One can customize the CSS classes so the generated markup is compatible with various frameworks. For example, to integrate with [Bootstrap](https://getbootstrap.com/docs/5.3/forms/validation) (v5+):
@@ -254,7 +260,6 @@ v.ValidationMessageValidCssClassName   = 'valid-feedback';             // change
 //v.ValidationSummaryCssClassName      = 'validation-summary-errors';  // unnecessary: bootstrap lacks validation summary component
 //v.ValidationSummaryValidCssClassName = 'validation-summary-valid';   // "
 v.bootstrap();
-```
 
 ## Logging
 
