@@ -260,6 +260,7 @@ v.ValidationMessageValidCssClassName   = 'valid-feedback';             // change
 //v.ValidationSummaryCssClassName      = 'validation-summary-errors';  // unnecessary: bootstrap lacks validation summary component
 //v.ValidationSummaryValidCssClassName = 'validation-summary-valid';   // "
 v.bootstrap();
+```
 
 ## Logging
 
