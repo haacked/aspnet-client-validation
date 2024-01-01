@@ -11,9 +11,9 @@ public class ValidationsController : Controller
     }
 
     [HttpPost]
-    public IActionResult CheckboxRemote(bool isChecked)
+    public IActionResult CheckboxRemote(bool isCheckedRemote)
     {
-        return Ok(isChecked);
+        return Ok(isCheckedRemote);
     }
 
     [HttpGet]
