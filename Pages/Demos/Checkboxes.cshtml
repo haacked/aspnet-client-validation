@@ -35,12 +35,16 @@
 
         <div class="form-field">
             <p>
-                One can also use the [Remote] validation attribute. In this case, the remote validator returns valid only when the checkbox is checked.
+                One can also use the <code>[Remote]</code> validation attribute with checkboxes.
+                This checkbox's remote validator returns valid only when it matches the one above.
+                <strong>Note:</strong> Changes to
+                <a href="https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.mvc.remoteattributebase.additionalfields">additional fields</a>
+                do <em>not</em> automatically revalidate.
             </p>
-            <label>Is checked
-                <input asp-for="Input.IsCheckedRemote"/>
+            <label>Is checked, too
+                <input asp-for="Input.IsCheckedToo"/>
             </label>
-            <span asp-validation-for="Input.IsCheckedRemote"></span>
+            <span asp-validation-for="Input.IsCheckedToo"></span>
         </div>
 
         <div class="form-field">

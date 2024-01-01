@@ -43,8 +43,11 @@ public class Checkboxes : PageModel
     {
         public bool IsChecked { get; set; }
 
-        [Remote("CheckboxRemote", "Validations", HttpMethod = "Post")]
-        public bool IsCheckedRemote { get; set; }
+        [Remote("CheckboxRemote", "Validations", HttpMethod = "Post",
+            ErrorMessage = "Must match other checkbox.",
+            AdditionalFields = $"{nameof(IsChecked)}"
+        )]
+        public bool IsCheckedToo { get; set; }
     }
 
     [BindProperty]
