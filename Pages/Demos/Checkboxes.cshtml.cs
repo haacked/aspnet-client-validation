@@ -28,6 +28,9 @@ public class Checkboxes : PageModel
     public InputModel Input { get; set; } = new();
 
     [BindProperty]
+    public InputModelRemote InputRemote { get; set; } = new();
+
+    [BindProperty]
     [Required]
     public List<string> SelectedAnimals { get; set; } = new();
 
@@ -41,8 +44,13 @@ public class Checkboxes : PageModel
 
     public class InputModel
     {
-        [Remote("CheckboxRemote", "Validations", HttpMethod = "Post")]
         public bool IsChecked { get; set; }
+    }
+
+    public class InputModelRemote
+    {
+        [Remote("CheckboxRemote", "Validations", HttpMethod = "Post")]
+        public bool IsCheckedRemote { get; set; }
     }
 
     [BindProperty]
