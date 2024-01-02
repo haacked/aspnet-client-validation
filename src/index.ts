@@ -806,6 +806,11 @@ export class ValidationService {
                     submitterInput.value = submitter.getAttribute('value');
                     form.appendChild(submitterInput)
                 }
+
+                const formAction = submitter.getAttribute('formaction');
+                if (formAction) {
+                    form.action = formAction;
+                }
             }
 
             form.submit();
