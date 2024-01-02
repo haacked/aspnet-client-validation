@@ -723,6 +723,9 @@ export class ValidationService {
      * @param callback Receives true or false indicating validity after all validation is complete.
      */
     validateForm = (form: HTMLFormElement, callback?: ValidatedCallback) => {
+        if (!(form instanceof HTMLFormElement)) {
+            throw new Error('validateForm() can only be called on <form> elements');
+        }
         let formUID = this.getElementUID(form);
         let formValidationEvent = this.formEvents[formUID];
         if (formValidationEvent) {
@@ -762,6 +765,9 @@ export class ValidationService {
      * @param submitEvent The `SubmitEvent`.
      */
     handleValidated = (form: HTMLFormElement, success: boolean, submitEvent?: SubmitEvent) => {
+        if (!(form instanceof HTMLFormElement)) {
+            throw new Error('handleValidated() can only be called on <form> elements');
+        }
         if (success) {
             if (submitEvent) {
                 this.submitValidForm(form, submitEvent);
@@ -782,6 +788,9 @@ export class ValidationService {
      * @param submitEvent The `SubmitEvent`.
      */
     submitValidForm = (form: HTMLFormElement, submitEvent: SubmitEvent) => {
+        if (!(form instanceof HTMLFormElement)) {
+            throw new Error('submitValidForm() can only be called on <form> elements');
+        }
         const newEvent = new SubmitEvent('submit', submitEvent);
         if (form.dispatchEvent(newEvent)) {
             // Because the submitter is not propagated when calling
@@ -808,6 +817,9 @@ export class ValidationService {
      * @param form
      */
     focusFirstInvalid = (form: HTMLFormElement) => {
+        if (!(form instanceof HTMLFormElement)) {
+            throw new Error('focusFirstInvalid() can only be called on <form> elements');
+        }
         let formUID = this.getElementUID(form);
         let formInputUIDs = this.formInputs[formUID];
         let invalidFormInputUIDs = formInputUIDs.filter(uid => this.summary[uid]);
@@ -829,6 +841,9 @@ export class ValidationService {
      * @returns The current state of the form. May be inaccurate if any validation is asynchronous (e.g. remote); consider using `callback` instead.
      */
     isValid = (form: HTMLFormElement, prevalidate: boolean = true, callback?: ValidatedCallback) => {
+        if (!(form instanceof HTMLFormElement)) {
+            throw new Error('isValid() can only be called on <form> elements');
+        }
         if (prevalidate) {
             this.validateForm(form, callback);
         }
