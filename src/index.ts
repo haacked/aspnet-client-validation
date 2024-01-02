@@ -1244,8 +1244,8 @@ export class ValidationService {
      */
     createValidator(input: ValidatableElement, directives: ValidationDirective) {
         return async () => {
-            // only validate visible fields
-            if (!this.isHidden(input)) {
+            // only validate visible and enabled fields
+            if (!this.isHidden(input) && !this.isDisabled(input)) {
                 for (let key in directives) {
                     let directive = directives[key];
                     let provider = this.providers[key];
@@ -1294,6 +1294,15 @@ export class ValidationService {
      */
     private isHidden(input: HTMLElement) {
         return !(this.allowHiddenFields || input.offsetWidth || input.offsetHeight || input.getClientRects().length);
+    }
+
+    /**
+     * Checks if the provided input is disabled
+     * @param input
+     * @returns
+     */
+    private isDisabled(input: HTMLElement) {
+        return input.getAttribute('disabled') !== null;
     }
 
     /**
