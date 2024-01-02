@@ -371,7 +371,7 @@ export class MvcValidationProviders {
         return new Promise((ok, reject) => {
             let request = new XMLHttpRequest();
 
-            if (params.type === 'Post') {
+            if (params.type && params.type.toLowerCase() === 'post') {
                 let postData = new FormData();
                 for (let fieldName in fields) {
                     postData.append(fieldName, fields[fieldName]);
