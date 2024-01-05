@@ -1013,6 +1013,10 @@ export class ValidationService {
      * @param input
      */
     addInput(input: ValidatableElement) {
+        if (input.disabled) {
+            return;
+        }
+
         let uid = this.getElementUID(input);
 
         let directives = this.parseDirectives(input.attributes);
