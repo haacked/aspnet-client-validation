@@ -106,8 +106,8 @@ function getRelativeFormElement(element: ValidatableElement, selector: string): 
         objectName = elementName.substring(0, dotLocation);
 
         // Form.Password
-        let relativeElementName = objectName + '.' + selectedName;
-        let relativeElement = document.getElementsByName(relativeElementName)[0];
+        const relativeElementName = objectName + '.' + selectedName;
+        const relativeElement = document.getElementsByName(relativeElementName)[0];
         if (isValidatable(relativeElement)) {
             return relativeElement;
         }
@@ -656,7 +656,7 @@ export class ValidationService {
         // https://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript/2117523#2117523
 
         return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-            var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+            const r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
             return v.toString(16);
         });
     }
@@ -1336,7 +1336,7 @@ export class ValidationService {
     /**
      * Load default validation providers and scans the entire document when ready.
      * @param options.watch If set to true, a MutationObserver will be used to continuously watch for new elements that provide validation directives.
-     * @param options.addNoValidate If set to true (the default), a novalidate attribute will be added to the containing form in validate elemets.
+     * @param options.addNoValidate If set to true (the default), a novalidate attribute will be added to the containing form in validate elements.
      */
     bootstrap(options?: Partial<ValidationServiceOptions>) {
         Object.assign(this.options, options);
