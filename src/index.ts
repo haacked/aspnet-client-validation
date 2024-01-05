@@ -1301,8 +1301,8 @@ export class ValidationService {
      * @param input
      * @returns
      */
-    private isDisabled(input: HTMLElement) {
-        return input.getAttribute('disabled') !== null;
+    private isDisabled(input: ValidatableElement) {
+        return input.disabled;
     }
 
     /**
