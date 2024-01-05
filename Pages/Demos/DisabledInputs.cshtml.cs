@@ -27,7 +27,7 @@ public class DisabledInputs : PageModel
 
     public IActionResult OnPost()
     {
-        StatusMessage = "Form was submitted. Any validation errors are due to server side validation";
+        StatusMessage = "Form was submitted to server. Any validation errors that may be present are due to server side validation, not client.";
 
         return RedirectToPage();
     }

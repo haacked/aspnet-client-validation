@@ -24,3 +24,10 @@
         <input type="submit" value="Submit"/>
     </form>
 </fieldset>
+
+@section Scripts {
+    <script>
+        const service = new aspnetValidation.ValidationService(console);
+        service.bootstrap();
+    </script>
+}

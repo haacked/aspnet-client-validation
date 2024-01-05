@@ -8,31 +8,38 @@
 <partial name="Shared/_StatusMessage" model="Model.StatusMessage"/>
 
 <fieldset>
-<legend>Required ASP.NET Checkboxes with hidden input</legend>
+    <legend>Required ASP.NET Checkboxes with hidden input</legend>
 
-<form method="post">
-    <div class="form-field">
-        <p>
-            This simple test demonstrates that we don't validate removed inputs.
-        </p>
+    <form method="post">
+        <div class="form-field">
+            <p>
+                This simple test demonstrates that we don't validate removed inputs.
+            </p>
 
-        <div id="value1" class="form-control">
-            <label>Value 1
-                <input asp-for="Value1"/>
-                <span asp-validation-for="Value1"></span>
-            </label>
+            <div id="value1" class="form-control">
+                <label>Value 1
+                    <input asp-for="Value1"/>
+                    <span asp-validation-for="Value1"></span>
+                </label>
+            </div>
+
+            <div id="value2" class="form-control my-1">
+                <label>Value 2
+                    <input asp-for="Value2"/>
+                    <span asp-validation-for="Value2"></span>
+                </label>
+            </div>
+
+            <button type="button" onclick="document.getElementById('value2').parentNode.removeChild(document.getElementById('value2'))">Remove Value 2 Input</button>
+
+            <input type="submit" value="Input Type Submit" />
         </div>
-
-        <div id="value2" class="form-control my-1">
-            <label>Value 2
-                <input asp-for="Value2"/>
-                <span asp-validation-for="Value2"></span>
-            </label>
-        </div>
-
-        <button type="button" onclick="document.getElementById('value2').parentNode.removeChild(document.getElementById('value2'))">Remove Value 2 Input</button>
-
-        <input type="submit" value="Input Type Submit" />
-    </div>
-</form>
+    </form>
 </fieldset>
+
+@section Scripts {
+    <script>
+        const service = new aspnetValidation.ValidationService(console);
+        service.bootstrap();
+    </script>
+}
