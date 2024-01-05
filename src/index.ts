@@ -814,9 +814,9 @@ export class ValidationService {
                 }
             }
 
-            form.submit();
-
-            if (form.action != initialFormAction) {
+            try {
+                form.submit();
+            } finally {
                 form.action = initialFormAction;
             }
         }
