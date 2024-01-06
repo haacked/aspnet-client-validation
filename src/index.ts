@@ -796,6 +796,7 @@ export class ValidationService {
             // Because the submitter is not propagated when calling
             // form.submit(), we recreate it here.
             const submitter = submitEvent.submitter;
+            const initialFormAction = form.action;
             if (submitter) {
                 const name = submitter.getAttribute('name');
                 // If name is null, a submit button is not submitted.
@@ -806,9 +807,18 @@ export class ValidationService {
                     submitterInput.value = submitter.getAttribute('value');
                     form.appendChild(submitterInput)
                 }
+
+                const formAction = submitter.getAttribute('formaction');
+                if (formAction) {
+                    form.action = formAction;
+                }
             }
 
-            form.submit();
+            try {
+                form.submit();
+            } finally {
+                form.action = initialFormAction;
+            }
         }
     }
 
@@ -825,7 +835,7 @@ export class ValidationService {
         let invalidFormInputUIDs = formInputUIDs.filter(uid => this.summary[uid]);
 
         if (invalidFormInputUIDs.length > 0) {
-            var firstInvalid = this.elementByUID[invalidFormInputUIDs[0]] as HTMLElement;
+            const firstInvalid = this.elementByUID[invalidFormInputUIDs[0]] as HTMLElement;
             if (firstInvalid) {
                 firstInvalid.focus();
             }

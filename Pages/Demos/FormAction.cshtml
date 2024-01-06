@@ -1,7 +1,6 @@
 @page
 @model DemoWeb.Pages.Demos.FormAction
 
-
 @{
     Layout = "Shared/_Layout";
 }
@@ -9,6 +8,13 @@
 <partial name="Shared/_StatusMessage" model="Model.StatusMessage"/>
 
 <form method="post">
+    <div asp-validation-summary="All">The following problems occurred when submitting the form:</div>
+    <div>
+        <label asp-for="Input.Name"></label>
+        <input asp-for="Input.Name" />
+        <span asp-validation-for="Input.Name" ></span>
+    </div>
     <input type="submit" value="Submit" asp-page-handler="Submit" />
     <input type="submit" value="Save" asp-page-handler="Save"/>
+    <input type="submit" />
 </form>
