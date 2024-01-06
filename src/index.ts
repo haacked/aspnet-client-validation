@@ -968,29 +968,33 @@ export class ValidationService {
 
         form.addEventListener('submit', cb);
         form.addEventListener('reset', e => {
-            let uids = this.formInputs[formUID];
+            const uids = this.formInputs[formUID];
 
             for (let uid of uids) {
-                let input = this.elementByUID[uid] as ValidatableElement;
-                if (input.classList.contains(this.ValidationInputCssClassName)) {
-                    input.classList.remove(this.ValidationInputCssClassName);
-                }
-                if (input.classList.contains(this.ValidationInputValidCssClassName)) {
-                    input.classList.remove(this.ValidationInputValidCssClassName);
-                }
-
-                let spans = this.getMessageFor(input);
-                if (spans) {
-                    for (let i = 0; i < spans.length; i++) {
-                        spans[i].innerHTML = '';
-                    }
-                }
-
-                delete this.summary[uid];
+                this.resetField(uid);
             }
             this.renderSummary();
         });
         this.formEvents[formUID] = cb;
+    }
+
+    private resetField(inputUID: string) {
+        let input = this.elementByUID[inputUID] as ValidatableElement;
+        if (input.classList.contains(this.ValidationInputCssClassName)) {
+            input.classList.remove(this.ValidationInputCssClassName);
+        }
+        if (input.classList.contains(this.ValidationInputValidCssClassName)) {
+            input.classList.remove(this.ValidationInputValidCssClassName);
+        }
+
+        let spans = this.getMessageFor(input);
+        if (spans) {
+            for (let i = 0; i < spans.length; i++) {
+                spans[i].innerHTML = '';
+            }
+        }
+
+        delete this.summary[inputUID];
     }
 
     private untrackFormInput(form: HTMLFormElement, inputUID: string) {
@@ -1081,7 +1085,7 @@ export class ValidationService {
 
         for (let i = 0; i < inputs.length; i++) {
             let input = inputs[i];
-            if (remove) {
+            if (remove || input.disabled) {
                 this.removeInput(input);
             }
             else {
@@ -1417,15 +1421,30 @@ export class ValidationService {
             }
         } else if (mutation.type === 'attributes') {
             if (mutation.target instanceof HTMLElement) {
-                const oldValue = mutation.oldValue ?? '';
-                const newValue = mutation.target.attributes[mutation.attributeName]?.value ?? '';
-                this.logger.log("Attribute '%s' changed from '%s' to '%s'",
-                    mutation.attributeName,
-                    oldValue,
-                    newValue,
-                    mutation.target);
-                if (oldValue !== newValue) {
-                    this.scan(mutation.target);
+                const attributeName = mutation.attributeName;
+
+                // Special case for disabled.
+                if (attributeName === 'disabled') {
+                    const target = mutation.target as ValidatableElement;
+                    if (target.disabled) {
+                        this.remove(target);
+                        this.resetField(this.getElementUID(target));
+                    }
+                    else {
+                        this.scan(target);
+                    }
+                }
+                else {
+                    const oldValue = mutation.oldValue ?? '';
+                    const newValue = mutation.target.attributes[mutation.attributeName]?.value ?? '';
+                    this.logger.log("Attribute '%s' changed from '%s' to '%s'",
+                        mutation.attributeName,
+                        oldValue,
+                        newValue,
+                        mutation.target);
+                    if (oldValue !== newValue) {
+                        this.scan(mutation.target);
+                    }
                 }
             }
         }
