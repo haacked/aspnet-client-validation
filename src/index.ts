@@ -978,6 +978,18 @@ export class ValidationService {
         this.formEvents[formUID] = cb;
     }
 
+    /*
+        Reset the state of a validatable input. This is used when it's enabled or disabled.
+    */
+    reset(input: HTMLElement) {
+        if (this.isDisabled(input)) {
+            this.resetField(this.getElementUID(input));
+        }
+        else {
+            this.scan(input);
+        }
+    }
+
     private resetField(inputUID: string) {
         let input = this.elementByUID[inputUID] as ValidatableElement;
         if (input.classList.contains(this.ValidationInputCssClassName)) {
@@ -1017,7 +1029,7 @@ export class ValidationService {
      * @param input
      */
     addInput(input: ValidatableElement) {
-        if (input.disabled) {
+        if (this.isDisabled(input)) {
             return;
         }
 
@@ -1085,7 +1097,7 @@ export class ValidationService {
 
         for (let i = 0; i < inputs.length; i++) {
             let input = inputs[i];
-            if (remove || input.disabled) {
+            if (remove || this.isDisabled(input)) {
                 this.removeInput(input);
             }
             else {
@@ -1309,8 +1321,10 @@ export class ValidationService {
      * @param input
      * @returns
      */
-    private isDisabled(input: ValidatableElement) {
-        return input.disabled;
+    private isDisabled(input: Element) {
+        // Test the the input is validatable and disabled
+        const validatableElement = input as ValidatableElement;
+        return validatableElement && validatableElement.disabled;
     }
 
     /**
@@ -1320,7 +1334,7 @@ export class ValidationService {
      * @param removeClass Class to remove
      */
     private swapClasses(element: Element, addClass: string, removeClass: string) {
-        if (addClass && !element.classList.contains(addClass)) {
+        if (addClass && !this.isDisabled(element) && !element.classList.contains(addClass)) {
             element.classList.add(addClass);
         }
         if (element.classList.contains(removeClass)) {
@@ -1426,13 +1440,7 @@ export class ValidationService {
                 // Special case for disabled.
                 if (attributeName === 'disabled') {
                     const target = mutation.target as ValidatableElement;
-                    if (target.disabled) {
-                        this.remove(target);
-                        this.resetField(this.getElementUID(target));
-                    }
-                    else {
-                        this.scan(target);
-                    }
+                    this.reset(target);
                 }
                 else {
                     const oldValue = mutation.oldValue ?? '';
