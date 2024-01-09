@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace DemoWeb.Pages.Demos;
 
-public class DisabledInputs : PageModel
+public class DisabledInputsWithWatchPageModel : PageModel
 {
     [TempData]
     public string? StatusMessage { get; set; }

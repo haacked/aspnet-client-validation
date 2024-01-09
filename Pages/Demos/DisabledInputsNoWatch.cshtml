@@ -1,0 +1,107 @@
+@page
+@model DemoWeb.Pages.Demos.DisabledInputsNoWatchPageModel
+
+@{
+    Layout = "Shared/_Layout";
+}
+
+<partial name="Shared/_StatusMessage" model="Model.StatusMessage"/>
+
+<fieldset>
+    <legend>Disabled inputs</legend>
+
+    <form method="post">
+        <div class="form-field">
+            <p>
+                This simple test demonstrates that we don't validate disabled inputs.
+            </p>
+
+            <div class="form-control">
+                <label>Value 1 (<span id="Value1InputStatus"></span>)
+                    <input asp-for="Value1" disabled="disabled" />
+                    <button id="Value1ToggleButton" type="button" onclick="toggleInput('Value1')"></button>
+                    <span asp-validation-for="Value1"></span>
+                </label>
+            </div>
+
+            <div class="form-control my-1">
+                <label>Value 2 (<span id="Value2InputStatus"></span>)
+                    <input asp-for="Value2"/>
+                    <button id="Value2ToggleButton"  type="button" onclick="toggleInput('Value2')"></button>
+                    <span asp-validation-for="Value2"></span>
+                </label>
+            </div>
+
+            <div class="form-field">
+                <label>Is checked, too (disabled)
+                    <input asp-for="IsCheckedToo" disabled="disabled"/>
+                </label>
+                <span asp-validation-for="IsCheckedToo"></span>
+            </div>
+
+            <input type="submit" />
+        </div>
+    </form>
+</fieldset>
+
+<fieldset disabled="disabled">
+    <legend>Disabled fieldset</legend>
+
+    <form method="post">
+        <div class="form-field">
+            <p>
+                This simple test demonstrates that we don't validate disabled fieldsets.
+            </p>
+
+            <div class="form-control">
+                <label>Value 1 (disabled)
+                    <input asp-for="Value1" disabled="disabled" />
+                    <span asp-validation-for="Value1"></span>
+                </label>
+            </div>
+
+            <div class="form-control my-1">
+                <label>Value 2 (not disabled)
+                    <input asp-for="Value2"/>
+                    <span asp-validation-for="Value2"></span>
+                </label>
+            </div>
+
+            <div class="form-field">
+                <label>Is checked, too (disabled)
+                    <input asp-for="IsCheckedToo" disabled="disabled"/>
+                </label>
+                <span asp-validation-for="IsCheckedToo"></span>
+            </div>
+
+            <input type="submit" />
+        </div>
+    </form>
+</fieldset>
+
+@section Scripts {
+    <script>
+        const service = new aspnetValidation.ValidationService(console);
+
+        function toggleInput(inputId) {
+            const input = document.getElementById(inputId);
+            input.disabled = !input.disabled;
+            updateStatus(inputId);
+        }
+
+        function updateStatus(inputId) {
+            const input = document.getElementById(inputId);
+            const inputStatus = document.getElementById(`${inputId}InputStatus`);
+            const toggleButton = document.getElementById(`${inputId}ToggleButton`);
+            inputStatus.innerText = input.disabled ? 'disabled' : 'enabled';
+            toggleButton.innerText = input.disabled ? 'Enable' : 'Disable';
+
+            service.reset(input);
+        }
+
+        updateStatus('Value1');
+        updateStatus('Value2');
+
+        service.bootstrap();
+    </script>
+}
