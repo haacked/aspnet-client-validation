@@ -169,6 +169,12 @@ v.addProvider('io', (value, element, params) => {
 });
 ```
 
+## Controlling when validation occurs
+
+By default, validation occurs immediately upon changes to form fields: on `input` for inputs and textareas, and on `change` for selects.
+
+One can change to a different event by setting a field's `data-val-event` attribute. For example, one can use `data-val-event="blur"` to validate that field on the `blur` event.
+
 ## Subscribing to Client Form Validation Event
 
 ```ts
