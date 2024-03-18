@@ -413,7 +413,7 @@ var MvcValidationProviders = /** @class */ (function () {
             var payload = encodedParams.join('&');
             return new Promise(function (ok, reject) {
                 var request = new XMLHttpRequest();
-                if (params.type === 'Post') {
+                if (params.type && params.type.toLowerCase() === 'post') {
                     var postData = new FormData();
                     for (var fieldName in fields) {
                         postData.append(fieldName, fields[fieldName]);
@@ -508,6 +508,9 @@ var ValidationService = /** @class */ (function () {
          * @param callback Receives true or false indicating validity after all validation is complete.
          */
         this.validateForm = function (form, callback) {
+            if (!(form instanceof HTMLFormElement)) {
+                throw new Error('validateForm() can only be called on <form> elements');
+            }
             var formUID = _this.getElementUID(form);
             var formValidationEvent = _this.formEvents[formUID];
             if (formValidationEvent) {
@@ -544,6 +547,9 @@ var ValidationService = /** @class */ (function () {
          * @param submitEvent The `SubmitEvent`.
          */
         this.handleValidated = function (form, success, submitEvent) {
+            if (!(form instanceof HTMLFormElement)) {
+                throw new Error('handleValidated() can only be called on <form> elements');
+            }
             if (success) {
                 if (submitEvent) {
                     _this.submitValidForm(form, submitEvent);
@@ -563,11 +569,15 @@ var ValidationService = /** @class */ (function () {
          * @param submitEvent The `SubmitEvent`.
          */
         this.submitValidForm = function (form, submitEvent) {
+            if (!(form instanceof HTMLFormElement)) {
+                throw new Error('submitValidForm() can only be called on <form> elements');
+            }
             var newEvent = new SubmitEvent('submit', submitEvent);
             if (form.dispatchEvent(newEvent)) {
                 // Because the submitter is not propagated when calling
                 // form.submit(), we recreate it here.
                 var submitter = submitEvent.submitter;
+                var initialFormAction = form.action;
                 if (submitter) {
                     var name_1 = submitter.getAttribute('name');
                     // If name is null, a submit button is not submitted.
@@ -578,8 +588,17 @@ var ValidationService = /** @class */ (function () {
                         submitterInput.value = submitter.getAttribute('value');
                         form.appendChild(submitterInput);
                     }
+                    var formAction = submitter.getAttribute('formaction');
+                    if (formAction) {
+                        form.action = formAction;
+                    }
                 }
-                form.submit();
+                try {
+                    form.submit();
+                }
+                finally {
+                    form.action = initialFormAction;
+                }
             }
         };
         /**
@@ -587,6 +606,9 @@ var ValidationService = /** @class */ (function () {
          * @param form
          */
         this.focusFirstInvalid = function (form) {
+            if (!(form instanceof HTMLFormElement)) {
+                throw new Error('focusFirstInvalid() can only be called on <form> elements');
+            }
             var formUID = _this.getElementUID(form);
             var formInputUIDs = _this.formInputs[formUID];
             var invalidFormInputUIDs = formInputUIDs.filter(function (uid) { return _this.summary[uid]; });
@@ -607,6 +629,9 @@ var ValidationService = /** @class */ (function () {
          */
         this.isValid = function (form, prevalidate, callback) {
             if (prevalidate === void 0) { prevalidate = true; }
+            if (!(form instanceof HTMLFormElement)) {
+                throw new Error('isValid() can only be called on <form> elements');
+            }
             if (prevalidate) {
                 _this.validateForm(form, callback);
             }
@@ -660,7 +685,7 @@ var ValidationService = /** @class */ (function () {
          */
         this.ValidationSummaryCssClassName = "validation-summary-errors";
         /**
-         * Override CSS class name for valid validation summary. Default: 'field-validation-valid'
+         * Override CSS class name for valid validation summary. Default: 'validation-summary-valid'
          */
         this.ValidationSummaryValidCssClassName = "validation-summary-valid";
         this.logger = logger || nullLogger;

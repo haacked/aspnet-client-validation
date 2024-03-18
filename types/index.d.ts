@@ -358,7 +358,7 @@ export declare class ValidationService {
      */
     ValidationSummaryCssClassName: string;
     /**
-     * Override CSS class name for valid validation summary. Default: 'field-validation-valid'
+     * Override CSS class name for valid validation summary. Default: 'validation-summary-valid'
      */
     ValidationSummaryValidCssClassName: string;
 }
