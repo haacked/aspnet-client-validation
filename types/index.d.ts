@@ -263,6 +263,8 @@ export declare class ValidationService {
      * @param inputUID
      */
     private trackFormInput;
+    reset(input: HTMLElement): void;
+    private resetField;
     private untrackFormInput;
     /**
      * Adds an input element to be managed and validated by the service.
@@ -307,6 +309,12 @@ export declare class ValidationService {
      */
     private isHidden;
     /**
+     * Checks if the provided input is disabled
+     * @param input
+     * @returns
+     */
+    private isDisabled;
+    /**
      * Adds addClass and removes removeClass
      * @param element Element to modify
      * @param addClass Class to add
@@ -320,7 +328,7 @@ export declare class ValidationService {
     /**
      * Load default validation providers and scans the entire document when ready.
      * @param options.watch If set to true, a MutationObserver will be used to continuously watch for new elements that provide validation directives.
-     * @param options.addNoValidate If set to true (the default), a novalidate attribute will be added to the containing form in validate elemets.
+     * @param options.addNoValidate If set to true (the default), a novalidate attribute will be added to the containing form in validate elements.
      */
     bootstrap(options?: Partial<ValidationServiceOptions>): void;
     /**
@@ -358,7 +366,7 @@ export declare class ValidationService {
      */
     ValidationSummaryCssClassName: string;
     /**
-     * Override CSS class name for valid validation summary. Default: 'field-validation-valid'
+     * Override CSS class name for valid validation summary. Default: 'validation-summary-valid'
      */
     ValidationSummaryValidCssClassName: string;
 }

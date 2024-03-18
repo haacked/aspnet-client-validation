@@ -96,7 +96,12 @@
             inputStatus.innerText = input.disabled ? 'disabled' : 'enabled';
             toggleButton.innerText = input.disabled ? 'Enable' : 'Disable';
 
-            service.reset(input);
+            // If you dynamically disable a field, the next time validation occurs, the field will be ignored.
+            // If you dynamically enable a field, the next time validation occurs, the field will be validated.
+            // However, the current validation state will not be updated unless you call reset on the service
+            // or use the watch: true option in service.bootstrap.
+
+            //service.reset(input);
         }
 
         updateStatus('Value1');

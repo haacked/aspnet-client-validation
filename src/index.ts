@@ -1029,10 +1029,6 @@ export class ValidationService {
      * @param input
      */
     addInput(input: ValidatableElement) {
-        if (this.isDisabled(input)) {
-            return;
-        }
-
         let uid = this.getElementUID(input);
 
         let directives = this.parseDirectives(input.attributes);
@@ -1097,7 +1093,7 @@ export class ValidationService {
 
         for (let i = 0; i < inputs.length; i++) {
             let input = inputs[i];
-            if (remove || this.isDisabled(input)) {
+            if (remove) {
                 this.removeInput(input);
             }
             else {
