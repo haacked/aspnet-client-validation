@@ -1318,9 +1318,9 @@ export class ValidationService {
      * @returns
      */
     private isDisabled(input: Element) {
-        // Test the the input is validatable and disabled
-        const validatableElement = input as ValidatableElement;
-        return validatableElement && validatableElement.disabled;
+        // If the input is validatable, we check the `disabled` property.
+        // Otherwise the `disabled` property is undefined and this returns false.
+        return (input as ValidatableElement).disabled;
     }
 
     /**
