@@ -106,8 +106,8 @@ function getRelativeFormElement(element: ValidatableElement, selector: string): 
         objectName = elementName.substring(0, dotLocation);
 
         // Form.Password
-        let relativeElementName = objectName + '.' + selectedName;
-        let relativeElement = document.getElementsByName(relativeElementName)[0];
+        const relativeElementName = objectName + '.' + selectedName;
+        const relativeElement = document.getElementsByName(relativeElementName)[0];
         if (isValidatable(relativeElement)) {
             return relativeElement;
         }
@@ -656,7 +656,7 @@ export class ValidationService {
         // https://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript/2117523#2117523
 
         return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-            var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+            const r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
             return v.toString(16);
         });
     }
@@ -968,29 +968,45 @@ export class ValidationService {
 
         form.addEventListener('submit', cb);
         form.addEventListener('reset', e => {
-            let uids = this.formInputs[formUID];
+            const uids = this.formInputs[formUID];
 
             for (let uid of uids) {
-                let input = this.elementByUID[uid] as ValidatableElement;
-                if (input.classList.contains(this.ValidationInputCssClassName)) {
-                    input.classList.remove(this.ValidationInputCssClassName);
-                }
-                if (input.classList.contains(this.ValidationInputValidCssClassName)) {
-                    input.classList.remove(this.ValidationInputValidCssClassName);
-                }
-
-                let spans = this.getMessageFor(input);
-                if (spans) {
-                    for (let i = 0; i < spans.length; i++) {
-                        spans[i].innerHTML = '';
-                    }
-                }
-
-                delete this.summary[uid];
+                this.resetField(uid);
             }
             this.renderSummary();
         });
         this.formEvents[formUID] = cb;
+    }
+
+    /*
+        Reset the state of a validatable input. This is used when it's enabled or disabled.
+    */
+    reset(input: HTMLElement) {
+        if (this.isDisabled(input)) {
+            this.resetField(this.getElementUID(input));
+        }
+        else {
+            this.scan(input);
+        }
+    }
+
+    private resetField(inputUID: string) {
+        let input = this.elementByUID[inputUID] as ValidatableElement;
+        if (input.classList.contains(this.ValidationInputCssClassName)) {
+            input.classList.remove(this.ValidationInputCssClassName);
+        }
+        if (input.classList.contains(this.ValidationInputValidCssClassName)) {
+            input.classList.remove(this.ValidationInputValidCssClassName);
+        }
+
+        let spans = this.getMessageFor(input);
+        if (spans) {
+            for (let i = 0; i < spans.length; i++) {
+                spans[i].innerHTML = '';
+            }
+        }
+
+        delete this.summary[inputUID];
     }
 
     private untrackFormInput(form: HTMLFormElement, inputUID: string) {
@@ -1244,8 +1260,8 @@ export class ValidationService {
      */
     createValidator(input: ValidatableElement, directives: ValidationDirective) {
         return async () => {
-            // only validate visible fields
-            if (!this.isHidden(input)) {
+            // only validate visible and enabled fields
+            if (!this.isHidden(input) && !this.isDisabled(input)) {
                 for (let key in directives) {
                     let directive = directives[key];
                     let provider = this.providers[key];
@@ -1297,13 +1313,24 @@ export class ValidationService {
     }
 
     /**
+     * Checks if the provided input is disabled
+     * @param input
+     * @returns
+     */
+    private isDisabled(input: Element) {
+        // If the input is validatable, we check the `disabled` property.
+        // Otherwise the `disabled` property is undefined and this returns false.
+        return (input as ValidatableElement).disabled;
+    }
+
+    /**
      * Adds addClass and removes removeClass
      * @param element Element to modify
      * @param addClass Class to add
      * @param removeClass Class to remove
      */
     private swapClasses(element: Element, addClass: string, removeClass: string) {
-        if (addClass && !element.classList.contains(addClass)) {
+        if (addClass && !this.isDisabled(element) && !element.classList.contains(addClass)) {
             element.classList.add(addClass);
         }
         if (element.classList.contains(removeClass)) {
@@ -1323,7 +1350,7 @@ export class ValidationService {
     /**
      * Load default validation providers and scans the entire document when ready.
      * @param options.watch If set to true, a MutationObserver will be used to continuously watch for new elements that provide validation directives.
-     * @param options.addNoValidate If set to true (the default), a novalidate attribute will be added to the containing form in validate elemets.
+     * @param options.addNoValidate If set to true (the default), a novalidate attribute will be added to the containing form in validate elements.
      */
     bootstrap(options?: Partial<ValidationServiceOptions>) {
         Object.assign(this.options, options);
@@ -1404,15 +1431,24 @@ export class ValidationService {
             }
         } else if (mutation.type === 'attributes') {
             if (mutation.target instanceof HTMLElement) {
-                const oldValue = mutation.oldValue ?? '';
-                const newValue = mutation.target.attributes[mutation.attributeName]?.value ?? '';
-                this.logger.log("Attribute '%s' changed from '%s' to '%s'",
-                    mutation.attributeName,
-                    oldValue,
-                    newValue,
-                    mutation.target);
-                if (oldValue !== newValue) {
-                    this.scan(mutation.target);
+                const attributeName = mutation.attributeName;
+
+                // Special case for disabled.
+                if (attributeName === 'disabled') {
+                    const target = mutation.target as ValidatableElement;
+                    this.reset(target);
+                }
+                else {
+                    const oldValue = mutation.oldValue ?? '';
+                    const newValue = mutation.target.attributes[mutation.attributeName]?.value ?? '';
+                    this.logger.log("Attribute '%s' changed from '%s' to '%s'",
+                        mutation.attributeName,
+                        oldValue,
+                        newValue,
+                        mutation.target);
+                    if (oldValue !== newValue) {
+                        this.scan(mutation.target);
+                    }
                 }
             }
         }

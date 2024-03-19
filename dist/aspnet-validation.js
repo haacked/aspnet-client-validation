@@ -413,7 +413,7 @@ var MvcValidationProviders = /** @class */ (function () {
             var payload = encodedParams.join('&');
             return new Promise(function (ok, reject) {
                 var request = new XMLHttpRequest();
-                if (params.type === 'Post') {
+                if (params.type && params.type.toLowerCase() === 'post') {
                     var postData = new FormData();
                     for (var fieldName in fields) {
                         postData.append(fieldName, fields[fieldName]);
@@ -508,6 +508,9 @@ var ValidationService = /** @class */ (function () {
          * @param callback Receives true or false indicating validity after all validation is complete.
          */
         this.validateForm = function (form, callback) {
+            if (!(form instanceof HTMLFormElement)) {
+                throw new Error('validateForm() can only be called on <form> elements');
+            }
             var formUID = _this.getElementUID(form);
             var formValidationEvent = _this.formEvents[formUID];
             if (formValidationEvent) {
@@ -544,6 +547,9 @@ var ValidationService = /** @class */ (function () {
          * @param submitEvent The `SubmitEvent`.
          */
         this.handleValidated = function (form, success, submitEvent) {
+            if (!(form instanceof HTMLFormElement)) {
+                throw new Error('handleValidated() can only be called on <form> elements');
+            }
             if (success) {
                 if (submitEvent) {
                     _this.submitValidForm(form, submitEvent);
@@ -563,11 +569,15 @@ var ValidationService = /** @class */ (function () {
          * @param submitEvent The `SubmitEvent`.
          */
         this.submitValidForm = function (form, submitEvent) {
+            if (!(form instanceof HTMLFormElement)) {
+                throw new Error('submitValidForm() can only be called on <form> elements');
+            }
             var newEvent = new SubmitEvent('submit', submitEvent);
             if (form.dispatchEvent(newEvent)) {
                 // Because the submitter is not propagated when calling
                 // form.submit(), we recreate it here.
                 var submitter = submitEvent.submitter;
+                var initialFormAction = form.action;
                 if (submitter) {
                     var name_1 = submitter.getAttribute('name');
                     // If name is null, a submit button is not submitted.
@@ -578,8 +588,17 @@ var ValidationService = /** @class */ (function () {
                         submitterInput.value = submitter.getAttribute('value');
                         form.appendChild(submitterInput);
                     }
+                    var formAction = submitter.getAttribute('formaction');
+                    if (formAction) {
+                        form.action = formAction;
+                    }
                 }
-                form.submit();
+                try {
+                    form.submit();
+                }
+                finally {
+                    form.action = initialFormAction;
+                }
             }
         };
         /**
@@ -587,6 +606,9 @@ var ValidationService = /** @class */ (function () {
          * @param form
          */
         this.focusFirstInvalid = function (form) {
+            if (!(form instanceof HTMLFormElement)) {
+                throw new Error('focusFirstInvalid() can only be called on <form> elements');
+            }
             var formUID = _this.getElementUID(form);
             var formInputUIDs = _this.formInputs[formUID];
             var invalidFormInputUIDs = formInputUIDs.filter(function (uid) { return _this.summary[uid]; });
@@ -607,6 +629,9 @@ var ValidationService = /** @class */ (function () {
          */
         this.isValid = function (form, prevalidate, callback) {
             if (prevalidate === void 0) { prevalidate = true; }
+            if (!(form instanceof HTMLFormElement)) {
+                throw new Error('isValid() can only be called on <form> elements');
+            }
             if (prevalidate) {
                 _this.validateForm(form, callback);
             }
@@ -660,7 +685,7 @@ var ValidationService = /** @class */ (function () {
          */
         this.ValidationSummaryCssClassName = "validation-summary-errors";
         /**
-         * Override CSS class name for valid validation summary. Default: 'field-validation-valid'
+         * Override CSS class name for valid validation summary. Default: 'validation-summary-valid'
          */
         this.ValidationSummaryValidCssClassName = "validation-summary-valid";
         this.logger = logger || nullLogger;
@@ -965,24 +990,38 @@ var ValidationService = /** @class */ (function () {
             var uids = _this.formInputs[formUID];
             for (var _i = 0, uids_1 = uids; _i < uids_1.length; _i++) {
                 var uid = uids_1[_i];
-                var input = _this.elementByUID[uid];
-                if (input.classList.contains(_this.ValidationInputCssClassName)) {
-                    input.classList.remove(_this.ValidationInputCssClassName);
-                }
-                if (input.classList.contains(_this.ValidationInputValidCssClassName)) {
-                    input.classList.remove(_this.ValidationInputValidCssClassName);
-                }
-                var spans = _this.getMessageFor(input);
-                if (spans) {
-                    for (var i = 0; i < spans.length; i++) {
-                        spans[i].innerHTML = '';
-                    }
-                }
-                delete _this.summary[uid];
+                _this.resetField(uid);
             }
             _this.renderSummary();
         });
         this.formEvents[formUID] = cb;
+    };
+    /*
+        Reset the state of a validatable input. This is used when it's enabled or disabled.
+    */
+    ValidationService.prototype.reset = function (input) {
+        if (this.isDisabled(input)) {
+            this.resetField(this.getElementUID(input));
+        }
+        else {
+            this.scan(input);
+        }
+    };
+    ValidationService.prototype.resetField = function (inputUID) {
+        var input = this.elementByUID[inputUID];
+        if (input.classList.contains(this.ValidationInputCssClassName)) {
+            input.classList.remove(this.ValidationInputCssClassName);
+        }
+        if (input.classList.contains(this.ValidationInputValidCssClassName)) {
+            input.classList.remove(this.ValidationInputValidCssClassName);
+        }
+        var spans = this.getMessageFor(input);
+        if (spans) {
+            for (var i = 0; i < spans.length; i++) {
+                spans[i].innerHTML = '';
+            }
+        }
+        delete this.summary[inputUID];
     };
     ValidationService.prototype.untrackFormInput = function (form, inputUID) {
         var formUID = this.getElementUID(form);
@@ -1193,7 +1232,7 @@ var ValidationService = /** @class */ (function () {
             return __generator(this, function (_d) {
                 switch (_d.label) {
                     case 0:
-                        if (!!this.isHidden(input)) return [3 /*break*/, 7];
+                        if (!(!this.isHidden(input) && !this.isDisabled(input))) return [3 /*break*/, 7];
                         _a = directives;
                         _b = [];
                         for (_c in _a)
@@ -1259,13 +1298,23 @@ var ValidationService = /** @class */ (function () {
         return !(this.allowHiddenFields || input.offsetWidth || input.offsetHeight || input.getClientRects().length);
     };
     /**
+     * Checks if the provided input is disabled
+     * @param input
+     * @returns
+     */
+    ValidationService.prototype.isDisabled = function (input) {
+        // If the input is validatable, we check the `disabled` property.
+        // Otherwise the `disabled` property is undefined and this returns false.
+        return input.disabled;
+    };
+    /**
      * Adds addClass and removes removeClass
      * @param element Element to modify
      * @param addClass Class to add
      * @param removeClass Class to remove
      */
     ValidationService.prototype.swapClasses = function (element, addClass, removeClass) {
-        if (addClass && !element.classList.contains(addClass)) {
+        if (addClass && !this.isDisabled(element) && !element.classList.contains(addClass)) {
             element.classList.add(addClass);
         }
         if (element.classList.contains(removeClass)) {
@@ -1275,7 +1324,7 @@ var ValidationService = /** @class */ (function () {
     /**
      * Load default validation providers and scans the entire document when ready.
      * @param options.watch If set to true, a MutationObserver will be used to continuously watch for new elements that provide validation directives.
-     * @param options.addNoValidate If set to true (the default), a novalidate attribute will be added to the containing form in validate elemets.
+     * @param options.addNoValidate If set to true (the default), a novalidate attribute will be added to the containing form in validate elements.
      */
     ValidationService.prototype.bootstrap = function (options) {
         var _this = this;
@@ -1353,11 +1402,19 @@ var ValidationService = /** @class */ (function () {
         }
         else if (mutation.type === 'attributes') {
             if (mutation.target instanceof HTMLElement) {
-                var oldValue = (_a = mutation.oldValue) !== null && _a !== void 0 ? _a : '';
-                var newValue = (_c = (_b = mutation.target.attributes[mutation.attributeName]) === null || _b === void 0 ? void 0 : _b.value) !== null && _c !== void 0 ? _c : '';
-                this.logger.log("Attribute '%s' changed from '%s' to '%s'", mutation.attributeName, oldValue, newValue, mutation.target);
-                if (oldValue !== newValue) {
-                    this.scan(mutation.target);
+                var attributeName = mutation.attributeName;
+                // Special case for disabled.
+                if (attributeName === 'disabled') {
+                    var target = mutation.target;
+                    this.reset(target);
+                }
+                else {
+                    var oldValue = (_a = mutation.oldValue) !== null && _a !== void 0 ? _a : '';
+                    var newValue = (_c = (_b = mutation.target.attributes[mutation.attributeName]) === null || _b === void 0 ? void 0 : _b.value) !== null && _c !== void 0 ? _c : '';
+                    this.logger.log("Attribute '%s' changed from '%s' to '%s'", mutation.attributeName, oldValue, newValue, mutation.target);
+                    if (oldValue !== newValue) {
+                        this.scan(mutation.target);
+                    }
                 }
             }
         }
