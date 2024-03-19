@@ -1,6 +1,6 @@
 {
   "name": "aspnet-client-validation",
-  "version": "0.9.3",
+  "version": "0.9.5",
   "description": "Enables ASP.NET MVC client-side validation, without jQuery!",
   "main": "dist/aspnet-validation.js",
   "style": "dist/aspnet-validation.css",
