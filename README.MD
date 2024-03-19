@@ -171,9 +171,21 @@ v.addProvider('io', (value, element, params) => {
 
 ## Controlling when validation occurs
 
+### Events
+
 By default, validation occurs immediately upon changes to form fields: on `input` for inputs and textareas, and on `change` for selects.
 
 One can change to a different event by setting a field's `data-val-event` attribute. For example, one can use `data-val-event="blur"` to validate that field on the `blur` event.
+
+### Timing
+
+To prevent unnecessary validation, a debounce of 300ms is used. This ensures validation does not occur for every keystroke, which is especially important during remote validation.
+
+In some cases it may be unnecessary, for example when performing local validation on blur (rather than on change). To change the default:
+
+```ts
+v.debounce = 0;
+```
 
 ## Subscribing to Client Form Validation Event
 
