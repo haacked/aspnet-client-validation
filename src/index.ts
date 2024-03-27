@@ -859,8 +859,8 @@ export class ValidationService {
         }
         let formUID = this.getElementUID(form);
         let formInputUIDs = this.formInputs[formUID];
-        let invalidFormInputUIDs = formInputUIDs.filter(uid => this.summary[uid]);
-        return invalidFormInputUIDs.length == 0;
+        let formIsInvalid = formInputUIDs?.some(uid => this.summary[uid]) === true;
+        return !formIsInvalid;
     }
 
     /**
