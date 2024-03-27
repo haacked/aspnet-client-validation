@@ -832,11 +832,11 @@ export class ValidationService {
         }
         let formUID = this.getElementUID(form);
         let formInputUIDs = this.formInputs[formUID];
-        let invalidFormInputUIDs = formInputUIDs.filter(uid => this.summary[uid]);
+        let invalidFormInputUID = formInputUIDs?.find(uid => this.summary[uid]);
 
-        if (invalidFormInputUIDs.length > 0) {
-            const firstInvalid = this.elementByUID[invalidFormInputUIDs[0]] as HTMLElement;
-            if (firstInvalid) {
+        if (invalidFormInputUID) {
+            const firstInvalid = this.elementByUID[invalidFormInputUID];
+            if (firstInvalid instanceof HTMLElement) {
                 firstInvalid.focus();
             }
         }
