@@ -611,10 +611,10 @@ var ValidationService = /** @class */ (function () {
             }
             var formUID = _this.getElementUID(form);
             var formInputUIDs = _this.formInputs[formUID];
-            var invalidFormInputUIDs = formInputUIDs.filter(function (uid) { return _this.summary[uid]; });
-            if (invalidFormInputUIDs.length > 0) {
-                var firstInvalid = _this.elementByUID[invalidFormInputUIDs[0]];
-                if (firstInvalid) {
+            var invalidFormInputUID = formInputUIDs === null || formInputUIDs === void 0 ? void 0 : formInputUIDs.find(function (uid) { return _this.summary[uid]; });
+            if (invalidFormInputUID) {
+                var firstInvalid = _this.elementByUID[invalidFormInputUID];
+                if (firstInvalid instanceof HTMLElement) {
                     firstInvalid.focus();
                 }
             }
@@ -637,8 +637,8 @@ var ValidationService = /** @class */ (function () {
             }
             var formUID = _this.getElementUID(form);
             var formInputUIDs = _this.formInputs[formUID];
-            var invalidFormInputUIDs = formInputUIDs.filter(function (uid) { return _this.summary[uid]; });
-            return invalidFormInputUIDs.length == 0;
+            var formIsInvalid = (formInputUIDs === null || formInputUIDs === void 0 ? void 0 : formInputUIDs.some(function (uid) { return _this.summary[uid]; })) === true;
+            return !formIsInvalid;
         };
         /**
          * Returns true if the provided field is currently valid.
