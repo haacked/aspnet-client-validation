@@ -110,11 +110,15 @@
             <span asp-validation-for="Input.SomeRequiredField"></span>
         </div>
         <button type="submit" class="btn">Save</button>
+        <button type="button" class="btn" data-action="remove">Disable Validation</button>
     </form>
 </fieldset>
 
 @section scripts {
     <script>
+        const service = new aspnetValidation.ValidationService(console);
+        service.bootstrap();
+
         document.addEventListener('DOMContentLoaded', function () {
             console.log('Listening to Form 4')
             document.getElementById('prevent-default').addEventListener('submit', function (e) {
