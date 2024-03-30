@@ -1044,9 +1044,11 @@ export class ValidationService {
 
         let debounceTimeoutID = 0;
         let cb = (e: Event, callback?: ValidatedCallback) => {
-            let validate = this.validators[uid];
             clearTimeout(debounceTimeoutID);
             debounceTimeoutID = setTimeout(() => {
+                let validate = this.validators[uid];
+                if (!validate) return;
+
                 validate()
                     .then(callback)
                     .catch(error => {
