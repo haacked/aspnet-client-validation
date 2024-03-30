@@ -432,9 +432,9 @@ export class ValidationService {
     private providers: { [name: string]: ValidationProvider } = {};
 
     /**
-     * A key-value collection of <span> elements for displaying validation messages for an input (by DOM ID).
+     * A key-value collection of form UIDs and their <span> elements for displaying validation messages for an input (by DOM name).
      */
-    private messageFor: { [id: string]: Element[] } = {};
+    private messageFor: { [formUID: string]: { [name: string]: Element[] } } = {};
 
     /**
      * A list of managed elements, each having a randomly assigned unique identifier (UID).
@@ -578,8 +578,12 @@ export class ValidationService {
 
     private pushValidationMessageSpan(form: HTMLElement, span: HTMLElement) {
         let formId = this.getElementUID(form);
-        let name = `${formId}:${span.getAttribute('data-valmsg-for')}`;
-        let spans = this.messageFor[name] || (this.messageFor[name] = []);
+        let formSpans = this.messageFor[formId] ??= {};
+
+        let messageForId = span.getAttribute('data-valmsg-for');
+        if (!messageForId) return;
+
+        let spans = formSpans[messageForId] ??= [];
         if (spans.indexOf(span) < 0) {
             spans.push(span);
         }
@@ -590,8 +594,13 @@ export class ValidationService {
 
     private removeValidationMessageSpan(form: HTMLElement, span: HTMLElement) {
         let formId = this.getElementUID(form);
-        let name = `${formId}:${span.getAttribute('data-valmsg-for')}`;
-        let spans = this.messageFor[name];
+        let formSpans = this.messageFor[formId];
+        if (!formSpans) return;
+
+        let messageForId = span.getAttribute('data-valmsg-for');
+        if (!messageForId) return;
+
+        let spans = formSpans[messageForId];
         if (!spans) {
             return;
         }
@@ -709,11 +718,10 @@ export class ValidationService {
     // Retrieves the validation span for the input.
     private getMessageFor(input: ValidatableElement) {
         if (!input.form) {
-            return [];
+            return undefined;
         }
         let formId = this.getElementUID(input.form);
-        let name = `${formId}:${input.name}`;
-        return this.messageFor[name];
+        return this.messageFor[formId]?.[input.name];
     }
 
     /**
