@@ -81,8 +81,8 @@ export type ValidationProvider = (value: string, element: ValidatableElement, pa
  */
 export type ValidatedCallback = (success: boolean) => void;
 
-interface ValidationEventCallback {
-    (e?: Event, callback?: ValidatedCallback): void;
+interface ValidationEventCallback<TEvent extends Event = Event> {
+    (e?: TEvent, callback?: ValidatedCallback): void;
     remove?: () => void;
 }
 
@@ -459,7 +459,7 @@ export class ValidationService {
     /**
      * A key-value map for form UID to its trigger element (submit event for <form>).
      */
-    private formEvents: { [id: string]: (e?: SubmitEvent, callback?: ValidatedCallback) => void } = {};
+    private formEvents: { [formUID: string]: ValidationEventCallback<SubmitEvent> } = {};
 
     /**
      * A key-value map for element UID to its trigger element (input event for <textarea> and <input>, change event for <select>).
@@ -925,7 +925,7 @@ export class ValidationService {
         }
 
         let validating = false;
-        let cb = (e?: SubmitEvent, callback?: ValidatedCallback) => {
+        let cb: ValidationEventCallback<SubmitEvent> = (e, callback) => {
             // Prevent recursion
             if (validating) {
                 return;
@@ -972,14 +972,22 @@ export class ValidationService {
         };
 
         form.addEventListener('submit', cb);
-        form.addEventListener('reset', e => {
+
+        const cbReset = (e: Event) => {
             const uids = this.formInputs[formUID];
 
             for (let uid of uids) {
                 this.resetField(uid);
             }
             this.renderSummary();
-        });
+        };
+        form.addEventListener('reset', cbReset);
+
+        cb.remove = () => {
+            form.removeEventListener('submit', cb);
+            form.removeEventListener('reset', cbReset);
+        }
+
         this.formEvents[formUID] = cb;
     }
 
@@ -1016,12 +1024,19 @@ export class ValidationService {
 
     private untrackFormInput(form: HTMLFormElement, inputUID: string) {
         let formUID = this.getElementUID(form);
-        if (!this.formInputs[formUID]) {
+        let formInputUIDs = this.formInputs[formUID]
+        if (!formInputUIDs) {
             return;
         }
-        let indexToRemove = this.formInputs[formUID].indexOf(inputUID);
+        let indexToRemove = formInputUIDs.indexOf(inputUID);
         if (indexToRemove >= 0) {
-            this.formInputs[formUID].splice(indexToRemove, 1);
+            formInputUIDs.splice(indexToRemove, 1);
+
+            if (!formInputUIDs.length) {
+                this.formEvents[formUID]?.remove();
+                delete this.formEvents[formUID];
+                delete this.formInputs[formUID];
+            }
         }
         else {
             this.logger.log("Form input for UID '%s' was already removed", inputUID);
