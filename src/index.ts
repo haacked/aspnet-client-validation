@@ -1057,14 +1057,8 @@ export class ValidationService {
             }, this.debounce);
         };
 
-        let validateEvent = input.dataset.valEvent;
-        if (validateEvent) {
-            input.addEventListener(validateEvent, cb);
-        }
-        else {
-            let eventType = input instanceof HTMLSelectElement ? 'change' : 'input';
-            input.addEventListener(eventType, cb);
-        }
+        const validateEvent = input.dataset.valEvent || input instanceof HTMLSelectElement ? 'change' : 'input';
+        input.addEventListener(validateEvent, cb);
 
         this.inputEvents[uid] = cb;
     }
