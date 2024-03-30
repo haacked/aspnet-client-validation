@@ -81,6 +81,11 @@ export type ValidationProvider = (value: string, element: ValidatableElement, pa
  */
 export type ValidatedCallback = (success: boolean) => void;
 
+interface ValidationEventCallback {
+    (e?: Event, callback?: ValidatedCallback): void;
+    remove?: () => void;
+}
+
 /**
  * A callback method signature that kickstarts a new validation task for an input element, as a Boolean Promise.
  */
@@ -459,7 +464,7 @@ export class ValidationService {
     /**
      * A key-value map for element UID to its trigger element (input event for <textarea> and <input>, change event for <select>).
      */
-    private inputEvents: { [id: string]: (e?: Event, callback?: ValidatedCallback) => void } = {};
+    private inputEvents: { [inputUID: string]: ValidationEventCallback } = {};
 
     /**
      * A key-value map of input UID to its validation error message.
@@ -1043,12 +1048,13 @@ export class ValidationService {
         }
 
         let debounceTimeoutID = 0;
-        let cb = (e: Event, callback?: ValidatedCallback) => {
+        const cb: ValidationEventCallback = (event, callback) => {
             clearTimeout(debounceTimeoutID);
             debounceTimeoutID = setTimeout(() => {
                 let validate = this.validators[uid];
                 if (!validate) return;
 
+                this.logger.log('Validating', { event });
                 validate()
                     .then(callback)
                     .catch(error => {
@@ -1059,12 +1065,20 @@ export class ValidationService {
 
         const validateEvent = input.dataset.valEvent || input instanceof HTMLSelectElement ? 'change' : 'input';
         input.addEventListener(validateEvent, cb);
+        cb.remove = () => input.removeEventListener(validateEvent, cb);
 
         this.inputEvents[uid] = cb;
     }
 
     removeInput(input: ValidatableElement) {
         let uid = this.getElementUID(input);
+
+        // Clean up event listener
+        let cb = this.inputEvents[uid];
+        if (cb?.remove) {
+            cb.remove();
+            delete cb.remove;
+        }
 
         delete this.summary[uid];
         delete this.inputEvents[uid];
