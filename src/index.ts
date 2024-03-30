@@ -1038,6 +1038,7 @@ export class ValidationService {
                 this.formEvents[formUID]?.remove();
                 delete this.formEvents[formUID];
                 delete this.formInputs[formUID];
+                delete this.messageFor[formUID];
             }
         }
         else {
