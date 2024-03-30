@@ -1007,17 +1007,15 @@ export class ValidationService {
 
     private resetField(inputUID: string) {
         let input = this.elementByUID[inputUID];
-        if (input.classList.contains(this.ValidationInputCssClassName)) {
-            input.classList.remove(this.ValidationInputCssClassName);
-        }
-        if (input.classList.contains(this.ValidationInputValidCssClassName)) {
-            input.classList.remove(this.ValidationInputValidCssClassName);
-        }
+        this.swapClasses(input, '', this.ValidationInputCssClassName);
+        this.swapClasses(input, '', this.ValidationInputValidCssClassName);
 
         let spans = isValidatable(input) && this.getMessageFor(input);
         if (spans) {
             for (let i = 0; i < spans.length; i++) {
                 spans[i].innerHTML = '';
+                this.swapClasses(spans[i], '', this.ValidationMessageCssClassName);
+                this.swapClasses(spans[i], '', this.ValidationMessageValidCssClassName);
             }
         }
 
