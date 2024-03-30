@@ -1394,18 +1394,22 @@ export class ValidationService {
     }
 
     /**
-     * Scans the provided root element for any validation directives and attaches behavior to them.
+     * Scans the root element for any validation directives and attaches behavior to them.
+     * @param root The root node to scan; if not provided, `options.root` (default: `document.body`) will be scanned
      */
-    scan(root: ParentNode) {
+    scan(root?: ParentNode) {
+        root ??= this.options.root;
         this.logger.log('Scanning', root);
         this.scanMessages(root, this.pushValidationMessageSpan);
         this.scanInputs(root, this.addInput);
     }
 
     /**
-     * Scans the provided root element for any validation directives and removes behavior from them.
+     * Scans the root element for any validation directives and removes behavior from them.
+     * @param root The root node to scan; if not provided, `options.root` (default: `document.body`) will be scanned
      */
-    remove(root: ParentNode) {
+    remove(root?: ParentNode) {
+        root ??= this.options.root;
         this.logger.log('Removing', root);
         this.scanMessages(root, this.removeValidationMessageSpan);
         this.scanInputs(root, this.removeInput);
@@ -1413,9 +1417,10 @@ export class ValidationService {
 
     /**
      * Watches the provided root element for mutations, and scans for new validation directives to attach behavior.
-     * @param root The root element to use, defaults to the document.documentElement.
+     * @param root The root node to watch; if not provided, `options.root` (default: `document.body`) will be watched
      */
-    watch(root: ParentNode) {
+    watch(root?: ParentNode) {
+        root ??= this.options.root;
         this.observer = new MutationObserver(mutations => {
             mutations.forEach(mutation => {
                 this.observed(mutation);
