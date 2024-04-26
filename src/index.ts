@@ -1060,17 +1060,17 @@ export class ValidationService {
             return;
         }
 
-        const cb: ValidationEventCallback = (event, callback) => {
-            {
-                let validate = this.validators[uid];
-                if (!validate) return;
+        const cb: ValidationEventCallback = async (event, callback) => {
+            let validate = this.validators[uid];
+            if (!validate) return;
 
-                this.logger.log('Validating', { event });
-                validate()
-                    .then(callback)
-                    .catch(error => {
-                        this.logger.log('Validation error', error);
-                    });
+            this.logger.log('Validating', { event });
+            try {
+                const success = await validate();
+                callback(success);
+            }
+            catch (error) {
+                this.logger.log('Validation error', error);
             }
         };
 
