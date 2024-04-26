@@ -82,7 +82,7 @@ export type ValidationProvider = (value: string, element: ValidatableElement, pa
 export type ValidatedCallback = (success: boolean) => void;
 
 interface ValidationEventCallback<TEvent extends Event = Event> {
-    (e?: TEvent, callback?: ValidatedCallback): void;
+    (e?: TEvent, callback?: ValidatedCallback): Promise<boolean>;
     debounced?: (e?: TEvent, callback?: ValidatedCallback) => void;
     remove?: () => void;
 }
@@ -729,29 +729,29 @@ export class ValidationService {
      * Fires off validation for elements within the provided form and then calls the callback
      * @param form The form to validate.
      * @param callback Receives true or false indicating validity after all validation is complete.
+     * @returns Promise that resolves to true or false indicating validity after all validation is complete.
      */
-    validateForm = (form: HTMLFormElement, callback?: ValidatedCallback) => {
+    validateForm = async (form: HTMLFormElement, callback?: ValidatedCallback) => {
         if (!(form instanceof HTMLFormElement)) {
             throw new Error('validateForm() can only be called on <form> elements');
         }
         let formUID = this.getElementUID(form);
         let formValidationEvent = this.formEvents[formUID];
-        if (formValidationEvent) {
-            formValidationEvent(undefined, callback);
-        }
+        return !formValidationEvent ||
+            await formValidationEvent(undefined, callback);
     }
 
     /**
      * Fires off validation for the provided element and then calls the callback
      * @param field The element to validate.
      * @param callback Receives true or false indicating validity after all validation is complete.
+     * @returns Promise that resolves to true or false indicating validity after all validation is complete
      */
-    validateField = (field: ValidatableElement, callback?: ValidatedCallback) => {
+    validateField = async (field: ValidatableElement, callback?: ValidatedCallback) => {
         let fieldUID = this.getElementUID(field);
         let fieldValidationEvent = this.inputEvents[fieldUID];
-        if (fieldValidationEvent) {
-            fieldValidationEvent(undefined, callback);
-        }
+        return !fieldValidationEvent ||
+            await fieldValidationEvent(undefined, callback);
     }
 
     /**
@@ -931,11 +931,11 @@ export class ValidationService {
         let cb: ValidationEventCallback<SubmitEvent> = (e, callback) => {
             // Prevent recursion
             if (validationTask) {
-                return;
+                return validationTask;
             }
 
             if (!this.shouldValidate(e)) {
-                return;
+                return Promise.resolve(true);
             }
 
             validationTask = this.getFormValidationTask(formUID);
@@ -947,11 +947,11 @@ export class ValidationService {
 
             this.logger.log('Validating', form);
 
-            validationTask.then(async success => {
+            return validationTask.then(async success => {
                 this.logger.log('Validated (success = %s)', success, form);
                 if (callback) {
                     callback(success);
-                    return;
+                    return success;
                 }
 
                 const validationEvent = new CustomEvent('validation',
@@ -963,8 +963,10 @@ export class ValidationService {
                 // Firefox fix: redispatch 'submit' after finished handling this event
                 await new Promise(resolve => setTimeout(resolve, 0));
                 this.handleValidated(form, success, e);
+                return success;
             }).catch(error => {
                 this.logger.log('Validation error', error);
+                return false;
             }).finally(() => {
                 validationTask = null;
             });
@@ -1062,15 +1064,17 @@ export class ValidationService {
 
         const cb: ValidationEventCallback = async (event, callback) => {
             let validate = this.validators[uid];
-            if (!validate) return;
+            if (!validate) return true;
 
             this.logger.log('Validating', { event });
             try {
                 const success = await validate();
                 callback(success);
+                return success;
             }
             catch (error) {
                 this.logger.log('Validation error', error);
+                return false;
             }
         };
 
