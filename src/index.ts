@@ -927,10 +927,10 @@ export class ValidationService {
             return;
         }
 
-        let validating = false;
+        let validationTask: Promise<boolean> | null = null;
         let cb: ValidationEventCallback<SubmitEvent> = (e, callback) => {
             // Prevent recursion
-            if (validating) {
+            if (validationTask) {
                 return;
             }
 
@@ -938,20 +938,16 @@ export class ValidationService {
                 return;
             }
 
-            let validate = this.getFormValidationTask(formUID);
-            if (!validate) {
-                return;
-            }
+            validationTask = this.getFormValidationTask(formUID);
 
             //`preValidate` typically prevents submit before validation
             if (e) {
                 this.preValidate(e);
             }
 
-            validating = true;
             this.logger.log('Validating', form);
 
-            validate.then(async success => {
+            validationTask.then(async success => {
                 this.logger.log('Validated (success = %s)', success, form);
                 if (callback) {
                     callback(success);
@@ -970,7 +966,7 @@ export class ValidationService {
             }).catch(error => {
                 this.logger.log('Validation error', error);
             }).finally(() => {
-                validating = false;
+                validationTask = null;
             });
         };
 
