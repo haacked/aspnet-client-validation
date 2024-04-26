@@ -83,6 +83,7 @@ export type ValidatedCallback = (success: boolean) => void;
 
 interface ValidationEventCallback<TEvent extends Event = Event> {
     (e?: TEvent, callback?: ValidatedCallback): void;
+    debounced?: (e?: TEvent, callback?: ValidatedCallback) => void;
     remove?: () => void;
 }
 
@@ -1063,10 +1064,8 @@ export class ValidationService {
             return;
         }
 
-        let debounceTimeoutID = 0;
         const cb: ValidationEventCallback = (event, callback) => {
-            clearTimeout(debounceTimeoutID);
-            debounceTimeoutID = setTimeout(() => {
+            {
                 let validate = this.validators[uid];
                 if (!validate) return;
 
@@ -1076,12 +1075,20 @@ export class ValidationService {
                     .catch(error => {
                         this.logger.log('Validation error', error);
                     });
+            }
+        };
+
+        let debounceTimeoutID = 0;
+        cb.debounced = (event, callback) => {
+            clearTimeout(debounceTimeoutID);
+            debounceTimeoutID = setTimeout(() => {
+                cb(event, callback);
             }, this.debounce);
         };
 
         const validateEvent = input.dataset.valEvent || input instanceof HTMLSelectElement ? 'change' : 'input';
-        input.addEventListener(validateEvent, cb);
-        cb.remove = () => input.removeEventListener(validateEvent, cb);
+        input.addEventListener(validateEvent, cb.debounced);
+        cb.remove = () => input.removeEventListener(validateEvent, cb.debounced);
 
         this.inputEvents[uid] = cb;
     }
