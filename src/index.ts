@@ -704,8 +704,7 @@ export class ValidationService {
 
         let formValidators: Validator[] = [];
 
-        for (let i = 0; i < formInputUIDs.length; i++) {
-            let inputUID = formInputUIDs[i];
+        for (let inputUID of formInputUIDs) {
             const validator = this.validators[inputUID];
             if (validator) {
                 formValidators.push(validator);
@@ -904,12 +903,10 @@ export class ValidationService {
      */
     private trackFormInput(form: HTMLFormElement, inputUID: string) {
         let formUID = this.getElementUID(form);
-        if (!this.formInputs[formUID]) {
-            this.formInputs[formUID] = [];
-        }
-        let add = (this.formInputs[formUID].indexOf(inputUID) === -1);
+        let formInputUIDs = this.formInputs[formUID] ??= [];
+        let add = formInputUIDs.indexOf(inputUID) === -1;
         if (add) {
-            this.formInputs[formUID].push(inputUID);
+            formInputUIDs.push(inputUID);
 
             if (this.options.addNoValidate) {
                 this.logger.log('Setting novalidate on form', form);
@@ -975,10 +972,10 @@ export class ValidationService {
         form.addEventListener('submit', cb);
 
         const cbReset = (e: Event) => {
-            const uids = this.formInputs[formUID];
+            const formInputUIDs = this.formInputs[formUID];
 
-            for (let uid of uids) {
-                this.resetField(uid);
+            for (let inputUID of formInputUIDs) {
+                this.resetField(inputUID);
             }
             this.renderSummary();
         };
