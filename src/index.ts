@@ -1045,14 +1045,22 @@ export class ValidationService {
         let debounceTimeoutID = 0;
         let cb = (e: Event, callback?: ValidatedCallback) => {
             let validate = this.validators[uid];
-            clearTimeout(debounceTimeoutID);
-            debounceTimeoutID = setTimeout(() => {
+            if(this.debounce){
+                clearTimeout(debounceTimeoutID);
+                debounceTimeoutID = setTimeout(() => {
+                    validate()
+                        .then(callback)
+                        .catch(error => {
+                            this.logger.log('Validation error', error);
+                        });
+                }, this.debounce);
+            }else{
                 validate()
-                    .then(callback)
-                    .catch(error => {
-                        this.logger.log('Validation error', error);
-                    });
-            }, this.debounce);
+                .then(callback)
+                .catch(error => {
+                    this.logger.log('Validation error', error);
+                });
+            }
         };
 
         let validateEvent = input.dataset.valEvent;
