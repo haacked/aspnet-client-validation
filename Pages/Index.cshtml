@@ -79,6 +79,7 @@
         </div>
 
         <input type="submit" asp-for="SubmitButton" class="btn" value="Save" />
+        <button type="button" class="btn" data-action="remove">Disable Validation</button>
     </form>
 </fieldset>
 
@@ -98,6 +99,7 @@
         </div>
 
         <button type="submit" class="btn">Save</button>
+        <button type="button" class="btn" data-action="remove">Disable Validation</button>
     </form>
 </fieldset>
 
@@ -110,11 +112,15 @@
             <span asp-validation-for="Input.SomeRequiredField"></span>
         </div>
         <button type="submit" class="btn">Save</button>
+        <button type="button" class="btn" data-action="remove">Disable Validation</button>
     </form>
 </fieldset>
 
 @section scripts {
     <script>
+        const service = new aspnetValidation.ValidationService(console);
+        service.bootstrap();
+
         document.addEventListener('DOMContentLoaded', function () {
             console.log('Listening to Form 4')
             document.getElementById('prevent-default').addEventListener('submit', function (e) {
@@ -123,8 +129,23 @@
                 alert(new URLSearchParams(data));
             });
         });
+
+        document.querySelectorAll('[data-action="remove"]').forEach(function (removeButton) {
+            removeButton.addEventListener('click', function (removeClick) {
+                if (removeButton.validationRemoved) {
+                    service.scan(removeButton.form);
+                    removeButton.textContent = 'Enable Validation';
+                    removeButton.validationRemoved = false;
+                } else {
+                    service.remove(removeButton.form);
+                    removeButton.textContent = 'Disable Validation';
+                    removeButton.validationRemoved = true;
+                }
+            });
+        });
     </script>
 }
+
 <fieldset>
     <legend>Form 4 (<code>preventDefault()</code>)</legend>
     <form method="post" id="prevent-default">
