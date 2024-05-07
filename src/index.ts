@@ -153,8 +153,9 @@ export class MvcValidationProviders {
 
             return false;
         }
-        // Default behavior otherwise.
-        return Boolean(value);
+
+        // Default behavior otherwise (trim ensures whitespace only is not seen as valid).
+        return Boolean(value?.trim());
     }
 
     /**
