@@ -231,8 +231,8 @@ var MvcValidationProviders = /** @class */ (function () {
                 }
                 return false;
             }
-            // Default behavior otherwise.
-            return Boolean(value);
+            // Default behavior otherwise (trim ensures whitespace only is not seen as valid).
+            return Boolean(value === null || value === void 0 ? void 0 : value.trim());
         };
         /**
          * Validates whether the input value satisfies the length contstraint.
