@@ -804,12 +804,13 @@ export class ValidationService {
             // Because the submitter is not propagated when calling
             // form.submit(), we recreate it here.
             const submitter = submitEvent.submitter;
+            let submitterInput: HTMLInputElement | null = null;
             const initialFormAction = form.action;
             if (submitter) {
                 const name = submitter.getAttribute('name');
                 // If name is null, a submit button is not submitted.
                 if (name) {
-                    const submitterInput = document.createElement('input');
+                    submitterInput = document.createElement('input');
                     submitterInput.type = 'hidden';
                     submitterInput.name = name;
                     submitterInput.value = submitter.getAttribute('value');
@@ -825,6 +826,10 @@ export class ValidationService {
             try {
                 form.submit();
             } finally {
+                if (submitterInput) {
+                    // Important to clean up the submit input we created.
+                    form.removeChild(submitterInput);
+                }
                 form.action = initialFormAction;
             }
         }

@@ -1,0 +1,33 @@
+@page
+@model DemoWeb.Pages.Demos.SubmitButtonDownload
+
+@{
+    Layout = "Shared/_Layout";
+}
+
+<fieldset>
+    <legend>Required ASP.NET Checkboxes with hidden input</legend>
+
+    @DateTime.UtcNow
+
+    <form method="post">
+        <div class="form-field">
+            <p>
+                This simple test demonstrates that we ensure that submit button values are submitted
+                correctly even when the form is posting to a download (and the page is not refreshed).
+            </p>
+
+            Required: <input asp-for="SomeRequiredValue" />
+
+            <input type="submit" asp-for="SubmitButtonValue" value="PDF" />
+            <input type="submit" asp-for="SubmitButtonValue" value="Excel" />
+        </div>
+    </form>
+</fieldset>
+
+@section Scripts {
+    <script>
+        const service = new aspnetValidation.ValidationService(console);
+        service.bootstrap();
+    </script>
+}
