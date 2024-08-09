@@ -690,6 +690,7 @@ var ValidationService = /** @class */ (function () {
             root: document.body,
             watch: false,
             addNoValidate: true,
+            delayedValidation: false,
         };
         /**
          * Override CSS class name for input validation error. Default: 'input-validation-error'
@@ -1096,6 +1097,12 @@ var ValidationService = /** @class */ (function () {
                         validate = this.validators[uid];
                         if (!validate)
                             return [2 /*return*/, true];
+                        if (this.options.delayedValidation &&
+                            event && event.type === 'input' &&
+                            !input.classList.contains(this.ValidationInputCssClassName)) {
+                            // When delayedValidation=true, "input" only takes it back to valid. "Change" can make it invalid.
+                            return [2 /*return*/, true];
+                        }
                         this.logger.log('Validating', { event: event });
                         _a.label = 1;
                     case 1:
@@ -1120,9 +1127,17 @@ var ValidationService = /** @class */ (function () {
                 cb(event, callback);
             }, _this.debounce);
         };
-        var validateEvent = input.dataset.valEvent || input instanceof HTMLSelectElement ? 'change' : 'input';
-        input.addEventListener(validateEvent, cb.debounced);
-        cb.remove = function () { return input.removeEventListener(validateEvent, cb.debounced); };
+        var validateEvent = input.dataset.valEvent || input instanceof HTMLSelectElement ? 'change' :
+            (this.options.delayedValidation ? 'input change' : 'input');
+        var events = validateEvent.split(' ');
+        events.forEach(function (eventName) {
+            input.addEventListener(eventName, cb.debounced);
+        });
+        cb.remove = function () {
+            events.forEach(function (eventName) {
+                input.removeEventListener(eventName, cb.debounced);
+            });
+        };
         this.inputEvents[uid] = cb;
     };
     ValidationService.prototype.removeInput = function (input) {
@@ -1378,6 +1393,7 @@ var ValidationService = /** @class */ (function () {
      * Load default validation providers and scans the entire document when ready.
      * @param options.watch If set to true, a MutationObserver will be used to continuously watch for new elements that provide validation directives.
      * @param options.addNoValidate If set to true (the default), a novalidate attribute will be added to the containing form in validate elements.
+     * @param options.delayedValidation If set to false (the default), validation happens while user inputs. If set to true, validation happens on blur, unless input is already invalid, in which case it will validate on input to indicate the value is valid as soon as possible.
      */
     ValidationService.prototype.bootstrap = function (options) {
         var _this = this;

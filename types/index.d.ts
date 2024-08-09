@@ -99,6 +99,7 @@ export interface ValidationServiceOptions {
     watch: boolean;
     root: ParentNode;
     addNoValidate: boolean;
+    delayedValidation: boolean;
 }
 /**
  * Responsible for managing the DOM elements and running the validation providers.
@@ -335,6 +336,7 @@ export declare class ValidationService {
      * Load default validation providers and scans the entire document when ready.
      * @param options.watch If set to true, a MutationObserver will be used to continuously watch for new elements that provide validation directives.
      * @param options.addNoValidate If set to true (the default), a novalidate attribute will be added to the containing form in validate elements.
+     * @param options.delayedValidation If set to false (the default), validation happens while user inputs. If set to true, validation happens on blur, unless input is already invalid, in which case it will validate on input to indicate the value is valid as soon as possible.
      */
     bootstrap(options?: Partial<ValidationServiceOptions>): void;
     /**

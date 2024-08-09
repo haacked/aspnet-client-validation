@@ -1076,7 +1076,7 @@ export class ValidationService {
                 !input.classList.contains(this.ValidationInputCssClassName)
             ) {
                 // When delayedValidation=true, "input" only takes it back to valid. "Change" can make it invalid.
-                return;
+                return true;
             }
 
             this.logger.log('Validating', { event });
