@@ -1068,6 +1068,15 @@ export class ValidationService {
         const cb: ValidationEventCallback = async (event, callback) => {
             let validate = this.validators[uid];
             if (!validate) return true;
+            
+            if (
+                !input.dataset.valEvent &&
+                event && event.type === 'input' &&
+                !input.classList.contains(this.ValidationInputCssClassName)
+            ) {
+                // When no data-val-event specified on a field, "input" event only takes it back to valid. "Change" event can make it invalid.
+                return true;
+            }
 
             this.logger.log('Validating', { event });
             try {
@@ -1089,9 +1098,19 @@ export class ValidationService {
             }, this.debounce);
         };
 
-        const validateEvent = input.dataset.valEvent || input instanceof HTMLSelectElement ? 'change' : 'input';
-        input.addEventListener(validateEvent, cb.debounced);
-        cb.remove = () => input.removeEventListener(validateEvent, cb.debounced);
+        const defaultEvent = input instanceof HTMLSelectElement ? 'change' : 'input change';
+        const validateEvent = input.dataset.valEvent ?? defaultEvent;
+        const events = validateEvent.split(' ');
+
+        events.forEach((eventName) => {
+          input.addEventListener(eventName, cb.debounced);
+        });
+
+        cb.remove = () => {
+          events.forEach((eventName) => {
+            input.removeEventListener(eventName, cb.debounced);
+          });
+        };
 
         this.inputEvents[uid] = cb;
     }

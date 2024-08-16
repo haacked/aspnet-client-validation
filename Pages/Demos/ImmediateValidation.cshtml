@@ -1,0 +1,35 @@
+@page
+@model DemoWeb.Pages.Demos.ImmediateValidation
+@{
+    Layout = "Shared/_Layout";
+}
+
+<div asp-validation-summary="All">
+    <span>Please correct the following errors</span>
+</div>
+
+<fieldset>
+    <legend>Required Email input with data-val-event specified for immediate validation as you type.</legend>
+    <form method="post">
+        <legend>Input with immediate validation (<code>data-val-event="input"</code>)</legend>
+        <div class="form-field">
+            <label asp-for="EmailAddress"></label>
+            <input asp-for="EmailAddress" data-val-event="input" />
+            <span asp-validation-for="EmailAddress"></span>
+        </div>
+        <legend>Input with default behavior</legend>
+        <div class="form-field">
+            <label asp-for="AnotherEmailAddress"></label>
+            <input asp-for="AnotherEmailAddress" />
+            <span asp-validation-for="AnotherEmailAddress"></span>
+        </div>
+        <input type="submit" value="Submit"/>
+    </form>
+</fieldset>
+
+@section Scripts {
+    <script>
+        const service = new aspnetValidation.ValidationService(console);
+        service.bootstrap();
+    </script>
+}

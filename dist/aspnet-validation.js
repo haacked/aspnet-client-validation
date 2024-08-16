@@ -1079,6 +1079,7 @@ var ValidationService = /** @class */ (function () {
      */
     ValidationService.prototype.addInput = function (input) {
         var _this = this;
+        var _a;
         var uid = this.getElementUID(input);
         var directives = this.parseDirectives(input.attributes);
         this.validators[uid] = this.createValidator(input, directives);
@@ -1096,6 +1097,12 @@ var ValidationService = /** @class */ (function () {
                         validate = this.validators[uid];
                         if (!validate)
                             return [2 /*return*/, true];
+                        if (!input.dataset.valEvent &&
+                            event && event.type === 'input' &&
+                            !input.classList.contains(this.ValidationInputCssClassName)) {
+                            // When no data-val-event specified on a field, "input" event only takes it back to valid. "Change" event can make it invalid.
+                            return [2 /*return*/, true];
+                        }
                         this.logger.log('Validating', { event: event });
                         _a.label = 1;
                     case 1:
@@ -1120,9 +1127,17 @@ var ValidationService = /** @class */ (function () {
                 cb(event, callback);
             }, _this.debounce);
         };
-        var validateEvent = input.dataset.valEvent || input instanceof HTMLSelectElement ? 'change' : 'input';
-        input.addEventListener(validateEvent, cb.debounced);
-        cb.remove = function () { return input.removeEventListener(validateEvent, cb.debounced); };
+        var defaultEvent = input instanceof HTMLSelectElement ? 'change' : 'input change';
+        var validateEvent = (_a = input.dataset.valEvent) !== null && _a !== void 0 ? _a : defaultEvent;
+        var events = validateEvent.split(' ');
+        events.forEach(function (eventName) {
+            input.addEventListener(eventName, cb.debounced);
+        });
+        cb.remove = function () {
+            events.forEach(function (eventName) {
+                input.removeEventListener(eventName, cb.debounced);
+            });
+        };
         this.inputEvents[uid] = cb;
     };
     ValidationService.prototype.removeInput = function (input) {
