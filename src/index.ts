@@ -1090,9 +1090,11 @@ export class ValidationService {
             }
         };
 
-        let debounceTimeoutID = 0;
+        let debounceTimeoutID: NodeJS.Timeout | null = null;
         cb.debounced = (event, callback) => {
-            clearTimeout(debounceTimeoutID);
+            if (debounceTimeoutID !== null) {
+                clearTimeout(debounceTimeoutID);
+            }
             debounceTimeoutID = setTimeout(() => {
                 cb(event, callback);
             }, this.debounce);
