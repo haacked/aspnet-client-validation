@@ -1252,9 +1252,10 @@ export class ValidationService {
             }
         }
 
-        this.swapClasses(input,
+        this.highlight(input,
             this.ValidationInputCssClassName,
-            this.ValidationInputValidCssClassName);
+            this.ValidationInputValidCssClassName
+        );
 
         if (input.form) {
             // Adding an error to one input should also add it to others with the same name (i.e. for radio button and checkbox lists).
@@ -1287,9 +1288,10 @@ export class ValidationService {
             }
         }
 
-        this.swapClasses(input,
+        this.unhighlight(input,
+            this.ValidationInputCssClassName,
             this.ValidationInputValidCssClassName,
-            this.ValidationInputCssClassName);
+        );
 
         // Removing an error from one input should also remove it from others with the same name (i.e. for radio button and checkbox lists).
         if (input.form) {
@@ -1511,6 +1513,26 @@ export class ValidationService {
                 }
             }
         }
+    }
+
+    /**
+     * Highlights invalid element by adding errorClass CSS class and removing validClass CSS class
+     * @param input Element to modify
+     * @param errorClass Class to add
+     * @param validClass Class to remove
+     */
+    highlight(input : ValidatableElement, errorClass: string, validClass: string) {
+        this.swapClasses(input, errorClass, validClass);
+    }
+
+    /**
+     * Unhighlight valid element by removing errorClass CSS class and adding validClass CSS class
+     * @param input Element to modify
+     * @param errorClass Class to add
+     * @param validClass Class to remove
+     */
+    unhighlight(input: ValidatableElement, errorClass: string, validClass: string) {
+        this.swapClasses(input, validClass, errorClass);
     }
 
     /**

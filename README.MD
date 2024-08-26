@@ -280,6 +280,15 @@ v.ValidationMessageValidCssClassName   = 'valid-feedback';             // change
 v.bootstrap();
 ```
 
+## Customizing highlight and unhighlight functions
+
+```js
+var v = new aspnetValidation.ValidationService();
+v.highlight = function (input, errorClass, validClass) { ... };
+v.unhighlight = function (input, errorClass, validClass) { ... };
+v.bootstrap();
+```
+
 ## Logging
 
 There is a rudimentary logging infrastructure in place if you want to get more insight into what the library is doing.
