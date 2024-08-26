@@ -1254,8 +1254,7 @@ export class ValidationService {
 
         this.highlight(input,
             this.ValidationInputCssClassName,
-            this.ValidationInputValidCssClassName
-        );
+            this.ValidationInputValidCssClassName);
 
         if (input.form) {
             // Adding an error to one input should also add it to others with the same name (i.e. for radio button and checkbox lists).
@@ -1290,8 +1289,7 @@ export class ValidationService {
 
         this.unhighlight(input,
             this.ValidationInputCssClassName,
-            this.ValidationInputValidCssClassName,
-        );
+            this.ValidationInputValidCssClassName);
 
         // Removing an error from one input should also remove it from others with the same name (i.e. for radio button and checkbox lists).
         if (input.form) {
