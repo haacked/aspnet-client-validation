@@ -62,8 +62,6 @@ let v = new ValidationService();
 v.bootstrap();
 ```
 
-> Use [instapack](https://github.com/ryanelian/instapack) for easy, rapid, and painless web application front-end development using TypeScript!
-
 ## Why?
 
 **jquery-3.3.2.min.js** + **jquery.validate.min.js** + **jquery.validate.unobtrusive.min.js** = 112 KB
