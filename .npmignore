@@ -1,4 +1,5 @@
 .vscode/
+sample/
 src/
 .gitattributes
 .travis.yml
