@@ -333,7 +333,7 @@ export class MvcValidationProviders {
             return false;
         }
 
-        let r = /^\+?[0-9\-\s]+$/;
+        let r = element.pattern ? new RegExp(element.pattern) : /^\+?[0-9\-\s]+$/;
         return r.test(value);
     }
 
