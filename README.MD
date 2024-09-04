@@ -120,6 +120,16 @@ public class ClassicMovieAttribute : ValidationAttribute, IClientModelValidator
         var year = _year.ToString(CultureInfo.InvariantCulture);
         MergeAttribute(context.Attributes, "data-val-classicmovie-year", year);
     }
+
+    private static bool MergeAttribute(IDictionary<string, string> attributes, string key, string value) {
+        if (attributes.ContainsKey(key)) {
+            return false;
+        }
+
+        attributes.Add(key, value);
+        return true;
+    }
+
 }
 ```
 
