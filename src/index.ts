@@ -1526,8 +1526,8 @@ export class ValidationService {
     /**
      * Unhighlight valid element by removing errorClass CSS class and adding validClass CSS class
      * @param input Element to modify
-     * @param errorClass Class to add
-     * @param validClass Class to remove
+     * @param errorClass Class to remove
+     * @param validClass Class to add
      */
     unhighlight(input: ValidatableElement, errorClass: string, validClass: string) {
         this.swapClasses(input, validClass, errorClass);
