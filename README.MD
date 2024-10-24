@@ -236,7 +236,7 @@ Similar to checking a forms validity, you can check individual fields too.
 v.isFieldValid(document.getElementById('field'))
 ```
 
-By default it will try to validate the form surrounding the field, before returning whether the field is valid. This can be disabled by setting the `prevalidate` parameter like so:
+By default it will try to validate the field, before returning whether the field is valid. This can be disabled by setting the `prevalidate` parameter like so:
 
 ```ts
 v.isFieldValid(document.getElementById('field'), false)
