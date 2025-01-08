@@ -1199,7 +1199,7 @@ var ValidationService = /** @class */ (function () {
                 this.swapClasses(spans[i], this.ValidationMessageCssClassName, this.ValidationMessageValidCssClassName);
             }
         }
-        this.swapClasses(input, this.ValidationInputCssClassName, this.ValidationInputValidCssClassName);
+        this.highlight(input, this.ValidationInputCssClassName, this.ValidationInputValidCssClassName);
         if (input.form) {
             // Adding an error to one input should also add it to others with the same name (i.e. for radio button and checkbox lists).
             var inputs = input.form.querySelectorAll(validatableSelector("[name=\"".concat(input.name, "\"]")));
@@ -1223,7 +1223,7 @@ var ValidationService = /** @class */ (function () {
                 this.swapClasses(spans[i], this.ValidationMessageValidCssClassName, this.ValidationMessageCssClassName);
             }
         }
-        this.swapClasses(input, this.ValidationInputValidCssClassName, this.ValidationInputCssClassName);
+        this.unhighlight(input, this.ValidationInputCssClassName, this.ValidationInputValidCssClassName);
         // Removing an error from one input should also remove it from others with the same name (i.e. for radio button and checkbox lists).
         if (input.form) {
             var inputs = input.form.querySelectorAll(validatableSelector("[name=\"".concat(input.name, "\"]")));
@@ -1438,6 +1438,24 @@ var ValidationService = /** @class */ (function () {
                 }
             }
         }
+    };
+    /**
+     * Highlights invalid element by adding errorClass CSS class and removing validClass CSS class
+     * @param input Element to modify
+     * @param errorClass Class to add
+     * @param validClass Class to remove
+     */
+    ValidationService.prototype.highlight = function (input, errorClass, validClass) {
+        this.swapClasses(input, errorClass, validClass);
+    };
+    /**
+     * Unhighlight valid element by removing errorClass CSS class and adding validClass CSS class
+     * @param input Element to modify
+     * @param errorClass Class to remove
+     * @param validClass Class to add
+     */
+    ValidationService.prototype.unhighlight = function (input, errorClass, validClass) {
+        this.swapClasses(input, validClass, errorClass);
     };
     return ValidationService;
 }());

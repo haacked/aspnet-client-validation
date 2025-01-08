@@ -354,6 +354,20 @@ export declare class ValidationService {
     watch(root?: ParentNode): void;
     private observed;
     /**
+     * Highlights invalid element by adding errorClass CSS class and removing validClass CSS class
+     * @param input Element to modify
+     * @param errorClass Class to add
+     * @param validClass Class to remove
+     */
+    highlight(input: ValidatableElement, errorClass: string, validClass: string): void;
+    /**
+     * Unhighlight valid element by removing errorClass CSS class and adding validClass CSS class
+     * @param input Element to modify
+     * @param errorClass Class to remove
+     * @param validClass Class to add
+     */
+    unhighlight(input: ValidatableElement, errorClass: string, validClass: string): void;
+    /**
      * Override CSS class name for input validation error. Default: 'input-validation-error'
      */
     ValidationInputCssClassName: string;
